@@ -11,17 +11,22 @@
     "typecheck": "tsc --noEmit",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "tokens": "node scripts/build-tokens.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "decimal.js": "^10.6.0",
     "dotenv": "^18.0.7",
+    "lucide-react": "^1.56.0",
     "next": "16.4.0",
     "pg": "^8.23.1",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

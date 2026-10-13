@@ -1,26 +1,164 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Humaflow (Kenac) design system. Tokens: design-system/humaflow, generated into src/styles/tokens.css.
+   Dark mode is the .hf-theme-dark class on <html>, as in Humaflow. */
+@custom-variant dark (&:where(.hf-theme-dark, .hf-theme-dark *));
 
 @theme inline {
+  --font-sans: var(--font-hanken), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* shadcn semantic names: prefer these in new code */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* app names */
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-brand: var(--hf-primary);
+  --color-brand-foreground: var(--hf-primary-foreground);
+  --color-brand-hover: var(--hf-primary-hover);
+  --color-brand-deep: var(--hf-primary-deep);
+  --color-brand-soft: var(--hf-primary-soft);
+  --color-brand-soft-strong: var(--hf-primary-soft-strong);
+  --color-brand-border: var(--hf-primary-border);
+  --color-teal: var(--teal);
+  --color-green: var(--green);
+  --color-green-bg: var(--green-bg);
+  --color-amber: var(--amber);
+  --color-amber-bg: var(--amber-bg);
+  --color-red: var(--red);
+  --color-red-bg: var(--red-bg);
+  --color-grey: var(--grey);
+  --color-grey-bg: var(--grey-bg);
+  --color-slate: var(--slate);
+  --color-slate-bg: var(--slate-bg);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-nav-primary: var(--nav-primary);
+  --color-nav-primary-fg: var(--nav-primary-fg);
+  --color-nav-accent: var(--nav-accent);
+  --color-nav-muted: var(--nav-muted);
+
+  --shadow-card: var(--sh-card);
+  --shadow-pop: var(--sh-pop);
+  --shadow-sm: var(--sh-sm);
+
+  --breakpoint-nav: 901px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    background: var(--bg);
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.45;
+    font-feature-settings: "tnum" 1, "cv11" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--hf-primary-soft-strong);
+  }
+  :where(button, a, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+  * {
+    border-color: var(--border);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Type styles from tokens.json → type.groups */
+@utility text-page-title {
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+@utility text-modal-title {
+  font-size: 19px;
+  line-height: 1.45;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+@utility text-section-title {
+  font-size: 18px;
+  line-height: 1.45;
+  font-weight: 800;
+}
+@utility text-card-title {
+  font-size: 15.5px;
+  line-height: 1.45;
+  font-weight: 700;
+}
+@utility text-wordmark {
+  font-size: 22px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+@utility text-label {
+  font-size: 13.5px;
+  line-height: 1.45;
+  font-weight: 700;
+}
+@utility text-body-sm {
+  font-size: 13px;
+  line-height: 1.45;
+}
+@utility text-meta {
+  font-size: 12.5px;
+  line-height: 1.45;
+  font-weight: 600;
+}
+@utility text-caption {
+  font-size: 12px;
+  line-height: 1.45;
+}
+@utility text-eyebrow {
+  font-size: 11px;
+  line-height: 1.45;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
