@@ -1,0 +1,317 @@
+// Budget Buddy schema. See docs/decisions.md for the rules this encodes.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------- Tenancy ----------
+
+enum OrganisationKind {
+  CUSTOMER
+  OPERATOR // Kenac Computer Systems
+}
+
+model Organisation {
+  id             String           @id @default(cuid())
+  name           String
+  kind           OrganisationKind @default(CUSTOMER)
+  industry       String?
+  // Public entities buy under public procurement rules: competitive quotes are mandatory,
+  // so alternatives to the operator's offer are always shown.
+  isPublicEntity Boolean          @default(false)
+  staffCount     Int?
+  siteCount      Int?
+  createdAt      DateTime         @default(now())
+
+  memberships Membership[]
+  budgets     Budget[]
+  evidence    Evidence[]
+  auditEvents AuditEvent[]
+}
+
+model User {
+  id          String       @id @default(cuid())
+  email       String       @unique
+  name        String?
+  createdAt   DateTime     @default(now())
+  memberships Membership[]
+}
+
+enum MembershipRole {
+  ADMIN
+  EDITOR
+  VIEWER
+  OPERATOR_STAFF
+}
+
+model Membership {
+  id             String         @id @default(cuid())
+  organisationId String
+  userId         String
+  role           MembershipRole
+  createdAt      DateTime       @default(now())
+
+  organisation Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organisationId, userId])
+}
+
+// ---------- Budgets ----------
+
+enum BudgetStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+}
+
+model Budget {
+  id                String       @id @default(cuid())
+  organisationId    String
+  name              String
+  periodStart       String // YYYY-MM
+  periodEnd         String // YYYY-MM
+  reportingCurrency String
+  ceilingAmount     Decimal?     @db.Decimal(20, 6)
+  ceilingCurrency   String?
+  status            BudgetStatus @default(DRAFT)
+  // The saved version that feeds shared demand. Never the live draft.
+  activeVersionId   String?      @unique
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  organisation  Organisation    @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  lines         BudgetLine[]
+  rates         ExchangeRate[]
+  versions      BudgetVersion[] @relation("BudgetVersions")
+  activeVersion BudgetVersion?  @relation("ActiveVersion", fields: [activeVersionId], references: [id])
+
+  @@index([organisationId])
+}
+
+enum VersionReason {
+  MANUAL
+  SUBMITTED
+  APPROVED
+  EXPORTED
+}
+
+// Immutable snapshot of lines + rates + engine output. Exports are generated from these.
+model BudgetVersion {
+  id          String        @id @default(cuid())
+  budgetId    String
+  number      Int
+  reason      VersionReason
+  label       String?
+  snapshot    Json
+  createdById String?
+  createdAt   DateTime      @default(now())
+
+  budget       Budget  @relation("BudgetVersions", fields: [budgetId], references: [id], onDelete: Cascade)
+  activeBudget Budget? @relation("ActiveVersion")
+
+  @@unique([budgetId, number])
+}
+
+enum Frequency {
+  ONE_OFF
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+  SCHEDULE
+}
+
+enum PriceBasis {
+  PER_UNIT
+  BUNDLE
+}
+
+enum TaxTreatment {
+  INCLUDED
+  EXCLUDED
+  UNRESOLVED
+}
+
+enum LineOrigin {
+  USER
+  IMPORT
+  AI_SUGGESTION
+}
+
+enum LineState {
+  SUGGESTED // AI proposal awaiting the user
+  ACCEPTED
+  DISMISSED
+  DEFERRED
+}
+
+enum SharingMode {
+  PRIVATE
+  IDENTIFIED
+}
+
+model BudgetLine {
+  id              String       @id @default(cuid())
+  budgetId        String
+  // Child lines carry delivery, implementation, training etc. for a parent purchase.
+  parentLineId    String?
+  title           String
+  description     String?
+  category        String
+  quantity        Decimal?     @db.Decimal(20, 6)
+  unit            String?
+  priceBasis      PriceBasis   @default(PER_UNIT)
+  bundleCount     Int?
+  // Unit price is only set together with evidence. Null = unpriced.
+  unitPrice       Decimal?     @db.Decimal(20, 6)
+  currency        String
+  evidenceId      String?
+  frequency       Frequency    @default(ONE_OFF)
+  activeFrom      String?
+  activeTo        String?
+  paymentMonth    String?
+  schedule        Json?
+  taxTreatment    TaxTreatment @default(UNRESOLVED)
+  taxRate         Decimal?     @db.Decimal(9, 6)
+  priority        Int?
+  justification   String?
+  origin          LineOrigin   @default(USER)
+  state           LineState    @default(ACCEPTED)
+  dismissReason   String?
+  catalogueItemId String?
+  sharingMode     SharingMode  @default(PRIVATE)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  budget        Budget                 @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  parent        BudgetLine?            @relation("LineComponents", fields: [parentLineId], references: [id])
+  components    BudgetLine[]           @relation("LineComponents")
+  evidence      Evidence?              @relation(fields: [evidenceId], references: [id])
+  catalogueItem CatalogueItem?         @relation(fields: [catalogueItemId], references: [id])
+  sharing       SharingAuthorisation[]
+
+  @@index([budgetId])
+}
+
+model ExchangeRate {
+  id            String   @id @default(cuid())
+  budgetId      String
+  fromCurrency  String
+  toCurrency    String
+  rate          Decimal  @db.Decimal(20, 8)
+  effectiveFrom String // YYYY-MM
+  source        String?
+  note          String?
+  createdAt     DateTime @default(now())
+
+  budget Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+
+  @@index([budgetId])
+}
+
+// ---------- Evidence & sourcing ----------
+
+enum EvidenceType {
+  OPERATOR_PRICE_LIST // Kenac's own catalogue price
+  PUBLISHED_PRICE // supplier website / published list
+  QUOTE
+  CONTRACT
+  HISTORICAL_ACTUAL
+  USER_ESTIMATE // a named person's own figure; never produced by AI
+}
+
+model Evidence {
+  id             String       @id @default(cuid())
+  organisationId String?
+  type           EvidenceType
+  supplierId     String?
+  amount         Decimal      @db.Decimal(20, 6)
+  currency       String
+  // URL, attachment key, price-list reference, or person for USER_ESTIMATE
+  reference      String
+  capturedAt     DateTime
+  validUntil     DateTime?
+  note           String?
+  createdById    String?
+  createdAt      DateTime     @default(now())
+
+  organisation Organisation? @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  supplier     Supplier?     @relation(fields: [supplierId], references: [id])
+  lines        BudgetLine[]
+}
+
+model Supplier {
+  id         String   @id @default(cuid())
+  name       String
+  isOperator Boolean  @default(false)
+  website    String?
+  createdAt  DateTime @default(now())
+
+  items    CatalogueItem[]
+  evidence Evidence[]
+}
+
+model CatalogueItem {
+  id            String    @id @default(cuid())
+  supplierId    String
+  sku           String
+  name          String
+  category      String
+  // Normalised spec attributes used for fit matching, e.g. {"ram_gb": 16, "cpu_class": "i5"}
+  attributes    Json
+  unit          String?
+  price         Decimal?  @db.Decimal(20, 6)
+  currency      String?
+  priceListRef  String?
+  priceListDate DateTime?
+  validUntil    DateTime?
+  active        Boolean   @default(true)
+  updatedAt     DateTime  @updatedAt
+
+  supplier Supplier     @relation(fields: [supplierId], references: [id])
+  lines    BudgetLine[]
+
+  @@unique([supplierId, sku])
+  @@index([category])
+}
+
+// ---------- Demand sharing ----------
+
+model SharingAuthorisation {
+  id             String      @id @default(cuid())
+  lineId         String
+  mode           SharingMode
+  fields         Json // field names the operator may see
+  purpose        String
+  authorisedById String
+  authorisedRole MembershipRole
+  createdAt      DateTime    @default(now())
+  revokedAt      DateTime?
+
+  line BudgetLine @relation(fields: [lineId], references: [id], onDelete: Cascade)
+
+  @@index([lineId])
+}
+
+// ---------- Audit ----------
+
+model AuditEvent {
+  id             String   @id @default(cuid())
+  organisationId String?
+  actorId        String?
+  action         String
+  entity         String
+  entityId       String
+  before         Json?
+  after          Json?
+  at             DateTime @default(now())
+
+  organisation Organisation? @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@index([organisationId, at])
+}

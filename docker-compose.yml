@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: budget-buddy-postgres
+    environment:
+      POSTGRES_USER: budgetbuddy
+      POSTGRES_PASSWORD: budgetbuddy
+      POSTGRES_DB: budgetbuddy
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - budget-buddy-pg:/var/lib/postgresql/data
+volumes:
+  budget-buddy-pg:

@@ -3,12 +3,17 @@
 AI-assisted ICT budgeting workspace for Zimbabwean ICT leaders. Plan your ICT budget. Know your options. Defend your decisions.
 
 - Product spec: [docs/product-specification.md](docs/product-specification.md)
-- Critical review and open decisions: [docs/spec-review.md](docs/spec-review.md)
+- Critical review: [docs/spec-review.md](docs/spec-review.md)
+- Decisions + season MVP plan: [docs/decisions.md](docs/decisions.md)
 
 ## Status
 
-Pre-MVP. The only implemented domain code is the deterministic calculation engine
-([src/lib/budget/calculate.ts](src/lib/budget/calculate.ts)), because every other feature depends on it and its behaviour doesn't depend on the open product decisions.
+Pre-MVP, targeting the Q4 2026 budget season. Implemented so far:
+
+- Deterministic calculation engine: [src/lib/budget/calculate.ts](src/lib/budget/calculate.ts)
+- Sourced-price policy: [src/lib/sourcing/evidence.ts](src/lib/sourcing/evidence.ts)
+- Kenac-first offer matching: [src/lib/sourcing/match.ts](src/lib/sourcing/match.ts)
+- Prisma schema + initial migration: [prisma/schema.prisma](prisma/schema.prisma)
 
 Engine rules: decimal arithmetic, cash basis, whole months with no prorating, per-unit vs bundle pricing,
 exchange rates that can change month by month, and unpriced/unconverted lines flagged rather than counted as zero.
@@ -16,11 +21,13 @@ exchange rates that can change month by month, and unpriced/unconverted lines fl
 ## Develop
 
 ```bash
+docker compose up -d      # Postgres on localhost:5434
+cp env.example .env
 pnpm install
+pnpm db:migrate
 pnpm test        # calculation engine tests
 pnpm typecheck
 pnpm dev
 ```
 
-Stack: Next.js 16, React 19, TypeScript, Tailwind 4, decimal.js, Vitest. Persistence (Prisma/Postgres), auth and the AI layer
-will be added after the decisions in `docs/spec-review.md` are made.
+Stack: Next.js 16, React 19, TypeScript, Tailwind 4, Prisma 7 + Postgres, decimal.js, Vitest. Hosted in the Kenac data centre.
