@@ -315,3 +315,31 @@ model AuditEvent {
 
   @@index([organisationId, at])
 }
+
+// ---------- Advisor conversations ----------
+
+// One planning conversation. Anonymous (device cookie) until the CTO saves it at the end
+// of the journey and gives their details. Unsaved sessions are deleted after 30 days.
+model AdvisorSession {
+  id             String    @id @default(cuid())
+  // Secret held in an httpOnly cookie and in the emailed "come back" link.
+  token          String    @unique
+  // Model conversation history, append-only.
+  messages       Json      @default("[]")
+  // The living plan (src/lib/plan/types.ts), validated on every write.
+  plan           Json
+  planVersion    Int       @default(0)
+  // Captured once, at wrap-up (journey stage 6).
+  contactName    String?
+  contactEmail   String?
+  organisation   String?
+  role           String?
+  consentEmail   Boolean   @default(false)
+  // Separate, optional, unticked by default.
+  consentContact Boolean   @default(false)
+  savedAt        DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([savedAt, updatedAt])
+}
