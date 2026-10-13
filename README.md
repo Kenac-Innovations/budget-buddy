@@ -4,6 +4,7 @@ AI-assisted ICT budgeting workspace for Zimbabwean ICT leaders. Plan your ICT bu
 
 - Product spec: [docs/product-specification.md](docs/product-specification.md)
 - Critical review: [docs/spec-review.md](docs/spec-review.md)
+- User journey (the buddy conversation, stage by stage): [docs/user-journey.md](docs/user-journey.md)
 - Decisions + season MVP plan: [docs/decisions.md](docs/decisions.md)
 - Design system (Kenac Humaflow) and review: [docs/design-system.md](docs/design-system.md)
 

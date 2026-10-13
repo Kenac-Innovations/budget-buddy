@@ -46,6 +46,15 @@ Implemented in `src/lib/sourcing/evidence.ts`.
 - The app and Postgres run on Kenac infrastructure, deployed the same way as other Kenac services (k8s + ArgoCD).
 - **Still open:** the AI calls. Using the Claude API means prompts leave the data centre. The rule is to send only the minimum, with no organisation names, people, or salary lines, and to record the decision under the Cyber and Data Protection Act. The alternative is a self-hosted model, which is weaker at this task.
 
+## D6. Budget Buddy is a conversational tech advisor
+
+Decided 13 October 2026. The CTO, CIO or CSO talks to an expert buddy. It starts from the business's 2027 objectives, advises on what's worth doing (and what's hype), and turns the agreed plan into a priced budget and a board case.
+
+- It never opens with "upload your spreadsheet" or "check your budget". The leader's job is to *create* the budget, and leaders won't hand a supplier sensitive data as step 1. Data is asked for progressively (see the data ladder in `user-journey.md`).
+- Advice is vendor-neutral. Kenac-first (D2) applies only at the sourcing step.
+- Trend knowledge comes from a Kenac-written trend brief plus dated sources, never from the model's memory alone.
+- The full journey is in `docs/user-journey.md` and replaces the MVP plan below where they differ.
+
 ## MVP for this season
 
 | Week | Deliverable |
