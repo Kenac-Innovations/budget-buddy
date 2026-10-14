@@ -51,6 +51,22 @@ function record(row: AdvisorSession): AdvisorSessionRecord {
 export class PrismaSessionStore implements SessionStore {
   constructor(private readonly prisma: PrismaClient) {}
 
+  async checkConnection() {
+    // Check the migrated table as well as connectivity before choosing storage.
+    await this.prisma.advisorSession.findFirst({ select: { id: true } });
+  }
+
+  async deleteByToken(input: string) {
+    const token = SessionToken.parse(input);
+    await this.prisma.$transaction(async (tx) => {
+      const session = await tx.advisorSession.findUnique({ where: { token }, select: { id: true } });
+      if (!session) return;
+      await tx.$queryRaw`SELECT "id" FROM "AdvisorSession" WHERE "id" = ${session.id} FOR UPDATE`;
+      await tx.auditEvent.deleteMany({ where: { entity: "AdvisorSession", entityId: session.id } });
+      await tx.advisorSession.deleteMany({ where: { id: session.id, token } });
+    });
+  }
+
   async create() {
     const plan = Plan.parse(emptyPlan());
     return record(await this.prisma.advisorSession.create({

@@ -98,3 +98,15 @@ it("validates save lengths, email, roles, consent defaults and exact booleans", 
     expect(ContactInput.safeParse({ ...input, ...patch }).success).toBe(false);
   }
 });
+
+it("deletes the session and sharing audit atomically using token ownership", async () => {
+  const advisorSession = { findUnique: vi.fn().mockResolvedValue({ id: "owned" }), deleteMany: vi.fn() };
+  const auditEvent = { deleteMany: vi.fn() };
+  const tx = { advisorSession, auditEvent, $queryRaw: vi.fn() };
+  const prisma = { $transaction: vi.fn(async (fn) => fn(tx)) } as unknown as PrismaClient;
+  await new PrismaSessionStore(prisma).deleteByToken("a".repeat(43));
+  expect(auditEvent.deleteMany).toHaveBeenCalledWith({ where: { entity: "AdvisorSession", entityId: "owned" } });
+  expect(advisorSession.deleteMany).toHaveBeenCalledWith({ where: { id: "owned", token: "a".repeat(43) } });
+  expect(tx.$queryRaw).toHaveBeenCalled();
+  await expect(new PrismaSessionStore(prisma).deleteByToken("invalid")).rejects.toThrow();
+});

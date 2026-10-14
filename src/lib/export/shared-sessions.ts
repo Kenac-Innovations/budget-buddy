@@ -2,8 +2,8 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
 import { z } from "zod";
 import { Plan } from "@/lib/plan/types";
-import { sessionStore } from "@/lib/session";
-import { ContactInput } from "@/lib/session/prisma-store";
+import { resolveSessionStore, sessionStore } from "@/lib/session";
+import { ContactInput, PrismaSessionStore } from "@/lib/session/prisma-store";
 import type { AdvisorSessionRecord } from "@/lib/session/store";
 import { sharedRows, type SharedRow } from "./sharing";
 
@@ -12,8 +12,8 @@ type Change = z.infer<typeof Change>;
 type Entry = { token: string; changes: Map<string, { change: Change; at: string }> };
 const state = globalThis as typeof globalThis & { budgetBuddySharing?: Map<string, Entry>; budgetBuddySharingPrisma?: PrismaClient };
 const memory = state.budgetBuddySharing ??= new Map();
-function db() {
-  if (!process.env.DATABASE_URL) return null;
+async function db() {
+  if (!process.env.DATABASE_URL || !((await resolveSessionStore()) instanceof PrismaSessionStore)) return null;
   return state.budgetBuddySharingPrisma ??= new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 }
 
@@ -21,7 +21,7 @@ function db() {
 export async function recordSharing(session: AdvisorSessionRecord): Promise<Record<string, string>> {
   if (!session.savedAt || !session.contact) return {};
   const plan = Plan.parse(session.plan);
-  const client = db();
+  const client = await db();
   const previous = new Map<string, { change: Change; at: string }>();
   if (client) {
     const events = await client.auditEvent.findMany({ where: { entity: "AdvisorSession", entityId: session.id, action: "kenac_sharing" }, orderBy: { at: "asc" } });
@@ -46,7 +46,7 @@ export async function recordSharing(session: AdvisorSessionRecord): Promise<Reco
 
 /** Always re-read live consent: a cached share snapshot can never keep a revoked line visible. */
 export async function listSharedRows(): Promise<SharedRow[]> {
-  const client = db();
+  const client = await db();
   const rows: SharedRow[] = [];
   if (client) {
     const sessions = await client.advisorSession.findMany({
@@ -75,3 +75,6 @@ export async function listSharedRows(): Promise<SharedRow[]> {
   }
   return rows;
 }
+
+/** Remove the demo index as well as the session itself. */
+export function forgetSharedSession(id: string) { memory.delete(id); }

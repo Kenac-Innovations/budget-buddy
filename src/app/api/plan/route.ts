@@ -24,7 +24,7 @@ export function displayTranscript(messages: unknown[]) {
 export async function GET() {
   try {
     const session = await getSession();
-    if (!session) return Response.json({ error: "Start a conversation to create your plan." }, { status: 401, headers: { "Cache-Control": "no-store" } });
+    if (!session) return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
     return Response.json({ plan: session.plan, messages: displayTranscript(session.messages), saved: session.savedAt !== null }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return Response.json({ error: "We couldn't load your plan. Try again in a moment." }, { status: 503, headers: { "Cache-Control": "no-store" } });

@@ -1,12 +1,13 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { applyOp } from "@/lib/plan/ops";
+import { PrismaSessionStore } from "@/lib/session/prisma-store";
 import { InMemorySessionStore } from "@/lib/session/store";
 import { exportDemoPlan } from "./fixtures";
 import { sharedRows } from "./sharing";
 import { listSharedRows, recordSharing } from "./shared-sessions";
 
 const doubles = vi.hoisted(() => ({ findByToken: vi.fn(), sessions: vi.fn(), events: vi.fn(), audit: vi.fn() }));
-vi.mock("@/lib/session", () => ({ sessionStore: { findByToken: doubles.findByToken } }));
+vi.mock("@/lib/session", () => ({ resolveSessionStore: async () => new PrismaSessionStore({} as never), sessionStore: { findByToken: doubles.findByToken } }));
 vi.mock("@/generated/prisma/client", () => ({ PrismaClient: class { advisorSession = { findMany: doubles.sessions }; auditEvent = { findMany: doubles.events, create: doubles.audit }; } }));
 const contact = { name: "Demo CIO", email: "cio@example.test", organisation: "Secret company", role: "CIO" as const, consentEmail: true as const, consentContact: false };
 afterEach(() => { vi.unstubAllEnvs(); vi.clearAllMocks(); });
