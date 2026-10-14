@@ -1,0 +1,61 @@
+import { afterEach, expect, it, vi } from "vitest";
+import { applyOp } from "@/lib/plan/ops";
+import { InMemorySessionStore } from "@/lib/session/store";
+import { exportDemoPlan } from "./fixtures";
+import { sharedRows } from "./sharing";
+import { listSharedRows, recordSharing } from "./shared-sessions";
+
+const doubles = vi.hoisted(() => ({ findByToken: vi.fn(), sessions: vi.fn(), events: vi.fn(), audit: vi.fn() }));
+vi.mock("@/lib/session", () => ({ sessionStore: { findByToken: doubles.findByToken } }));
+vi.mock("@/generated/prisma/client", () => ({ PrismaClient: class { advisorSession = { findMany: doubles.sessions }; auditEvent = { findMany: doubles.events, create: doubles.audit }; } }));
+const contact = { name: "Demo CIO", email: "cio@example.test", organisation: "Secret company", role: "CIO" as const, consentEmail: true as const, consentContact: false };
+afterEach(() => { vi.unstubAllEnvs(); vi.clearAllMocks(); });
+it("preview and Kenac rows match; revocation is immediate without refreshing an index", async () => {
+  vi.stubEnv("DATABASE_URL", "");
+  const store = new InMemorySessionStore();
+  doubles.findByToken.mockImplementation((token: string) => store.findByToken(token));
+  const session = await store.create();
+  let plan = exportDemoPlan();
+  const result = applyOp(plan, { op: "set_sharing", id: "l5", shared: true }, "user");
+  if (!result.ok) throw new Error(result.error);
+  plan = result.plan;
+  await store.updatePlan(session.id, plan);
+  await store.save(session.id, contact);
+  const saved = (await store.findByToken(session.token))!;
+  const dates = await recordSharing(saved);
+  expect(await listSharedRows()).toEqual(sharedRows(plan, contact, dates));
+  const again = await recordSharing(saved);
+  expect(again).toEqual(dates);
+  const revoked = applyOp(plan, { op: "set_sharing", id: "l5", shared: false }, "user");
+  if (!revoked.ok) throw new Error(revoked.error);
+  await store.updatePlan(session.id, revoked.plan);
+  expect(await listSharedRows()).toEqual([]);
+  // Unsaved sessions must never enter the index.
+  expect(await recordSharing(session)).toEqual({});
+});
+it("queries saved sessions only, projects mixed fixtures, and never queries conversations or tokens", async () => {
+  vi.stubEnv("DATABASE_URL", "postgresql://demo:demo@localhost/demo");
+  const result = applyOp(exportDemoPlan(), { op: "set_sharing", id: "l6", shared: true }, "user");
+  if (!result.ok) throw new Error(result.error);
+  doubles.sessions.mockResolvedValue([{ id: "s1", plan: result.plan, consentContact: false }]);
+  doubles.events.mockResolvedValue([{ after: { lineId: "l6", shared: true, allocation: false }, at: new Date("2026-10-14T12:00:00Z") }]);
+  const rows = await listSharedRows();
+  expect(rows.map((r) => r.lineId)).toEqual(["l6"]);
+  expect(rows[0].organisation).toBeUndefined();
+  const query = doubles.sessions.mock.calls[0][0];
+  expect(query.where).toEqual({ savedAt: { not: null } });
+  expect(query.select.messages).toBeUndefined();
+  expect(query.select.token).toBeUndefined();
+  expect(rows[0].sharedAt).toBe("2026-10-14T12:00:00.000Z");
+});
+it("persists only ids and consent flags in the existing audit table", async () => {
+  vi.stubEnv("DATABASE_URL", "postgresql://demo:demo@localhost/demo");
+  const result = applyOp(exportDemoPlan(), { op: "set_sharing", id: "l5", shared: true, shareAllocation: true }, "user");
+  if (!result.ok) throw new Error(result.error);
+  doubles.events.mockResolvedValue([]);
+  const dates = await recordSharing({ id: "s1", token: "private-token", plan: result.plan, messages: ["private transcript"], savedAt: new Date(), contact });
+  expect(dates.l5).toBeTruthy();
+  expect(doubles.audit).toHaveBeenCalledTimes(1);
+  expect(doubles.audit.mock.calls[0][0].data.after).toEqual({ lineId: "l5", shared: true, allocation: true });
+  expect(JSON.stringify(doubles.audit.mock.calls)).not.toMatch(/private-token|private transcript|Secret company|cio@example/);
+});
