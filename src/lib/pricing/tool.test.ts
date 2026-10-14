@@ -13,7 +13,7 @@ import { KENAC_NAME, type CatalogueEntry, type CatalogueReader } from "./catalog
 
 const asOf = new Date("2026-10-14T12:00:00Z");
 const entry: CatalogueEntry = { id: "test", sku: "TEST-A", name: "Synthetic test endpoint", category: "Hardware",
-  attributes: { ram_gb: 16 }, unit: "device", price: "1234.56", currency: "USD", priceListRef: "Synthetic test list",
+  imageUrl: "/catalogue/demo/solar-ups.svg", attributes: { ram_gb: 16 }, unit: "device", price: "1234.56", currency: "USD", priceListRef: "Synthetic test list",
   priceListDate: new Date("2026-10-14"), validUntil: new Date("2027-12-31T23:59:59.999Z"), active: true,
   supplier: { id: "kenac", name: KENAC_NAME, isOperator: true } };
 const args = { lineId: "l1", category: "Hardware", constraints: [{ key: "ram_gb", op: "gte", value: 16 }] };
@@ -142,5 +142,6 @@ describe("find_kenac_price tool", () => {
     expect(html).toContain(">Kenac</span>");
     expect(html).toContain("Kenac price list");
     expect(plan.lines[0].price?.evidence.supplier?.isOperator).toBe(true);
+    expect(plan.lines[0].price?.product?.imageUrl).toBe(entry.imageUrl);
   });
 });

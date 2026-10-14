@@ -5,6 +5,14 @@ import { parsePriceList, PriceListMetadata } from "./format";
 export const sampleCsv = readFileSync(new URL("./__fixtures__/kenac-sample.csv", import.meta.url), "utf8");
 const header = "sku,name,category,unit,price,currency,valid_until,attributes\n";
 describe("price-list format", () => {
+  it("accepts optional local and https images and rejects unsafe image URLs", () => {
+    for (const url of ["", "/catalogue/item.svg", "https://example.com/item.webp"]) {
+      expect(parsePriceList(header.trim() + ",image_url\nA,Item,Hardware,unit,1,USD,,," + url).rows[0].image_url).toBe(url);
+    }
+    for (const url of ["//example.com/item", "http://example.com/item", "javascript:alert(1)"]) {
+      expect(parsePriceList(header.trim() + ",image_url\nA,Item,Hardware,unit,1,USD,,," + url).rejected).toHaveLength(1);
+    }
+  });
   it("parses JSON and key=value specifications, normalising decimal strings", () => {
     const parsed = parsePriceList(`\uFEFF${sampleCsv}`);
     expect(parsed.rejected).toEqual([]);

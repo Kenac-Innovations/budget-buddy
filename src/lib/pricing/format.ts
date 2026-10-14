@@ -27,9 +27,16 @@ export const PriceListMetadata = z.object({
 }).strict();
 export type PriceListMetadata = z.infer<typeof PriceListMetadata>;
 
+export const ImageUrl = z.string().trim().max(500).refine((value) => {
+  if (value === "") return true;
+  if (value.startsWith("/") && !value.startsWith("//")) return !/[\\\s]/.test(value);
+  try { return new URL(value).protocol === "https:"; } catch { return false; }
+}, "Use a local asset path or https URL");
+
 export const PriceListRow = z.object({
   sku: z.string().trim().min(1).max(80), name: z.string().trim().min(1).max(160), category: Category,
   unit: z.string().trim().min(1).max(30), price: Money, currency: Currency,
+  image_url: ImageUrl.optional(),
   valid_until: z.union([z.literal(""), IsoDay]), attributes: Attributes,
 }).strict();
 export type PriceListRow = z.infer<typeof PriceListRow>;
@@ -60,7 +67,8 @@ function attributes(value: string): unknown {
 export function parsePriceList(csv: string): ParsedPriceList {
   const records = parse(csv, { bom: true, skip_empty_lines: true, trim: true, max_record_size: 64_000 }) as string[][];
   const header = records.shift();
-  if (!header || header.length !== HEADERS.length || new Set(header).size !== HEADERS.length ||
+  if (!header || ![HEADERS.length, HEADERS.length + 1].includes(header.length) || new Set(header).size !== header.length ||
+    header.some((key) => ![...HEADERS, "image_url"].includes(key)) ||
     HEADERS.some((key) => !header.includes(key))) throw new Error("Use the documented price-list headers");
   const rawRows = records.map((values) => Object.fromEntries(header.map((key, i) => [key, values[i]])));
   const skus = rawRows.map((row) => row.sku.trim());

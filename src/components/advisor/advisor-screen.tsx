@@ -1,5 +1,5 @@
 "use client";
-import { useEffect,useRef,useState,type ReactNode } from "react";
+import { useCallback,useEffect,useMemo,useRef,useState,type ReactNode } from "react";
 import { z } from "zod";
 import { ArrowUp,ChevronUp,LockKeyhole,Moon,ShieldCheck,Square,Sun,Wallet,X } from "lucide-react";
 import Link from "next/link";
@@ -55,7 +55,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
   const textarea=useRef<HTMLTextAreaElement>(null);
   const panel=useRef<HTMLElement>(null);
   const openButton=useRef<HTMLButtonElement>(null);
-  const summary=planSummary(plan);
+  const summary=useMemo(() => planSummary(plan),[plan]);
   const draftKey=demoMode? "bb-draft-demo":"bb-draft";
   const replacePlan=(next: Plan) => { planRef.current=next; setPlan(next); };
   useEffect(() => {
@@ -245,7 +245,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
       requestAnimationFrame(() => textarea.current?.focus());
     }
   }
-  async function userOp(op: PlanOp): Promise<boolean> {
+  const userOp=useCallback(async (op: PlanOp): Promise<boolean> => {
     if(activeRef.current||pendingOp)
       return false;
     const before=planRef.current;
@@ -278,7 +278,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
       setPendingOp(false);
       abortRef.current=null;
     }
-  }
+  },[pendingOp]);
   return <div className={styles.screen}>
     <header className={styles.topbar} inert={sheet||undefined}>
       <div className="flex min-w-0 items-center gap-2.5">
