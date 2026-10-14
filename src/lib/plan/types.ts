@@ -95,6 +95,21 @@ export const LinePrice = z.object({
     validUntil: z.string().optional(),
     supplier: z.object({ name: z.string(), isOperator: z.boolean() }).optional(),
   }),
+  /**
+   * The specific product behind a sourced price (Kenac price-list items). Only set at the
+   * sourcing stage, never during advice. imageUrl is a Kenac-supplied asset path or https URL.
+   */
+  product: z
+    .object({
+      sku: z.string().max(60),
+      name: z.string().max(160),
+      imageUrl: z
+        .string()
+        .max(500)
+        .refine((u) => u.startsWith("/") || u.startsWith("https://"), "Image must be a local path or https URL")
+        .optional(),
+    })
+    .optional(),
 });
 export type LinePrice = z.infer<typeof LinePrice>;
 

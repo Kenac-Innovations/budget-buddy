@@ -115,3 +115,48 @@ describe("demo script", () => {
     expect(t2.events.filter((e) => e.type === "op")).toHaveLength(5);
   });
 });
+
+describe("priced product", () => {
+  it("keeps the Kenac product name, sku and image with the price", () => {
+    const base = must(applyOp(emptyPlan(), { op: "add_line", initiativeId: null, title: "UPS", category: "Power", quantity: 4, frequency: "one_off" }, "advisor"));
+    const r = must(
+      applyOp(
+        base.plan,
+        {
+          op: "price_line",
+          id: "l1",
+          price: {
+            unitPrice: "1200.00",
+            currency: "USD",
+            evidence: { type: "OPERATOR_PRICE_LIST", reference: "Kenac price list 2026-10 · UPS-3KVA", capturedAt: "2026-10-01", supplier: { name: "Kenac Computer Systems", isOperator: true } },
+            product: { sku: "UPS-3KVA", name: "3 kVA online UPS", imageUrl: "/catalogue/ups-3kva.webp" },
+          },
+        },
+        "advisor",
+        asOf,
+      ),
+    );
+    expect(r.plan.lines[0].price?.product?.imageUrl).toBe("/catalogue/ups-3kva.webp");
+  });
+
+  it("rejects a non-https product image", () => {
+    const base = must(applyOp(emptyPlan(), { op: "add_line", initiativeId: null, title: "UPS", category: "Power", quantity: 4, frequency: "one_off" }, "advisor"));
+    expect(() =>
+      applyOp(
+        base.plan,
+        {
+          op: "price_line",
+          id: "l1",
+          price: {
+            unitPrice: "1200.00",
+            currency: "USD",
+            evidence: { type: "OPERATOR_PRICE_LIST", reference: "x", capturedAt: "2026-10-01" },
+            product: { sku: "X", name: "X", imageUrl: "http://example.com/x.png" },
+          },
+        },
+        "advisor",
+        asOf,
+      ),
+    ).toThrow();
+  });
+});
