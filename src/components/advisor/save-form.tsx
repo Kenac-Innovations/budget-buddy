@@ -88,7 +88,7 @@ export function SaveForm({ onSaved }: SaveFormProps) {
         </label>
         <label className="min-w-0 space-y-1.5 text-label" htmlFor={`${id}-role`}>
           <span className="block">Role</span>
-          <select className={fieldClass} id={`${id}-role`} name="role" defaultValue="" required>
+          <select className={fieldClass} id={`${id}-role`} name="role" aria-label="Role" defaultValue="" required>
             <option value="" disabled>Choose your role</option>
             <option value="CIO">CIO</option><option value="CTO">CTO</option><option value="CSO">CSO</option>
             <option value="ICT_MANAGER">ICT manager</option><option value="OTHER">Other</option>
