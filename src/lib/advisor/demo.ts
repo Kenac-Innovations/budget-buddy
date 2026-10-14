@@ -33,7 +33,38 @@ export async function runDemo(options: DemoOptions): Promise<Plan> {
     if (requestedWrapUp(message) || readyToWrapUp(plan)) {
       events = [{ type: "status", status: "thinking" }, { type: "wrap_up", summary: wrapUpSummary(plan) },
         { type: "text", delta: "Shall I save this so you can return to it?" }];
-    } else if (index < 2) events = scriptedTurn(index, plan).events;
+    } else if (index < 2) {
+      const fixture = scriptedTurn(index, plan);
+      const ops = fixture.events.filter((event) => event.type === "op");
+      if (index === 1) {
+        const renewalIndex = ops.findIndex((event) => event.op.op === "add_line" && event.op.title === "Firewall subscription renewal");
+        let beforeRenewal = plan;
+        for (const event of ops.slice(0, renewalIndex)) {
+          const result = applyOp(beforeRenewal, event.op, "advisor");
+          if (result.ok) beforeRenewal = result.plan;
+        }
+        const op = { op: "add_initiative" as const, objectiveId: "o2",
+          title: "Keep the firewall subscription current", disposition: "fund" as const, proactive: true,
+          rationale: "Include the August renewal in the cash plan so protection continues.",
+          sources: [{ title: "Demo planning assumption: August renewal", date: "2026-10", kind: "trend_brief" as const }] };
+        const proactive = applyOp(beforeRenewal, op, "advisor");
+        const renewal = ops[renewalIndex];
+        if (proactive.ok && renewal?.op.op === "add_line") {
+          renewal.op = { ...renewal.op, initiativeId: proactive.createdId! };
+          ops.splice(renewalIndex, 0, { type: "op", op, version: proactive.plan.version, createdId: proactive.createdId });
+        }
+      }
+      // Spread proposals across the reply. There is still text after the last
+      // operation, so the leader sees the plan forming while advice arrives.
+      const words = fixture.events.filter((event) => event.type === "text");
+      events = [{ type: "status", status: "planning" }];
+      const cadence = Math.max(1, Math.floor(words.length / (ops.length + 1)));
+      for (let n = 0; n < words.length; n++) {
+        if (n % cadence === 0 && ops.length) events.push(ops.shift()!);
+        events.push(words[n]);
+      }
+      events.push(...ops);
+    }
     else {
       const reply = /\b(cost|price|quote|estimate|laptops)\b/i.test(message)
         ? "That line stays Unpriced until we have a dated source. A scoped quote will give us a defensible price, or you can enter your own labelled estimate."

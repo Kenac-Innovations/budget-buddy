@@ -11,6 +11,7 @@ vi.mock("next/headers", () => ({ cookies: async () => jar }));
 import { getSessionStore } from "@/lib/session";
 import { getOrCreate } from "@/lib/session/cookie";
 import { PlanVersionConflict } from "@/lib/session/prisma-store";
+import { DELETE as deletePlan } from "../route";
 import { POST as save } from "./route";
 import { GET as resume } from "../../plan/route";
 import { POST as op } from "../../plan/op/route";
@@ -45,7 +46,7 @@ async function firstReply() {
 describe("session route flow", () => {
   it("creates nothing on page-view resume and requires a first reply for ops/save", async () => {
     const create = vi.spyOn(getSessionStore(), "create");
-    expect((await resume()).status).toBe(401);
+    expect((await resume()).status).toBe(204);
     expect((await op(request({ op: { op: "add_objective", title: "A" } }))).status).toBe(401);
     expect((await save(request(details))).status).toBe(401);
     expect(create).not.toHaveBeenCalled();
@@ -67,7 +68,7 @@ describe("session route flow", () => {
     expect((await getSessionStore().findByToken(session.token))?.contact?.consentContact).toBe(false);
     expect(await (await resume()).json()).toMatchObject({ saved: true });
     jar.values.clear();
-    expect((await resume()).status).toBe(401);
+    expect((await resume()).status).toBe(204);
     const response = await returnRequest(session.token);
     expect(response.status).toBe(303);
     expect(response.headers.get("location")).toBe("https://plan.example.test/");
@@ -144,4 +145,23 @@ it("allows no contact details to appear in the resume response", async () => {
   expect(JSON.stringify(body)).not.toContain(details.email);
   expect(body.plan).not.toEqual(emptyPlan());
   expect((await getSessionStore().findByToken(session.token))?.contact).not.toBeNull();
+});
+
+it("deletes a saved plan and invalidates private return links, without deleting another visitor", async () => {
+  const session = await firstReply();
+  await save(request(details));
+  const other = await getSessionStore().create();
+  expect((await deletePlan()).status).toBe(204);
+  expect(await getSessionStore().findByToken(session.token)).toBeNull();
+  expect(await getSessionStore().findByToken(other.token)).not.toBeNull();
+  expect((await returnRequest(session.token)).headers.get("location")).toContain("link-expired");
+  expect((await deletePlan()).status).toBe(204);
+});
+it("keeps credentials on deletion failure and returns calm copy", async () => {
+  await firstReply();
+  vi.spyOn(getSessionStore(), "findByToken").mockRejectedValue(new Error("private database detail"));
+  const response = await deletePlan();
+  expect(response.status).toBe(503);
+  expect(await response.text()).not.toContain("private database detail");
+  expect(jar.values.get("bb_session")).toBeTruthy();
 });

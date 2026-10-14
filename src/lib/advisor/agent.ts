@@ -5,8 +5,9 @@ import { applyOp, PlanOp } from "@/lib/plan/ops";
 import { Plan } from "@/lib/plan/types";
 import type { AdvisorSessionRecord, SessionStore } from "@/lib/session/store";
 import { AdvisorEvent, TurnRequest, type AdvisorEvent as Event } from "./events";
+import { createKenacToolRegistry } from "./tools/kenac";
 import { advisorPrompt } from "./prompt";
-import { createToolRegistry, type ToolContext, type ToolRegistry } from "./tools";
+import { type ToolContext, type ToolRegistry } from "./tools";
 
 export interface ResponsesClient {
   responses: { create(params: ResponseCreateParamsStreaming, options: { signal: AbortSignal }): PromiseLike<AsyncIterable<unknown>> };
@@ -97,7 +98,7 @@ export async function runAgent(options: AgentOptions): Promise<Plan> {
     const history = z.array(inputItem).parse(session.messages) as ResponseInputItem[];
     const client = options.client ?? (process.env.OPENAI_API_KEY ? new OpenAI({ maxRetries: 0 }) : undefined);
     if (!client) throw new TurnFailure("configuration");
-    const registry = options.registry ?? createToolRegistry();
+    const registry = options.registry ?? createKenacToolRegistry();
     const context: ToolContext = { plan, message, signal, documentedPrices: [],
       userMessages: [...history, ...additions].flatMap((item) => "role" in item && item.role === "user" && typeof item.content === "string" ? [item.content] : []) };
     let toolRounds = 0;

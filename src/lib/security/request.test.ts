@@ -39,3 +39,8 @@ describe("request boundaries", () => {
     expect(clientIp(new Headers({ "x-real-ip": "cio@example.org" }), "x-real-ip")).toBe("unknown");
   });
 });
+
+it("accepts the empty DELETE stream produced by Next without requiring a content type", async () => {
+  const request = new Request("https://plan.example.test/api/session", { method: "DELETE", body: new ReadableStream({start(controller){controller.close();}}), duplex: "half" } as RequestInit);
+  expect(await checkJsonBody(request)).toBeNull();
+});

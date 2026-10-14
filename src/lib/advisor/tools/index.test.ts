@@ -45,7 +45,14 @@ describe("advisor tool registry", () => {
     expect((await execute({ ...price, evidence: { ...price.evidence, supplier: { name: "Kenac", isOperator: true } } }, ctx)).output.ok).toBe(false);
     const operator = { ...price, evidence: { ...price.evidence, type: "OPERATOR_PRICE_LIST" as const, supplier: { name: "Kenac", isOperator: true } } };
     ctx.documentedPrices.push(operator);
+    expect((await execute(operator, ctx)).output.ok).toBe(false);
+    const line=ctx.plan.lines[0];
+    ctx.documentedLinePrices=new Map([[line.id, [{ price: operator, scope: JSON.stringify([line.category,line.unit,line.title,line.note]) }]]]);
     expect((await execute(operator, ctx)).output.ok).toBe(true);
+    ctx.documentedLinePrices=new Map([["other-line", [{price:operator,scope:JSON.stringify([line.category,line.unit,line.title,line.note])}]]]);
+    expect((await execute(operator, ctx)).output.ok).toBe(false);
+    ctx.documentedLinePrices=new Map([[line.id, [{price:operator,scope:"outdated scope"}]]]);
+    expect((await execute(operator, ctx)).output.ok).toBe(false);
   });
   it("can add a validated T4 lookup without changing the loop", async () => {
     const registry = createToolRegistry([{ name: "find_kenac_price", description: "Test fitting lookup", schema: z.object({ category: z.string() }),

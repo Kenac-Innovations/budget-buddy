@@ -16,6 +16,7 @@ export interface ToolContext {
   signal: AbortSignal;
   /** T4 records fitting offers here. The model cannot authorize its own evidence. */
   documentedPrices: LinePrice[];
+  documentedLinePrices?: Map<string, { price: LinePrice; scope: string }[]>;
 }
 
 export interface ToolResult {
@@ -70,7 +71,12 @@ const descriptions: Record<(typeof ADVISOR_OPS)[number], string> = {
   clear_price: "Remove an unsupported price; the line becomes Unpriced, never zero.",
 };
 
-function hasDocumentedPrice(price: LinePrice, context: ToolContext): boolean {
+function hasDocumentedPrice(price: LinePrice, context: ToolContext, lineId: string): boolean {
+  if (price.evidence.supplier?.isOperator || price.evidence.type === "OPERATOR_PRICE_LIST") {
+    const line = context.plan.lines.find((item) => item.id === lineId);
+    return !!line && (context.documentedLinePrices?.get(lineId) ?? []).some((offer) =>
+      JSON.stringify(offer.price) === JSON.stringify(price) && offer.scope === JSON.stringify([line.category, line.unit, line.title, line.note]));
+  }
   if (context.documentedPrices.some((p) => JSON.stringify(p) === JSON.stringify(price))) return true;
   if (!["QUOTE", "PUBLISHED_PRICE"].includes(price.evidence.type) || price.evidence.supplier?.isOperator) return false;
   // Conservative grounding: the same user statement must contain the amount, currency, source and date.
@@ -97,7 +103,7 @@ export function createToolRegistry(extraTools: AdvisorTool[] = []): ToolRegistry
         if (!result.ok) return { output: { ok: false, error: result.error } };
         if (op.op === "price_line") {
           const dates = [op.price.evidence.capturedAt, op.price.evidence.validUntil].filter(Boolean);
-          if (dates.some((d) => !Number.isFinite(Date.parse(d!))) || !hasDocumentedPrice(op.price, context)) {
+          if (dates.some((d) => !Number.isFinite(Date.parse(d!))) || !hasDocumentedPrice(op.price, context, op.id)) {
             return { output: { ok: false, error: "Price rejected: evidence is not verified. Leave the line unpriced; request a dated quote or use a fitting sourced offer." } };
           }
         }

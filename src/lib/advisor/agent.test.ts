@@ -229,12 +229,13 @@ describe("Responses advisor loop", () => {
     const client = stub([textRound("Review recovery.")]);
     await runAgent({ ...next, client });
     expect(client.responses.create.mock.calls[0][0].model).toBe("account-confirmed-model");
+    expect(client.responses.create.mock.calls[0][0].tools.map((tool: { name: string }) => tool.name)).toContain("find_kenac_price");
   });
 
   it("emits server-authored wrap-up before the invitation text", async () => {
     const state = await setup();
     await runAgent({ ...state, message: "Let's wrap up", client: stub([toolRound("suggest_wrap_up", {}), textRound("Shall I save this so you can return to it?")]) });
     expect(state.events.findIndex((e) => e.type === "wrap_up")).toBeLessThan(state.events.findIndex((e) => e.type === "text"));
-    expect(state.events.find((e) => e.type === "wrap_up")).toMatchObject({ summary: expect.stringContaining("US$0.00 planned so far") });
+    expect(state.events.find((e) => e.type === "wrap_up")).toMatchObject({ summary: expect.stringContaining("No priced lines yet") });
   });
 });

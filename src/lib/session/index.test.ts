@@ -3,7 +3,7 @@ import { applyOp } from "@/lib/plan/ops";
 import { emptyPlan } from "@/lib/plan/types";
 import type { SessionStore } from "./store";
 import { PlanVersionConflict, PrismaSessionStore, UNSAVED_MAX_AGE_MS } from "./prisma-store";
-import { getSessionStore, sessionStore } from "./index";
+import { deleteSessionByToken, resolveSessionStore, getSessionStore, sessionStore } from "./index";
 const globalStore = globalThis as typeof globalThis & { budgetBuddySessionStore?: SessionStore };
 
 beforeEach(() => { delete globalStore.budgetBuddySessionStore; vi.stubEnv("DATABASE_URL", ""); });
@@ -51,4 +51,31 @@ describe("session factory", () => {
     expect(await store.findByToken(unsaved.token)).toBeNull();
     expect(await store.findByToken(saved.token)).not.toBeNull();
   });
+});
+
+it("deletes memory contacts, history and return credentials, including repeated deletion", async () => {
+  const session = await sessionStore.create();
+  await sessionStore.save(session.id, { name: "Test", email: "test@example.test", organisation: "Example", role: "CSO", consentEmail: true, consentContact: false });
+  await deleteSessionByToken(session.token);
+  expect(await sessionStore.findByToken(session.token)).toBeNull();
+  await deleteSessionByToken(session.token);
+  await expect(sessionStore.updatePlan(session.id, session.plan)).rejects.toThrow();
+  await expect(sessionStore.save(session.id, session.contact!)).rejects.toThrow();
+});
+it("pins demo memory fallback on initial connection failure and never replaces working persistence", async () => {
+  vi.stubEnv("DATABASE_URL", "postgresql://test:test@localhost:5434/test");
+  vi.stubEnv("ADVISOR_MODE", "demo");
+  const database = getSessionStore() as PrismaSessionStore;
+  const check = vi.spyOn(database, "checkConnection").mockRejectedValue(new Error("offline"));
+  const [a,b] = await Promise.all([resolveSessionStore(),resolveSessionStore()]);
+  expect(a).toBe(b); expect(a).not.toBe(database); expect(check).toHaveBeenCalledTimes(1);
+  expect(await resolveSessionStore()).toBe(a);
+  vi.restoreAllMocks();
+});
+it("fails closed on missing live persistence", async () => {
+  vi.stubEnv("DATABASE_URL", "postgresql://test:test@localhost:5434/test");
+  vi.stubEnv("ADVISOR_MODE", "live");
+  vi.spyOn(getSessionStore() as PrismaSessionStore, "checkConnection").mockRejectedValue(new Error("offline"));
+  await expect(resolveSessionStore()).rejects.toThrow("unavailable");
+  vi.restoreAllMocks();
 });

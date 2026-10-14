@@ -11,10 +11,12 @@ import { cn } from "@/lib/utils";
 import { LightMarkdown } from "./markdown";
 import { PlanView,planSummary } from "./plan-view";
 import { loadSession,PlanConflict,requestTurn,sendUserOp } from "./transport";
+import { SaveForm } from "./save-form";
+import { SavedSharePanel } from "./share-panel";
 import { WrapUpCard } from "./wrap-up-card";
 import styles from "./styles";
 import "./advisor.css";
-const Message=z.object({ id: z.string(),role: z.enum(["user","advisor"]),text: z.string().max(20000),summary: z.string().max(600).optional() });
+const Message=z.object({ id: z.string(),role: z.enum(["user","advisor"]),text: z.string().max(20000),summary: z.string().max(600).optional(),offerSave: z.boolean().optional() });
 type Message=z.infer<typeof Message>;
 const Draft=z.object({ expires: z.number(),plan: Plan,messages: z.array(Message).max(200),turn: z.number().int().nonnegative() });
 const OPENING: Message={ id: "opening",role: "advisor",text: OPENING_MESSAGE };
@@ -41,11 +43,12 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
   const [sheet,setSheet]=useState(false);
   const [changed,setChanged]=useState<Record<string,number>>({});
   const [sessionSaved,setSessionSaved]=useState(saved);
+  const [sharing,setSharing]=useState(false);
+  const sessionRequest=useRef<ReturnType<typeof loadSession>|null>(null);
   const [ready,setReady]=useState(false);
   const [turn,setTurn]=useState(0);
   const abortRef=useRef<AbortController|null>(null);
   const activeRef=useRef(false);
-  const turnStart=useRef(plan);
   const retry=useRef({ message: "",replyId: "" });
   const viewport=useRef<HTMLDivElement>(null);
   const follow=useRef(true);
@@ -60,6 +63,9 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
     const frame=requestAnimationFrame(async () => {
       const mode=demo||new URLSearchParams(location.search).has("demo");
       setDemoMode(mode);
+      const notice=new URLSearchParams(location.search).get("notice");
+      if(notice==="link-expired") setOpError("That link has expired. You can start a new conversation.");
+      if(notice==="resume-unavailable") setOpError("We couldn't open your plan. Try the link again in a moment.");
       const storageKey=mode? "bb-draft-demo":"bb-draft";
       if(!initialPlan&&!saved) {
         try {
@@ -78,7 +84,9 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
       }
       try {
         if(!initialPlan) {
-          const session=await loadSession(controller.signal);
+          sessionRequest.current ??= loadSession(new AbortController().signal);
+          const session=await sessionRequest.current;
+          if(controller.signal.aborted) return;
           if(session) {
             planRef.current=session.plan;
             setPlan(session.plan);
@@ -99,13 +107,13 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
     return () => { controller.abort(); cancelAnimationFrame(frame); abortRef.current?.abort(); };
   },[demo,initialPlan,saved]);
   useEffect(() => {
-    if(!ready||saved||streaming||pendingOp||messages.length===1)
+    if(!ready||sessionSaved||saved||streaming||pendingOp||messages.length===1)
       return;
     try {
       localStorage.setItem(draftKey,JSON.stringify({ plan,messages,turn,expires: Date.now()+30*86400000 }));
     }
     catch { }
-  },[draftKey,ready,saved,streaming,pendingOp,messages,plan,turn]);
+  },[draftKey,ready,sessionSaved,saved,streaming,pendingOp,messages,plan,turn]);
   useEffect(() => {
     if(viewport.current&&follow.current)
       viewport.current.scrollTop=viewport.current.scrollHeight;
@@ -169,7 +177,6 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
     abortRef.current=controller;
     const id=isRetry? retry.current.replyId:crypto.randomUUID();
     if(!isRetry) {
-      turnStart.current=planRef.current;
       retry.current={ message,replyId: id };
       setMessages(current => [...current,{ id: crypto.randomUUID(),role: "user",text: message },{ id,role: "advisor",text: "" }]);
       setInput("");
@@ -185,7 +192,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
     follow.current=true;
     let completed=false;
     try {
-      for await(const event of requestTurn(message,controller.signal,demoMode,turn,turnStart.current)) {
+      for await(const event of requestTurn(message,controller.signal,demoMode)) {
         controller.signal.throwIfAborted();
         switch(event.type) {
           case "status":
@@ -212,7 +219,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
             break;
           }
           case "wrap_up":
-            setMessages(current => current.map(m => m.id===id? { ...m,summary: event.summary }:m));
+            setMessages(current => current.map(m => m.id===id? { ...m,summary: event.summary,offerSave: !sessionSaved }:m));
             break;
           case "error": throw new Error("Turn interrupted");
           case "done":
@@ -254,7 +261,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
     const controller=new AbortController();
     abortRef.current=controller;
     try {
-      const authoritative=await sendUserOp(op,controller.signal,demoMode);
+      const authoritative=await sendUserOp(op,controller.signal);
       if(authoritative)
         replacePlan(authoritative);
       if("id" in op)
@@ -300,7 +307,8 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
     <main className={styles.workspace}>
       <section className={styles.conversation} aria-label="Conversation with Budget Buddy" inert={sheet||undefined}>
         <div className="flex shrink-0 items-center justify-between gap-3 px-5 py-4 nav:px-8">
-          <p className="text-caption font-semibold text-ink-2">Your 2027 ICT plan</p>
+          <div><p className="text-caption font-semibold text-ink-2">Your 2027 ICT plan</p>
+            {demoMode&&<p className="mt-1 text-[11px] text-ink-2">Demo · Scripted advice and planning assumptions</p>}</div>
           <span className="flex items-center gap-1.5 text-caption text-ink-2"><LockKeyhole size={12} />Private conversation</span>
         </div>
         <div ref={viewport} className={styles.messages} onScroll={() => {
@@ -321,8 +329,17 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
                 </span>
                 {status==="thinking"? "Thinking it through":status==="planning"? "Shaping your plan":"Putting it into words"}
               </div>}
-              {m.summary&&<WrapUpCard summary={m.summary}>{saveForm}</WrapUpCard>}
+              {m.summary&&<WrapUpCard summary={m.summary}>{saveForm??(m.offerSave&&m.id===[...messages].reverse().find(item => item.summary)?.id?
+                <SaveForm onSaved={() => { setSessionSaved(true); try { localStorage.removeItem(draftKey); } catch { } }} />:undefined)}</WrapUpCard>}
             </article>)}
+            {sessionSaved&&<div className="space-y-4">
+              <p className="text-sm text-ink-2">Your plan is saved. Sharing with Kenac is your choice.</p>
+              <div className="flex flex-wrap gap-3">
+                {!messages.some(m => m.offerSave)&&<a href="/api/export/xlsx" download className="text-sm font-medium text-primary underline underline-offset-4">Download Excel file</a>}
+                <Button variant="outline" size="sm" onClick={() => setSharing(current => !current)}>{sharing? "Close sharing choices":"Choose items to share"}</Button>
+              </div>
+              {sharing&&<SavedSharePanel onPlanChange={replacePlan} />}
+            </div>}
             {(failure||stopped)&&<div className="rounded-xl border border-line bg-surface-2 p-4" role="alert">
               <p className="text-sm">{failure? "I lost my train of thought. Try again?":"Reply stopped. The items already added are still in your plan."}</p>
               <Button className="mt-2" variant="outline" size="sm" disabled={streaming||pendingOp} onClick={() => send(retry.current.message,true)}>{failure? "Retry":"Resume reply"}</Button>
@@ -330,6 +347,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
           </div>
         </div>
         <div className={styles.composerArea}>
+          {opError&&<p role="alert" className="mb-2 text-sm text-destructive">{opError}</p>}
           <form className={styles.composer} onSubmit={e => { e.preventDefault(); send(input.trim()); }}>
             <label className="sr-only" htmlFor="advisor-message">Message Budget Buddy</label>
             <textarea ref={textarea} id="advisor-message" rows={1} maxLength={4000} value={input} disabled={streaming||pendingOp||!ready} placeholder="Tell me what the business needs next year…" onChange={e => setInput(e.target.value)} onKeyDown={e => {

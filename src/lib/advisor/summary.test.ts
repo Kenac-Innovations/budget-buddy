@@ -22,3 +22,11 @@ it("summarises accepted work, decimal totals, unpriced and unconverted lines hon
   expect(requestedWrapUp("Let's wrap up")).toBe(true);
   expect(requestedWrapUp("We want uptime")).toBe(false);
 });
+
+it("never presents an empty or wholly unpriced budget as a zero price", () => {
+  expect(wrapUpSummary(emptyPlan())).toContain("No priced lines yet");
+  const added=applyOp(emptyPlan(),{op:"add_line",initiativeId:null,title:"Power",category:"Hardware",quantity:1,frequency:"one_off"},"user");
+  if(!added.ok)throw new Error(added.error);
+  expect(wrapUpSummary(added.plan)).not.toContain("US$0");
+  expect(wrapUpSummary(added.plan)).toContain("1 accepted line still to price");
+});

@@ -4,6 +4,7 @@ import { getSessionStore, registerSessionStore } from "./session-store";
 
 afterEach(() => vi.unstubAllEnvs());
 it("reuses the memory instance and swaps to a registered integration store by env", async () => {
+  vi.stubEnv("DATABASE_URL", "");
   vi.stubEnv("SESSION_STORE", "memory");
   const store = await getSessionStore();
   const session = await store.create();

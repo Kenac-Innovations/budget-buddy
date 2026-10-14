@@ -46,7 +46,7 @@ it("creates a secure lazy session, streams parseable demo turns and continues vi
   expect(create).toHaveBeenCalledTimes(1);
   const done = more.at(-1);
   expect(done?.type).toBe("done");
-  if (done?.type === "done") expect(done.plan.initiatives).toHaveLength(2);
+  if (done?.type === "done") expect(done.plan.initiatives).toHaveLength(3);
   const token = cookie.split(";")[0].split("=")[1];
   expect((await store.findByToken(token))?.messages).toHaveLength(4);
 });

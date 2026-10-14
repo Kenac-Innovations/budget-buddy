@@ -4,7 +4,7 @@ import { scriptedTurn } from "@/lib/advisor/fixtures";
 import { applyOp,type PlanOp } from "@/lib/plan/ops";
 import { emptyPlan } from "@/lib/plan/types";
 import { InMemorySessionStore } from "@/lib/session/store";
-import { developmentTurn,loadSession,PlanConflict,requestTurn,sendUserOp } from "./transport";
+import { loadSession,PlanConflict,requestTurn,sendUserOp } from "./transport";
 const response=(events: AdvisorEvent[]) => new Response(events.map(encodeEvent).join(""),{ headers: { "Content-Type": "application/x-ndjson" } });
 async function collect<T>(source: AsyncIterable<T>): Promise<T[]> {
   const values: T[]=[];
@@ -18,7 +18,7 @@ describe("advisor transport",() => {
     const fetch=vi.fn().mockResolvedValue(response(fixture.events));
     vi.stubGlobal("fetch",fetch);
     const signal=new AbortController().signal;
-    expect(await collect(requestTurn("180 staff",signal,true,0,emptyPlan()))).toEqual(fixture.events.map(e => AdvisorEvent.parse(JSON.parse(encodeEvent(e)))));
+    expect(await collect(requestTurn("180 staff",signal,true))).toEqual(fixture.events.map(e => AdvisorEvent.parse(JSON.parse(encodeEvent(e)))));
     expect(fetch).toHaveBeenCalledWith("/api/advisor/turn?demo",expect.objectContaining({ signal,body: JSON.stringify({ message: "180 staff" }) }));
   });
   it("rejects a truncated reply after retaining the operations already delivered",async () => {
@@ -26,7 +26,7 @@ describe("advisor transport",() => {
     vi.stubGlobal("fetch",vi.fn().mockResolvedValue(response(events)));
     const received: AdvisorEvent[]=[];
     await expect((async () => {
-      for await(const e of requestTurn("hello",new AbortController().signal,false,0,emptyPlan()))
+      for await(const e of requestTurn("hello",new AbortController().signal,false))
         received.push(e);
     })()).rejects.toThrow("Incomplete");
     expect(received.some(e => e.type==="op")).toBe(true);
@@ -34,58 +34,15 @@ describe("advisor transport",() => {
   it("rejects invalid model events and input before trusting them",async () => {
     const fetch=vi.fn().mockResolvedValue(new Response('{"type":"done","plan":{}}\n'));
     vi.stubGlobal("fetch",fetch);
-    await expect(collect(requestTurn("",new AbortController().signal,false,0,emptyPlan()))).rejects.toThrow();
+    await expect(collect(requestTurn("",new AbortController().signal,false))).rejects.toThrow();
     expect(fetch).not.toHaveBeenCalled();
-    await expect(collect(requestTurn("hello",new AbortController().signal,false,0,emptyPlan()))).rejects.toThrow();
-  });
-  it("interleaves both fixture turns and reduces to exactly the authoritative done plan",async () => {
-    vi.useFakeTimers();
-    vi.stubEnv("NODE_ENV","development");
-    let plan=emptyPlan();
-    for(let index=0;index<2;index++) {
-      const start=plan;
-      const task=collect(developmentTurn(index,start,"hello",new AbortController().signal));
-      await vi.runAllTimersAsync();
-      const events=await task;
-      const firstText=events.findIndex(e => e.type==="text");
-      const lastOp=events.map(e => e.type).lastIndexOf("op");
-      expect(lastOp).toBeGreaterThan(firstText);
-      expect(events.slice(lastOp+1).some(e => e.type==="text")).toBe(true);
-      for(const event of events)
-        if(event.type==="op") {
-          const result=applyOp(plan,event.op,"advisor");
-          expect(result.ok).toBe(true);
-          if(result.ok)
-            plan=result.plan;
-        }
-      const last=events[events.length-1];
-      expect(last.type).toBe("done");
-      if(last.type==="done")
-        expect(plan).toEqual(last.plan);
-      expect(plan).toEqual(scriptedTurn(index,start).plan);
-    }
-  });
-  it("stops the fixture immediately when aborted",async () => {
-    vi.stubEnv("NODE_ENV","development");
-    const controller=new AbortController();
-    const stream=developmentTurn(0,emptyPlan(),"hello",controller.signal);
-    expect((await stream.next()).value?.type).toBe("status");
-    controller.abort();
-    await expect(stream.next()).rejects.toMatchObject({ name: "AbortError" });
-  });
-  it("offers wrap-up after the two fixture turns",async () => {
-    vi.useFakeTimers();
-    vi.stubEnv("NODE_ENV","development");
-    const task=collect(developmentTurn(2,emptyPlan(),"let's wrap up",new AbortController().signal));
-    await vi.runAllTimersAsync();
-    expect((await task).some(e => e.type==="wrap_up")).toBe(true);
+    await expect(collect(requestTurn("hello",new AbortController().signal,false))).rejects.toThrow();
   });
   it("never falls back to local fixtures or user changes in production",async () => {
     vi.stubEnv("NODE_ENV","production");
     vi.stubGlobal("fetch",vi.fn().mockResolvedValue(new Response(null,{ status: 404 })));
-    await expect(collect(requestTurn("hello",new AbortController().signal,true,0,emptyPlan()))).rejects.toThrow("unavailable");
-    await expect(sendUserOp({ op: "set_state",id: "o1",state: "accepted" },new AbortController().signal,true)).rejects.toThrow();
-    await expect(collect(developmentTurn(0,emptyPlan(),"hello",new AbortController().signal))).rejects.toThrow("disabled");
+    await expect(collect(requestTurn("hello",new AbortController().signal,true))).rejects.toThrow("unavailable");
+    await expect(sendUserOp({ op: "set_state",id: "o1",state: "accepted" },new AbortController().signal)).rejects.toThrow();
   });
 });
 describe("user operations and session integration",() => {
@@ -104,7 +61,7 @@ describe("user operations and session integration",() => {
       await store.updatePlan(session.id,result.plan);
       return Response.json({ plan: result.plan });
     }));
-    const plan=await sendUserOp({ op: "set_state",id: "o1",state: "accepted" },new AbortController().signal,false);
+    const plan=await sendUserOp({ op: "set_state",id: "o1",state: "accepted" },new AbortController().signal);
     expect(plan?.objectives[0].state).toBe("accepted");
     expect((await store.findByToken(session.token))?.plan).toEqual(plan);
   });
@@ -114,7 +71,7 @@ describe("user operations and session integration",() => {
     vi.stubGlobal("fetch",fetch);
     let conflict: unknown;
     try {
-      await sendUserOp({ op: "set_state",id: "o1",state: "accepted" },new AbortController().signal,false);
+      await sendUserOp({ op: "set_state",id: "o1",state: "accepted" },new AbortController().signal);
     }
     catch(e) {
       conflict=e;
@@ -131,7 +88,14 @@ describe("user operations and session integration",() => {
   it("rejects failed mutations and malformed successful responses",async () => {
     vi.stubGlobal("fetch",vi.fn().mockResolvedValueOnce(new Response(null,{ status: 500 })).mockResolvedValueOnce(Response.json({ plan: {} })));
     const op: PlanOp={ op: "set_state",id: "o1",state: "accepted" };
-    await expect(sendUserOp(op,new AbortController().signal,false)).rejects.toThrow();
-    await expect(sendUserOp(op,new AbortController().signal,false)).rejects.toThrow();
+    await expect(sendUserOp(op,new AbortController().signal)).rejects.toThrow();
+    await expect(sendUserOp(op,new AbortController().signal)).rejects.toThrow();
   });
+});
+
+it("treats a 204 resume as a normal fresh visit", async () => {
+  const fetch=vi.fn().mockResolvedValue(new Response(null,{status:204}));
+  vi.stubGlobal("fetch",fetch);
+  expect(await loadSession(new AbortController().signal)).toBeNull();
+  expect(fetch).toHaveBeenCalledTimes(1);
 });

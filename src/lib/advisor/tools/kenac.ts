@@ -35,6 +35,9 @@ export function createKenacPriceTool(options: FindOptions = {}): AdvisorTool {
           !context.documentedPrices.some((price) => JSON.stringify(price) === JSON.stringify(offer.price))) {
           context.documentedPrices.push(offer.price);
         }
+        context.documentedLinePrices ??= new Map();
+        context.documentedLinePrices.set(line.id, offers.flatMap((offer) => offer.attachable && offer.price ?
+          [{ price: offer.price, scope: JSON.stringify([line.category, line.unit, line.title, line.note]) }] : []));
         return { output: { ok: true, lineId: line.id, offers, needsCompetingQuotes,
           ...(!offers.some((offer) => offer.attachable) ? { suggestion: "Request quotes" } : {}) } };
       } catch {

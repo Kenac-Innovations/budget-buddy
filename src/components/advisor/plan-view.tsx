@@ -157,9 +157,9 @@ export function PlanView({ plan,changed,disabled,onOp }: {
     <div className="mb-7 rounded-xl border border-brand-border bg-brand-soft p-5">
       <p className="text-caption font-semibold text-ink-2">{summary.complete? "Planned spend":"Planned spend so far"}</p>
       <p className="mt-1 text-[28px] font-semibold tracking-tight text-brand" aria-label={summary.amount}>
-        {summary.hasAmount? <><AnimatedMoney value={summary.totals.reportingTotal} currency={summary.totals.reportingCurrency} />{!summary.complete&&<span className="ml-2 text-sm font-medium" aria-hidden>so far</span>}</>:<span className="text-xl">Awaiting prices</span>}
+        {summary.hasAmount? <><AnimatedMoney value={summary.totals.reportingTotal} currency={summary.totals.reportingCurrency} />{!summary.complete&&<span className="ml-2 text-sm font-medium" aria-hidden> so far</span>}</>:<span className="text-xl">Awaiting prices</span>}
       </p>
-      <p className="mt-2 text-caption text-ink-2">{summary.unpriced} unpriced · Accepted lines only{summary.totals.unconvertedLineIds.length>0&&` · ${summary.totals.unconvertedLineIds.length} awaiting exchange rates`}</p>
+      <p className="mt-2 text-caption text-ink-2">{summary.unpriced} unpriced · Total uses accepted lines{summary.totals.unconvertedLineIds.length>0&&` · ${summary.totals.unconvertedLineIds.length} awaiting exchange rates`}</p>
     </div>
     {empty&&<p className="mb-7 text-sm text-ink-2">Your plan builds here as we talk.</p>}
     {plan.profile.role&&<p className="mb-6 text-caption text-ink-2">{plan.profile.role} lens · {plan.profile.staffBand} staff · {plan.profile.siteBand} sites{plan.profile.sector&&` · ${plan.profile.sector}`}</p>}

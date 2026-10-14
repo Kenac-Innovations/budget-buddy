@@ -13,9 +13,21 @@ it("streams both scripted turns, parses every line and resumes without duplicati
     const index = session.messages.length / 2;
     const expected = scriptedTurn(index, session.plan);
     await runDemo({ store, session, message, emit: (e) => events.push(e), wordDelayMs: 0, opDelayMs: 0 });
-    expect(events).toEqual(expected.events.map((event) => AdvisorEvent.parse(event)));
+    expect(events.some((event) => event.type === "error")).toBe(false);
+    const firstText=events.findIndex((event) => event.type === "text");
+    const lastOp=events.map((event) => event.type).lastIndexOf("op");
+    expect(lastOp).toBeGreaterThan(firstText);
+    expect(events.slice(lastOp+1).some((event) => event.type === "text")).toBe(true);
+    let replay=session.plan;
+    for (const event of events) if (event.type === "op") {
+      const result=applyOp(replay,event.op,"advisor");
+      expect(result.ok).toBe(true);
+      if (result.ok) replay=result.plan;
+    }
     session = (await store.findByToken(session.token))!;
-    expect(session.plan).toEqual(expected.plan);
+    expect(session.plan).toEqual(replay);
+    if (index===0) expect(session.plan).toEqual(expected.plan);
+    else expect(session.plan.initiatives.some((item) => item.proactive)).toBe(true);
   }
   const before = session.plan;
   const events: AdvisorEvent[] = [];

@@ -74,6 +74,10 @@ export async function runScenario(scenario: Scenario, options: {
 }
 
 export async function main(args = process.argv.slice(2)) {
+  if (args.includes("--help") || args.includes("-h")) {
+    process.stdout.write("Usage: pnpm eval [--scenario n] [--mode demo|live] [--base-url http://localhost:3208]\nDemo uses scripted users; live requires OPENAI_API_KEY and an account-confirmed OPENAI_MODEL.\n");
+    return 0;
+  }
   const options = parseOptions(args);
   const all = await loadScenarios();
   const scenarios = options.scenario ? all.filter((s) => s.id === options.scenario) : all;
@@ -101,7 +105,7 @@ export async function main(args = process.argv.slice(2)) {
   const usage = models?.usage ?? { input: 0, cached: 0, output: 0 };
   const cost = evalCost(usage, options.mode);
   const report = await saveReport(results, { ...options, fullSuite: scenarios.length === all.length,
-    model: model ?? "None (scripted demo)", timestamp: new Date().toISOString(), elapsedMs: Date.now() - start, cost, usage });
+    model: options.mode === "demo" ? "None (scripted demo)" : model!, timestamp: new Date().toISOString(), elapsedMs: Date.now() - start, cost, usage });
   process.stdout.write(`Eval-client cost: ${cost}\nAdvisor cost / total live-run cost: unavailable (no advisor usage event)\nReport: ${report.path}\nRelease gate: ${report.passed ? "PASS" : "FAIL"}\n`);
   return report.passed ? 0 : 1;
 }

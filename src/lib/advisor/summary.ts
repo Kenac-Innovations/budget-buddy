@@ -23,7 +23,8 @@ export function wrapUpSummary(plan: Plan): string {
   const currency = totals.reportingCurrency === "USD" ? "US$" : `${totals.reportingCurrency} `;
   const accepted = (items: { state: string }[]) => items.filter((i) => i.state === "accepted").length;
   const pending = [...plan.objectives, ...plan.initiatives, ...plan.lines].filter((i) => i.state === "proposed").length;
-  return `${count(accepted(plan.objectives), "accepted objective")}, ${count(accepted(plan.initiatives), "accepted initiative")}, ${currency}${money} planned so far, ${count(totals.unpricedLineIds.length, "accepted line")} still to price.` +
+  const spend = totals.lines.some((line) => line.reportingTotal !== null) ? `${currency}${money} planned so far` : "No priced lines yet";
+  return `${count(accepted(plan.objectives), "accepted objective")}, ${count(accepted(plan.initiatives), "accepted initiative")}, ${spend}, ${count(totals.unpricedLineIds.length, "accepted line")} still to price.` +
     (totals.unconvertedLineIds.length ? ` ${count(totals.unconvertedLineIds.length, "line")} ${totals.unconvertedLineIds.length === 1 ? "needs an exchange rate and is" : "need an exchange rate and are"} excluded from that total.` : "") +
     (pending ? ` ${count(pending, "proposal")} ${pending === 1 ? "awaits" : "await"} your decision.` : "");
 }

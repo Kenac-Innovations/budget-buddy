@@ -1,3 +1,4 @@
+import { log } from "@/lib/log";
 import { SESSION_COOKIE, type SessionStore } from "@/lib/session/store";
 import { runAgent, type ResponsesClient } from "./agent";
 import { runDemo } from "./demo";
@@ -17,6 +18,7 @@ const encoder = new TextEncoder();
 
 export function createTurnHandler(options: HandlerOptions = {}) {
   return async function POST(request: Request): Promise<Response> {
+    const start=Date.now();
     let message: string;
     try {
       const body = await request.text();
@@ -43,9 +45,11 @@ export function createTurnHandler(options: HandlerOptions = {}) {
     request.signal.addEventListener("abort", abort, { once: true });
     if (request.signal.aborted) abort();
     let closed = false;
+    let failed = false;
     const body = new ReadableStream<Uint8Array>({
       async start(stream) {
         const emit = (event: AdvisorEvent) => {
+          if (event.type === "error") failed = true;
           if (closed || controller.signal.aborted) return;
           try { stream.enqueue(encoder.encode(encodeEvent(AdvisorEvent.parse(event)))); }
           catch { closed = true; controller.abort(); }
@@ -58,6 +62,7 @@ export function createTurnHandler(options: HandlerOptions = {}) {
           // No raw exceptions, message text or contact details reach logs or the response.
           emit({ type: "error", message: "I couldn't complete this turn. Please reload your plan and try again.", retryable: true });
         } finally {
+          log({ event: failed ? "request_failed" : "advisor_completed", route: "/api/advisor/turn", sessionId: session.id, status: 200, ms: Date.now()-start });
           active.delete(session.id);
           request.signal.removeEventListener("abort", abort);
           if (!closed) { closed = true; stream.close(); }

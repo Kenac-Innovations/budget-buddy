@@ -57,7 +57,7 @@ it("matches preview row for row in the protected HTML/CSV, hides private fields,
     if (!revoked.ok) throw new Error(revoked.error);
     await store.updatePlan(session.id, revoked.plan);
     expect(await (await kenac(request())).text()).not.toContain(rows[0].item);
-    const access = log.mock.calls.map(([line]) => JSON.parse(String(line)));
+    const access = log.mock.calls.map(([line]) => JSON.parse(String(line))).filter((entry) => ["kenac_view", "kenac_csv"].includes(entry.event));
     expect(access).toEqual([{ event: "kenac_view", count: 1 }, { event: "kenac_csv", count: 1 }, { event: "kenac_view", count: 0 }]);
   } finally { log.mockRestore(); }
 });

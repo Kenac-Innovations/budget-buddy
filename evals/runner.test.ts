@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import type { AddressInfo } from "node:net";
 import { createDemoServer } from "./demo-server";
 import { AdvisorTransport, inferStage } from "./transport";
-import { runScenario, parseOptions } from "./runner";
+import { main, runScenario, parseOptions } from "./runner";
 import { loadScenarios } from "./scenarios";
 import { emptyPlan } from "../src/lib/plan/types";
 import { type AdvisorEvent } from "../src/lib/advisor/events";
@@ -114,4 +114,12 @@ describe("HTTP runner", () => {
       expect(() => parseOptions(args)).toThrow();
     }
   });
+});
+
+it("prints help successfully without model configuration or HTTP calls", async () => {
+  const write=vi.spyOn(process.stdout,"write").mockReturnValue(true);
+  try {
+    expect(await main(["--help"])).toBe(0);
+    expect(write).toHaveBeenCalledWith(expect.stringContaining("Usage: pnpm eval"));
+  } finally { write.mockRestore(); }
 });
