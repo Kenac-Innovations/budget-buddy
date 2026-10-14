@@ -1,0 +1,11 @@
+.git
+.next
+node_modules
+.env
+.env.*
+!.env.example
+coverage
+docs/codex/reports
+*.log
+
+.playwright-mcp

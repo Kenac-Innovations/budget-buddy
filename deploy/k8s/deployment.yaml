@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: budget-buddy
+  namespace: budget-buddy
+  labels: {app: budget-buddy}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: budget-buddy}
+  template:
+    metadata:
+      labels: {app: budget-buddy}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+        - name: app
+          image: harbor.kenac.co.zw/REPLACE_PROJECT/budget-buddy:REPLACE_IMMUTABLE_TAG
+          ports: [{name: http, containerPort: 3000}]
+          envFrom: [{secretRef: {name: budget-buddy-env}}]
+          env:
+            - {name: PORT, value: "3000"}
+            - {name: HOSTNAME, value: "0.0.0.0"}
+          startupProbe:
+            httpGet: {path: /api/health?probe=liveness, port: http}
+            failureThreshold: 60
+            periodSeconds: 5
+          readinessProbe:
+            httpGet: {path: /api/health, port: http}
+            timeoutSeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /api/health?probe=liveness, port: http}
+            timeoutSeconds: 5
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 250m, memory: 384Mi}
+            limits: {cpu: "1", memory: 768Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+            - {name: next-cache, mountPath: /app/.next/cache}
+      volumes:
+        - {name: tmp, emptyDir: {}}
+        - {name: next-cache, emptyDir: {}}

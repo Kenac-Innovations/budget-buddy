@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: budget-buddy-retention
+  namespace: budget-buddy
+spec:
+  schedule: "15 2 * * *"
+  timeZone: Africa/Harare
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 300
+      template:
+        spec:
+          restartPolicy: Never
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            fsGroup: 1001
+          containers:
+            - name: retention
+              image: harbor.kenac.co.zw/REPLACE_PROJECT/budget-buddy:REPLACE_IMMUTABLE_TAG
+              # Bypass migration entrypoint: cleanup is not a deployment.
+              command: ["/app/node_modules/.bin/tsx", "/app/scripts/retention.ts"]
+              envFrom: [{secretRef: {name: budget-buddy-env}}]
+              resources:
+                requests: {cpu: 50m, memory: 128Mi}
+                limits: {cpu: 250m, memory: 256Mi}
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: {drop: [ALL]}
+              volumeMounts: [{name: tmp, mountPath: /tmp}]
+          volumes: [{name: tmp, emptyDir: {}}]
