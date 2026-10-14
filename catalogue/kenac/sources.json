@@ -27,7 +27,7 @@
     "vendor_page": "https://www.dell.com/en-us/shop/desktop-computers/optiplex-small-form-factor/spd/optiplex-7020-small-ff",
     "checked_on": "2026-10-14",
     "description": "Business desktop family. Image shows a small form factor model; confirm stock and current equivalent before procurement.",
-    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting. Original product URL currently redirects to the Dell homepage. The official OptiPlex 7020 image is retained as a representative legacy model; confirm the current equivalent."
   },
   "HP-ELITEBOOK": {
     "vendor_page": "https://www.hp.com/us-en/laptops/business/elitebooks.html",
@@ -45,7 +45,7 @@
     "vendor_page": "https://www.dell.com/en-us/shop/dell-pro-24-plus-usb-c-hub-monitor-p2425he/apd/210-bmgh/monitors-monitor-accessories",
     "checked_on": "2026-10-14",
     "description": "Business displays including USB-C hub models. Image shows a representative monitor; size, resolution and ports vary.",
-    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting. The current vendor redirect presents a P2425H display; USB-C features are model-specific, not a matching attribute."
   },
   "LENOVO-DOCKS": {
     "vendor_page": "https://psref.lenovo.com/accessory/40AY0090IT",
