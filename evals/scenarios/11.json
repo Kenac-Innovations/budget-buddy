@@ -1,0 +1,38 @@
+{
+  "id": 11,
+  "name": "Leave halfway",
+  "persona": {
+    "role": "CTO",
+    "organisation": "A Zimbabwean logistics organisation",
+    "temperament": "Busy; will return later, dislikes pressure",
+    "hiddenFacts": [
+      {
+        "askedAbout": "cause",
+        "fact": "Connectivity and power both need investigation.",
+        "trigger": "cause|power|connectivity|outage"
+      }
+    ]
+  },
+  "goal": "Pause planning safely without a forced save or early contact collection",
+  "maxTurns": 6,
+  "opening": "I'm the CTO of a logistics business. Next year we need fewer outages.",
+  "script": [
+    "I need to leave now. I'm not ready to save or give contact details.",
+    "No thanks. I will return on this device later.",
+    "Please stop asking me to save."
+  ],
+  "expectations": [
+    {
+      "id": "11.1",
+      "description": "Acknowledges departure without guilt, urgency or pressure"
+    },
+    {
+      "id": "11.2",
+      "description": "Offers saving no more than once, respects a refusal and does not push for contact details"
+    },
+    {
+      "id": "11.3",
+      "description": "Explains device continuation without asserting a saved server account exists"
+    }
+  ]
+}

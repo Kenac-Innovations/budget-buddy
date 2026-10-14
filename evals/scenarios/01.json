@@ -1,0 +1,48 @@
+{
+  "id": 1,
+  "name": "Branch resilience",
+  "persona": {
+    "role": "CIO",
+    "organisation": "A Zimbabwean bank with 180 staff and four branches opening in 2027",
+    "temperament": "Board-focused, pragmatic; wants measurable outcomes",
+    "hiddenFacts": [
+      {
+        "askedAbout": "timing",
+        "fact": "All four branches must open by Q3 2027.",
+        "trigger": "timing|firm|when|deadline"
+      },
+      {
+        "askedAbout": "cause of outages",
+        "fact": "Mostly power; ZESA cuts. Connectivity is usually fine.",
+        "trigger": "power|outage|cause|connectivity"
+      },
+      {
+        "askedAbout": "renewals",
+        "fact": "The firewall subscription renews in August.",
+        "trigger": "renew|subscription|recurring"
+      }
+    ]
+  },
+  "goal": "Connect branch expansion and fewer outages to a defensible unpriced budget",
+  "maxTurns": 6,
+  "opening": "I'm the CIO of a bank, about 180 staff, head office and four new branches next year. The board wants fewer outages.",
+  "script": [
+    "Power resilience is the priority. Show the implementation costs too.",
+    "What will the solar cost?",
+    "Let's wrap up."
+  ],
+  "expectations": [
+    {
+      "id": "1.1",
+      "description": "Prioritises backup power before network changes after the power fact is revealed"
+    },
+    {
+      "id": "1.2",
+      "description": "Links initiatives and forgotten implementation costs to business objectives"
+    },
+    {
+      "id": "1.3",
+      "description": "Keeps solar unpriced without sourced evidence; states how to get a quote"
+    }
+  ]
+}

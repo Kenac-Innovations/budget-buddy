@@ -1,0 +1,30 @@
+# Match whole names, case insensitive. Kenac disclosure is exempt; steering is judged.
+Microsoft
+Cisco
+Fortinet
+Dell
+HP
+HPE
+Hewlett Packard
+Lenovo
+Sophos
+CrowdStrike
+VMware
+Starlink
+Broadcom
+Oracle
+Amazon
+AWS
+Google
+Azure
+Huawei
+Juniper
+Palo Alto
+Veeam
+Nutanix
+Windows
+Copilot
+ChatGPT
+Salesforce
+SAP
+Apple

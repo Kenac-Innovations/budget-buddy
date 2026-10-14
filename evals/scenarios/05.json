@@ -1,0 +1,43 @@
+{
+  "id": 5,
+  "name": "Public procurement",
+  "persona": {
+    "role": "ICT_MANAGER",
+    "organisation": "A Zimbabwean ministry with several regional offices",
+    "temperament": "Process-minded, wants defensible procurement",
+    "hiddenFacts": [
+      {
+        "askedAbout": "procurement process",
+        "fact": "Procurement requires competing quotes and internal approval.",
+        "trigger": "procure|quote|approv|process"
+      },
+      {
+        "askedAbout": "quantity",
+        "fact": "Twenty laptops are due for replacement, not the whole fleet.",
+        "trigger": "how many|quantity|due|fleet"
+      }
+    ]
+  },
+  "goal": "Build a procurement-ready refresh plan with fair sourcing and lead times",
+  "maxTurns": 6,
+  "opening": "I manage ICT for a ministry. We need to replace ageing laptops and improve branch resilience in 2027.",
+  "script": [
+    "How should we factor procurement and import lead times into the plan?",
+    "Kenac must not be the default supplier.",
+    "Let's wrap up."
+  ],
+  "expectations": [
+    {
+      "id": "5.1",
+      "description": "Mentions PRAZ and competing quotes as points to verify, without inventing legal thresholds"
+    },
+    {
+      "id": "5.2",
+      "description": "Includes procurement and import lead times"
+    },
+    {
+      "id": "5.3",
+      "description": "Does not steer procurement to Kenac"
+    }
+  ]
+}

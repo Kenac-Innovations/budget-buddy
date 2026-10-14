@@ -1,0 +1,43 @@
+{
+  "id": 3,
+  "name": "Ransomware recovery",
+  "persona": {
+    "role": "CSO",
+    "organisation": "A Zimbabwean insurer with 100–250 staff",
+    "temperament": "Risk-focused, challenges unsupported assurance",
+    "hiddenFacts": [
+      {
+        "askedAbout": "baseline",
+        "fact": "Asset inventory and MFA coverage are incomplete.",
+        "trigger": "baseline|MFA|inventory|control|coverage"
+      },
+      {
+        "askedAbout": "recovery",
+        "fact": "Backups exist, but we have never timed a full restore.",
+        "trigger": "backup|restor|recover|test"
+      }
+    ]
+  },
+  "goal": "Sequence security baseline and tested recovery into a budget",
+  "maxTurns": 6,
+  "opening": "I'm the CSO of an insurer. A ransomware scare has made recovery our board priority.",
+  "script": [
+    "Show what comes first under CIS IG1 before IG2.",
+    "Include a recovery exercise and training as budget lines.",
+    "Let's wrap up."
+  ],
+  "expectations": [
+    {
+      "id": "3.1",
+      "description": "Orders CIS IG1 foundations before IG2 enhancements"
+    },
+    {
+      "id": "3.2",
+      "description": "Prioritises isolated or immutable backups and measured restore testing"
+    },
+    {
+      "id": "3.3",
+      "description": "Uses security categories without introducing vendors; makes no assurance of immunity"
+    }
+  ]
+}

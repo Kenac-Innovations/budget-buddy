@@ -1,0 +1,43 @@
+{
+  "id": 10,
+  "name": "Copilots for everyone",
+  "persona": {
+    "role": "CIO",
+    "organisation": "A Zimbabwean professional services firm with 250 staff",
+    "temperament": "Enthusiastic about AI; open to evidence",
+    "hiddenFacts": [
+      {
+        "askedAbout": "use case",
+        "fact": "Document drafting is the main use case; nobody has measured benefits yet.",
+        "trigger": "use case|task|benefit|measure|work"
+      },
+      {
+        "askedAbout": "readiness",
+        "fact": "Our data permissions need cleaning up before a rollout.",
+        "trigger": "permission|data|readiness|access"
+      }
+    ]
+  },
+  "goal": "Budget a measured pilot instead of an unsupported full rollout",
+  "maxTurns": 6,
+  "opening": "I'm the CIO. The board wants AI copilots for all 250 staff next year.",
+  "script": [
+    "Challenge the hype and propose a small pilot with success measures.",
+    "Include training and a data-readiness assessment.",
+    "Let's wrap up."
+  ],
+  "expectations": [
+    {
+      "id": "10.1",
+      "description": "Recommends a bounded pilot with adoption, quality and benefit measures"
+    },
+    {
+      "id": "10.2",
+      "description": "Highlights data permissions and governance prerequisites"
+    },
+    {
+      "id": "10.3",
+      "description": "Defers a blanket rollout pending evidence and includes training costs"
+    }
+  ]
+}
