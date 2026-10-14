@@ -25,6 +25,23 @@ describe("living plan presentation",() => {
     expect(html).toContain('href="/privacy"');
     expect(html).not.toContain('type="email"');
   });
+  it("offers a reset only for server-authorised demo mode and starts with the greeting", () => {
+    const demo=renderToStaticMarkup(createElement(AdvisorScreen,{ demo: true }));
+    expect(demo).toContain("Start over");
+    expect(demo).toContain(OPENING_MESSAGE.split("\n\n")[1]);
+    expect(demo).not.toContain("Welcome back");
+    expect(renderToStaticMarkup(createElement(AdvisorScreen))).not.toContain("Start over");
+    expect(demo).toContain("Dark: HUD mode");
+    expect(demo).toContain("Shift+Enter for a new line");
+  });
+  it("renders human dates in cards, chart tooltips and accessible month tables", () => {
+    const plan=scriptedTurn(1,scriptedTurn(0,undefined,true).plan,true).plan;
+    const html=renderToStaticMarkup(createElement(PlanView,{ plan,changed: {},disabled: false,onOp: async () => true }));
+    expect(html).toContain("Mar 2027");
+    expect(html).toContain("Jan–Dec 2027");
+    expect(html).toContain("View payments for Aug 2027");
+    expect(html).not.toMatch(/\b\d{4}-\d{2}\b/);
+  });
   it("never represents unpriced lines as a zero-valued budget",() => {
     const plan=demoPlan();
     const html=renderToStaticMarkup(createElement(PlanView,{ plan,changed: {},disabled: false,onOp: async () => true }));

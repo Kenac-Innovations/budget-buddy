@@ -162,3 +162,32 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Advisor HUD mode: all elevation and light are derived from the shipped Humaflow palette.
+   The grid is 3% ink; lighting sits behind content and never changes text opacity. */
+.hf-theme-dark {
+  --hud-glow: color-mix(in srgb, var(--hf-primary) 12%, transparent);
+  --hud-hairline: color-mix(in srgb, var(--ink) 11%, var(--bg));
+  --hud-elev-1: color-mix(in srgb, var(--bg) 55%, var(--surface));
+  --hud-elev-2: color-mix(in srgb, var(--surface) 88%, var(--bg));
+  --hud-grid: color-mix(in srgb, var(--ink) 3%, transparent);
+  --hud-trace: color-mix(in srgb, var(--hf-primary) 45%, var(--bg));
+}
+@keyframes bb-hud-total-light {
+  0% { opacity: 0; transform: scale(.96); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.04); }
+}
+@keyframes bb-hud-trace-flow {
+  from { transform: translateY(0); }
+  to { transform: translateY(56px); }
+}
+@keyframes bb-hud-status-shimmer {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(210%); }
+}
+@keyframes bb-hud-scan {
+  from { opacity: 0; transform: translateX(-100%); }
+  20% { opacity: 1; }
+  to { opacity: 0; transform: translateX(290%); }
+}

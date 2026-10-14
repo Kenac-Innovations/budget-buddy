@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Plan } from "@/lib/plan/types";
 import { money } from "./money";
 import type { Hud } from "./derive";
+import { formatMonth, formatMonthRange } from "../dates";
 
 export function AnimatedTotal({ value, currency }: { value: Decimal; currency: string }) {
   const element = useRef<HTMLSpanElement>(null);
@@ -29,8 +30,9 @@ export function AnimatedTotal({ value, currency }: { value: Decimal; currency: s
   }, [target, currency]);
   return <span ref={element} aria-hidden>{money(new Decimal(0), currency)}</span>;
 }
-function monthLabel(month: string) {
-  return new Date(`${month}-01T00:00:00Z`).toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" });
+
+function TotalPulse({ value }: { value: string }) {
+  return <span key={value} className="bb-hud-total-pulse" aria-hidden />;
 }
 export function BudgetHud({ hud, plan, onCategory }: { hud: Hud; plan: Plan; onCategory: (category: string | null) => void }) {
   const headline = useRef<HTMLDivElement>(null);
@@ -44,6 +46,8 @@ export function BudgetHud({ hud, plan, onCategory }: { hud: Hud; plan: Plan; onC
     return () => observer.disconnect();
   }, []);
   const [month, setMonth] = useState<string | null>(null);
+  const [category, setCategory] = useState<string | null>(null);
+  const highlightCategory = (next: string | null) => { setCategory(next); onCategory(next); };
   const { totals, categories } = hud;
   const currency = totals.reportingCurrency;
   const maximum = Decimal.max(1, ...totals.reportingMonthly.values());
@@ -63,6 +67,7 @@ export function BudgetHud({ hud, plan, onCategory }: { hud: Hud; plan: Plan; onC
     </div>
     <section className="bb-hud-budget" aria-label="Budget overview" data-total={totals.reportingTotal.toFixed(2)}>
     <div ref={headline} className="bb-hud-total-row">
+      {hasAmount && <TotalPulse value={totals.reportingTotal.toString()} />}
       <div><p className="bb-hud-eyebrow">{hud.complete ? "Planned spend" : "Accepted spend"}</p>
         <p className="bb-hud-total" aria-label={hasAmount ? `${money(totals.reportingTotal, currency)}${hud.complete ? " planned spend" : " so far"}` : "Awaiting prices"}>
           {hasAmount ? <><AnimatedTotal value={totals.reportingTotal} currency={currency} />{!hud.complete && <span aria-hidden> so far</span>}</> : <span className="bb-hud-awaiting">Awaiting prices</span>}
@@ -75,14 +80,15 @@ export function BudgetHud({ hud, plan, onCategory }: { hud: Hud; plan: Plan; onC
     <div className="bb-hud-breakdown">
       <div className="bb-hud-ring-wrap">
         <svg className="bb-hud-ring" viewBox="0 0 120 120" role="img" aria-label="Accepted priced spend by category. Category amounts follow in the table.">
-          <circle cx="60" cy="60" r="44" fill="none" stroke="var(--line-2)" strokeWidth="13" />
+          <circle className="bb-hud-ring-track" cx="60" cy="60" r="44" fill="none" stroke="var(--line-2)" strokeWidth="13" />
           <g transform="rotate(-90 60 60)">{segments.filter(s => s.length > 0).map(s => <circle key={`${s.category}-${s.total}`} className="bb-hud-segment" cx="60" cy="60" r="44" pathLength="100"
             fill="none" stroke={s.color} strokeWidth="13" strokeDasharray={`${s.length} ${100 - s.length}`} strokeDashoffset={-s.offset}
-            onMouseEnter={() => onCategory(s.category)} onMouseLeave={() => onCategory(null)}><title>{`${s.category}: ${money(s.total, currency)}`}</title></circle>)}</g>
+            data-active={category === s.category} onMouseEnter={() => highlightCategory(s.category)} onMouseLeave={() => highlightCategory(null)}><title>{`${s.category}: ${money(s.total, currency)}`}</title></circle>)}</g>
+          <g className="bb-hud-ring-light" transform="rotate(-90 60 60)" aria-hidden>{segments.filter(s => s.length > 0).map(s => <circle key={s.category} data-active={category === s.category} cx="60" cy="60" r="44" pathLength="100" fill="none" stroke={s.color} strokeWidth="18" strokeDasharray={`${s.length} ${100 - s.length}`} strokeDashoffset={-s.offset} />)}</g>
           <text x="60" y="57" textAnchor="middle" className="bb-hud-ring-number">{hud.priced}/{hud.count}</text>
           <text x="60" y="73" textAnchor="middle" className="bb-hud-ring-caption">lines priced</text>
         </svg>
-        <ul className="bb-hud-legend">{segments.map(s => <li key={s.category}><button type="button" onMouseEnter={() => onCategory(s.category)} onMouseLeave={() => onCategory(null)} onFocus={() => onCategory(s.category)} onBlur={() => onCategory(null)}>
+        <ul className="bb-hud-legend">{segments.map(s => <li key={s.category}><button type="button" data-active={category === s.category} onMouseEnter={() => highlightCategory(s.category)} onMouseLeave={() => highlightCategory(null)} onFocus={() => highlightCategory(s.category)} onBlur={() => highlightCategory(null)}>
           <i style={{ background: s.color }} aria-hidden /><span>{s.category}</span><strong>{s.hasAmount ? money(s.total, currency) : "Pending"}</strong>
         </button></li>)}{!segments.length && <li className="text-caption text-ink-2">Accept priced lines to see the spend mix.</li>}</ul>
       </div>
@@ -92,23 +98,24 @@ export function BudgetHud({ hud, plan, onCategory }: { hud: Hud; plan: Plan; onC
         <button type="button" className="bb-hud-ceiling" aria-disabled="true">Set a ceiling <span>Coming soon</span></button>
       </div>
     </div>
-    <div className="bb-hud-timeline"><div className="bb-hud-chart-heading"><h3>Monthly cash plan</h3><span>{plan.profile.periodStart} – {plan.profile.periodEnd}</span></div>
+    <div className="bb-hud-timeline"><div className="bb-hud-chart-heading"><h3>Monthly cash plan</h3><span>{formatMonthRange(plan.profile.periodStart, plan.profile.periodEnd)}</span></div>
       <svg viewBox={`0 0 ${Math.max(360, totals.months.length * 30)} 130`} preserveAspectRatio="none" role="img" aria-label="Monthly cash payments. Use the month buttons or the table for payment details.">
-        <line x1="0" y1="104" x2={Math.max(360, totals.months.length * 30)} y2="104" stroke="var(--line-2)" />
+        {[22, 63, 104].map(y => <line key={y} className="bb-hud-gridline" data-baseline={y === 104} x1="0" y1={y} x2={Math.max(360, totals.months.length * 30)} y2={y} stroke="var(--line-2)" />)}
         {totals.months.map((m, index) => {
           const width = Math.max(360, totals.months.length * 30) / totals.months.length;
           const value = totals.reportingMonthly.get(m)!;
           const height = value.div(maximum).times(82).toNumber();
-          return <g key={m} onMouseEnter={() => setMonth(m)} onMouseLeave={() => setMonth(null)}>
+          return <g key={m} data-active={month === m} onMouseEnter={() => setMonth(m)} onMouseLeave={() => setMonth(null)}>
             <rect x={index * width + 5} y="10" width={width - 10} height="95" fill="transparent" />
             <rect key={value.toString()} className="bb-hud-bar" x={index * width + 5} y={104 - height} width={width - 10} height={height} rx="3" fill="var(--chart-1)" />
-            <title>{`${m}: ${hasAmount ? money(value, currency) : "No priced payments"}`}</title>
+            <rect className="bb-hud-bar-light" x={index * width + 2} y={101 - height} width={width - 4} height={height + 6} rx="5" fill="var(--chart-1)" aria-hidden />
+            <title>{`${formatMonth(m)}: ${hasAmount ? money(value, currency) : "No priced payments"}`}</title>
           </g>;
         })}
       </svg>
-      <div className="bb-hud-month-buttons">{totals.months.map(m => <button key={m} aria-label={`View payments for ${m}`} aria-pressed={month === m} onClick={() => setMonth(month === m ? null : m)} onFocus={() => setMonth(m)}>{monthLabel(m)}</button>)}</div>
-      <div className="bb-hud-payments" aria-live="polite">{month ? <><strong>{month} · {hasAmount ? money(totals.reportingMonthly.get(month)!, currency) : "No priced payments"}</strong>{payments.length ? <ul>{payments.map(l => <li key={l.id}>{plan.lines.find(p => p.id === l.id)?.title} <span>{money(l.reportingMonthly!.get(month)!, currency)}</span></li>)}</ul> : <p>No priced payments scheduled.</p>}</> : <p>Explore a month to see its payments.</p>}</div>
-      <div className="sr-only"><table><caption>Monthly cash plan ({currency})</caption><thead><tr><th>Month</th><th>Total</th><th>Payments</th></tr></thead><tbody>{totals.months.map(m => <tr key={m}><th>{m}</th><td>{hasAmount ? totals.reportingMonthly.get(m)!.toFixed(2) : "No priced payments"}</td><td>{totals.lines.filter(l => l.reportingMonthly?.get(m)?.gt(0)).map(l => `${plan.lines.find(p => p.id === l.id)?.title}: ${l.reportingMonthly!.get(m)!.toFixed(2)}`).join("; ") || "No priced payments"}</td></tr>)}</tbody></table></div>
+      <div className="bb-hud-month-buttons">{totals.months.map(m => <button key={m} aria-label={`View payments for ${formatMonth(m)}`} aria-pressed={month === m} onClick={() => setMonth(month === m ? null : m)} onFocus={() => setMonth(m)}>{formatMonth(m, true)}</button>)}</div>
+      <div className="bb-hud-payments" aria-live="polite">{month ? <><strong>{formatMonth(month)} · {hasAmount ? money(totals.reportingMonthly.get(month)!, currency) : "No priced payments"}</strong>{payments.length ? <ul>{payments.map(l => <li key={l.id}>{plan.lines.find(p => p.id === l.id)?.title} <span>{money(l.reportingMonthly!.get(month)!, currency)}</span></li>)}</ul> : <p>No priced payments scheduled.</p>}</> : <p>Explore a month to see its payments.</p>}</div>
+      <div className="sr-only"><table><caption>Monthly cash plan ({currency})</caption><thead><tr><th>Month</th><th>Total</th><th>Payments</th></tr></thead><tbody>{totals.months.map(m => <tr key={m}><th>{formatMonth(m)}</th><td>{hasAmount ? totals.reportingMonthly.get(m)!.toFixed(2) : "No priced payments"}</td><td>{totals.lines.filter(l => l.reportingMonthly?.get(m)?.gt(0)).map(l => `${plan.lines.find(p => p.id === l.id)?.title}: ${l.reportingMonthly!.get(m)!.toFixed(2)}`).join("; ") || "No priced payments"}</td></tr>)}</tbody></table></div>
     </div>
   </section></>;
 }
