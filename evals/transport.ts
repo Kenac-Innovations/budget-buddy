@@ -26,9 +26,11 @@ export class AdvisorTransport {
     if (!response.ok) throw new Error(`Advisor HTTP ${response.status}; check server mode and availability.`);
     if (!response.headers.get("content-type")?.includes("application/x-ndjson") || !response.body) throw new Error("Advisor did not return NDJSON.");
     const events: AdvisorEvent[] = [];
+    let size = 0;
     for await (const event of readEvents(response.body)) {
       events.push(event);
-      if (events.length > 2000 || events.reduce((size, e) => size + JSON.stringify(e).length, 0) > 2_000_000) throw new Error("Advisor stream exceeded eval limits.");
+      size += JSON.stringify(event).length;
+      if (events.length > 2000 || size > 2_000_000) throw new Error("Advisor stream exceeded eval limits.");
     }
     const final = events.findLast((event) => event.type === "done");
     if (!final || final.type !== "done") throw new Error("Advisor stream missing done.");

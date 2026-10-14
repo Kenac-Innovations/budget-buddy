@@ -118,6 +118,12 @@ export function checkTurn(input: {
     const event = parsed.data;
     if (ended) fail("stream_integrity", "Event after done.");
     if (event.type === "op") {
+      const narrative = Object.entries(event.op).filter(([key, value]) =>
+        ["title", "rationale", "caution", "note", "measure"].includes(key) && typeof value === "string").map(([, value]) => value).join(" ");
+      const allowed = new Set([...userAmounts, ...sourcedAmounts(current, asOf)]);
+      for (const amount of amounts(narrative)) if (!allowed.has(amount)) {
+        fail("invented_price", "Unsupported currency amount in plan narrative.");
+      }
       if (event.op.op === "price_line" && !documentedPrice(event.op.price, asOf, true)) {
         fail("price_evidence", "A price_line lacks valid documented evidence or uses an AI estimate.");
       }

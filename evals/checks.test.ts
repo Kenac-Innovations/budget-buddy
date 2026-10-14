@@ -83,6 +83,13 @@ describe("crafted passing and failing hard checks", () => {
     expect(has(transcript("", { events }), "invented_price")).toBe(true);
     expect(has(transcript("", { events, userMessages: ["US$999 is my estimate."] }), "invented_price")).toBe(false);
   });
+  it("does not allow a guessed price to hide in plan narrative", () => {
+    const op: PlanOp = { ...line, op: "add_line", note: "Budget US$5000 for this kit." };
+    const made = apply(emptyPlan(), op);
+    const events: AdvisorEvent[] = [{ type: "op", op, createdId: made.createdId, version: made.plan.version }, { type: "done", plan: made.plan }];
+    expect(has(transcript("", { events }), "invented_price")).toBe(true);
+    expect(has(transcript("", { events, userMessages: ["My own estimate is US$5000."] }), "invented_price")).toBe(false);
+  });
   it("allows only brands already supplied by the user during advice", () => {
     expect(has(transcript("Investigate Cisco links."), "vendor_advice")).toBe(true);
     expect(has(transcript("Review your VMware renewal.", { userMessages: ["VMware renews soon."] }), "vendor_advice")).toBe(false);
