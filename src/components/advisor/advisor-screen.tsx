@@ -198,7 +198,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
     return () => { document.removeEventListener("keydown",keydown); window.removeEventListener("resize",resize); trigger?.focus(); };
   },[sheet]);
   async function send(message: string,isRetry=false) {
-    if(activeRef.current||pendingOp||!message.trim())
+    if(!ready||activeRef.current||pendingOp||!message.trim())
       return;
     activeRef.current=true;
     const controller=new AbortController();
