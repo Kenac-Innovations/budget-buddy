@@ -1,0 +1,6 @@
+sku,name,category,unit,price,currency,valid_until,attributes
+TEST-LAPTOP-16,Sample endpoint 16 GB,Hardware,device,1149.00,USD,2027-12-31,ram_gb=16;cpu_class=i5;warranty_years=3
+TEST-LAPTOP-8,Sample endpoint 8 GB,Hardware,device,849.00,USD,2027-12-31,"{""ram_gb"":8,""cpu_class"":""i5"",""warranty_years"":3}"
+TEST-LAPTOP-UNKNOWN,Sample endpoint awaiting specification,Hardware,device,999.00,USD,2027-12-31,cpu_class=i5
+TEST-UPS,Sample branch UPS,Power,unit,500.25,USD,2027-12-31,capacity_va=1500;warranty_years=2
+TEST-EXPIRED,Sample expired endpoint,Hardware,device,749.00,USD,2026-01-31,ram_gb=16;cpu_class=i5;warranty_years=3
