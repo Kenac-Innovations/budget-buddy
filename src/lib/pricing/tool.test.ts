@@ -80,8 +80,28 @@ describe("find_kenac_price tool", () => {
     expect((await registry.execute("price_line", JSON.stringify({ id: "l1", price: invented }), ctx)).output.ok).toBe(false);
     expect(ctx.plan.lines[0].price).toBeNull();
   });
+  it("returns unpriced fitting product families without authorizing an advisor price", async () => {
+    vi.stubEnv("ADVISOR_MODE", "demo");
+    vi.stubEnv("DATABASE_URL", "");
+    const ctx = context();
+    const result = await createKenacToolRegistry().execute("find_kenac_price", JSON.stringify({
+      ...args, constraints: [{ key: "form_factor", op: "eq", value: "laptop" }],
+    }), ctx);
+    expect(result.output).toMatchObject({ ok: true, suggestion: "Request quotes", offers: [
+      { product: { sku: "LENOVO-THINKPAD-T", name: "Lenovo ThinkPad T-series", imageUrl: expect.any(String) },
+        usablePrice: null, price: null, attachable: false, status: "Available through Kenac · price on request" },
+      expect.any(Object), expect.any(Object),
+    ] });
+    expect(ctx.documentedPrices).toEqual([]);
+    expect(ctx.documentedLinePrices?.get("l1")).toEqual([]);
+    expect(ctx.plan.lines[0].price).toBeNull();
+    expect((await createKenacToolRegistry().execute("price_line", JSON.stringify({ id: "l1", price: {
+      unitPrice: "1", currency: "USD", evidence: { type: "OPERATOR_PRICE_LIST", reference: "Invented",
+        capturedAt: "2026-10-14", supplier: { name: KENAC_NAME, isOperator: true } },
+    } }), ctx)).output.ok).toBe(false);
+  });
   it("returns empty for no imported catalogue and for no fit, without a database or API key", async () => {
-    vi.stubEnv("DATABASE_URL", ""); vi.stubEnv("OPENAI_API_KEY", "");
+    vi.stubEnv("ADVISOR_MODE", "live"); vi.stubEnv("DATABASE_URL", ""); vi.stubEnv("OPENAI_API_KEY", "");
     const ctx = context();
     expect((await createKenacToolRegistry().execute("find_kenac_price", JSON.stringify(args), ctx)).output)
       .toMatchObject({ ok: true, offers: [], suggestion: "Request quotes" });
