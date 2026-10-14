@@ -71,7 +71,7 @@ describe("HUD engine selections", () => {
       expect(categoryIllustration(category)).toMatch(/^\/illustrations\/categories\/[a-z]+\.svg$/);
     const request = quoteRequest(demo().lines[0], "2027-01");
     expect(request).toContain("Quantity: 4 branches");
-    expect(request).toContain("2027-03");
+    expect(request).toContain("Mar 2027");
     expect(request).not.toContain("Kenac");
     expect(request).not.toContain("4200");
   });

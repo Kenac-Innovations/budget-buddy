@@ -2,6 +2,7 @@ import Decimal from "decimal.js";
 import { applyOp } from "@/lib/plan/ops";
 import { planTotals } from "@/lib/plan/totals";
 import type { Plan, PlanLine } from "@/lib/plan/types";
+import { formatMonth } from "../dates";
 
 /** A view-only selection. All persisted changes still pass through applyOp. */
 export function deriveHud(plan: Plan) {
@@ -52,7 +53,7 @@ export function categoryIllustration(category: string) {
   return `/illustrations/categories/${match?.[1] ?? "hardware"}.svg`;
 }
 export function quoteRequest(line: PlanLine, periodStart: string) {
-  return `Please quote for ${line.title}.\nQuantity: ${line.quantity ?? "To confirm"} ${line.unit ?? "units"}.\nTiming: ${line.paymentMonth ?? periodStart}; ${line.frequency.replaceAll("_", " ")}.\nSpecification: ${line.note ?? "Please confirm specifications and scope."}\nPlease state validity, delivery, implementation, support and taxes separately.`;
+  return `Please quote for ${line.title}.\nQuantity: ${line.quantity ?? "To confirm"} ${line.unit ?? "units"}.\nTiming: ${formatMonth(line.paymentMonth ?? periodStart)}; ${line.frequency.replaceAll("_", " ")}.\nSpecification: ${line.note ?? "Please confirm specifications and scope."}\nPlease state validity, delivery, implementation, support and taxes separately.`;
 }
 export function sharePercent(amount: Decimal, total: Decimal) {
   return total.isZero() ? "0" : amount.div(total).times(100).toFixed(0);

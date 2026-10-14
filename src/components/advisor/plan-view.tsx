@@ -9,12 +9,14 @@ import { PlanOp } from "@/lib/plan/ops";
 import type { ItemState,Plan,PlanLine } from "@/lib/plan/types";
 import { cn } from "@/lib/utils";
 import styles from "./styles";
+import { formatDate, formatMonth } from "./dates";
 import { deriveHud,pathIds,sharePercent } from "./plan/derive";
 import { BudgetHud } from "./plan/budget-hud";
 import { LineVisual } from "./plan/visual";
 import { money } from "./plan/money";
 import { useResponseCheck } from "./plan/use-response-check";
 import { DetailSheet } from "./plan/detail-sheet";
+import { Connector } from "./plan/connector";
 const DISPOSITION={
   fund: { label: "Fund",tone: "green" },pilot: { label: "Pilot",tone: "slate" },
   investigate: { label: "Investigate",tone: "amber" },defer: { label: "Defer",tone: "grey" },
@@ -101,11 +103,6 @@ export function EstimateForm({ line,currency,disabled,onOp }: {
     </form>}
   </div>;
 }
-function SourceDate({ date }: {
-  date: string;
-}) {
-  return new Date(`${date.slice(0,7)}-01T00:00:00Z`).toLocaleDateString("en-GB",{ month: "short",year: "numeric",timeZone: "UTC" });
-}
 export const PlanView=memo(function PlanView({ plan,changed,disabled,onOp: persistOp }: {
   plan: Plan;
   changed: Record<string,number>;
@@ -132,7 +129,6 @@ export const PlanView=memo(function PlanView({ plan,changed,disabled,onOp: persi
   });
   const highlight=(id: string) => changed[id]? <span key={changed[id]} className="bb-hud-glow" aria-hidden />:null;
   const pending=(state: ItemState) => state==="proposed"? <span className="bb-hud-decision">Awaiting your decision</span>:null;
-  const connector=<svg className="bb-hud-connector" viewBox="0 0 16 40" preserveAspectRatio="none" aria-hidden><path d="M1 0 V24 Q1 32 9 32 H16" fill="none" stroke="currentColor" strokeWidth="1" vectorEffect="non-scaling-stroke" /></svg>;
   const lineCard=(line: PlanLine) => {
     const total=hud.lineTotals.get(line.id);
     const deferred=Boolean(line.initiativeId&&hud.deferred.has(line.initiativeId));
@@ -148,7 +144,7 @@ export const PlanView=memo(function PlanView({ plan,changed,disabled,onOp: persi
         <button className="bb-hud-line-title" onClick={() => setDetail(line.id)} aria-label={`View details for ${line.title}`}>{line.title}</button>
         {line.price?.evidence.type==="OPERATOR_PRICE_LIST"&&line.price.product&&<p className="text-caption text-ink-2">{line.price.product.name}</p>}
         <p className="mt-1 text-caption text-ink-2">{line.quantity??"Confirm quantity"} {line.unit??"units"} × {line.price? money(new Decimal(line.price.unitPrice),line.price.currency):"Unpriced"}{line.priceBasis==="bundle"&&" · Bundle price"}</p>
-        <span className="bb-hud-timing">{line.frequency.replaceAll("_"," ")} · {line.paymentMonth??plan.profile.periodStart}</span>
+        <span className="bb-hud-timing">{line.frequency.replaceAll("_"," ")} · {formatMonth(line.paymentMonth??plan.profile.periodStart)}</span>
       </div></div>
       <div className="bb-hud-line-value"><strong>{deferred? "Deferred":!line.price? "Unpriced":total?.total? money(total.total,line.price.currency):"Confirm quantity"}</strong>{pending(line.state)}</div>
       {line.price&&<p className="text-caption text-ink-2">{line.price.evidence.reference}{total?.reportingTotal===null&&total.total!==null&&" · Awaiting exchange rate"}</p>}
@@ -157,16 +153,16 @@ export const PlanView=memo(function PlanView({ plan,changed,disabled,onOp: persi
       <ItemActions id={line.id} state={line.state} disabled={disabled} onOp={onOp} />
     </article>;
   };
-  const initiativeNode=(i: Plan["initiatives"][number]) => <div className="bb-hud-branch" key={i.id}>{connector}
+  const initiativeNode=(i: Plan["initiatives"][number]) => <div className="bb-hud-branch" key={i.id} data-path={Boolean(path?.has(i.id))}><Connector active={Boolean(path?.has(i.id))} />
     <article {...nodeProps(i.id,i.state,i.proactive)}>{highlight(i.id)}
       <div className="bb-hud-pills"><StatusPill map={DISPOSITION} status={i.disposition} size="sm" />{i.proactive&&<Spotted />}{pending(i.state)}</div>
       <h4 className="mt-3 text-card-title">{i.title}</h4><p className="mt-2 text-body-sm text-ink-2">{i.rationale}</p>
       {i.caution&&<p className="mt-2 text-caption text-ink-2">Watch out: {i.caution}</p>}
-      <div className="mt-3 flex flex-wrap gap-2">{i.sources.map((source,n) => <span key={n} className="text-caption text-ink-2">{source.url? <a href={source.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand underline underline-offset-4">{source.title}<ExternalLink size={11} /></a>:source.title} · <SourceDate date={source.date} /></span>)}</div>
+      <div className="mt-3 flex flex-wrap gap-2">{i.sources.map((source,n) => <span key={n} className="text-caption text-ink-2">{source.url? <a href={source.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand underline underline-offset-4">{source.title}<ExternalLink size={11} /></a>:source.title} · {formatDate(source.date)}</span>)}</div>
       {i.state==="accepted"&&<Button className="mt-3" variant="outline" size="sm" disabled={disabled} aria-pressed={i.disposition==="defer"} onClick={() => onOp({ op: "update_initiative",id: i.id,disposition: i.disposition==="defer"? "fund":"defer" })}>{i.disposition==="defer"? "Fund initiative":"Defer initiative"}</Button>}
       <ItemActions id={i.id} state={i.state} reason={i.dismissReason} disabled={disabled} onOp={onOp} />
     </article>
-    {plan.lines.filter(l => l.initiativeId===i.id&&l.state!=="dismissed").map(l => <div className="bb-hud-branch" key={l.id}>{connector}{lineCard(l)}</div>)}
+    {plan.lines.filter(l => l.initiativeId===i.id&&l.state!=="dismissed").map(l => <div className="bb-hud-branch" key={l.id} data-path={Boolean(path?.has(l.id))}><Connector active={Boolean(path?.has(l.id))} />{lineCard(l)}</div>)}
   </div>;
   return <div className={styles.planContent}>
     <div className="bb-hud-header"><div><p className="bb-hud-eyebrow">{plan.profile.periodStart.slice(0,4)} ICT plan</p><h2 className="mt-1 text-page-title">Your living plan</h2></div><Target size={25} className="text-brand" strokeWidth={1.4} aria-hidden /></div>

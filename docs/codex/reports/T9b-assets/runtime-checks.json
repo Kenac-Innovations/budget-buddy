@@ -1,0 +1,14 @@
+{
+  "ssrGreeting": true,
+  "freshSession204": true,
+  "streamedTurns": 2,
+  "demoLines": 5,
+  "productImagePreserved": true,
+  "acceptsPersisted": 3,
+  "serverActionReset": true,
+  "cookieExpired": true,
+  "oldSessionInvalidated": true,
+  "resetSession204": true,
+  "firstTurnRestarts": true,
+  "checkSessionDeleted": true
+}

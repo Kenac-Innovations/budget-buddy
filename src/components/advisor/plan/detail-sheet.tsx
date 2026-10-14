@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import type { Plan, PlanLine } from "@/lib/plan/types";
 import { quoteRequest } from "./derive";
 import { LineVisual } from "./visual";
+import { formatDate, formatMonth, formatMonthRange } from "../dates";
 
 export function DetailSheet({ line, plan, actions, onClose }: {
   line: PlanLine; plan: Plan; actions: ReactNode; onClose: () => void;
@@ -40,7 +41,7 @@ export function DetailSheet({ line, plan, actions, onClose }: {
       <ol>{parts.map((part, index) => <li key={part.id} className={part.forgottenCost ? "bb-hud-part-spotted" : undefined}>
         <span className="bb-hud-part-index" aria-hidden>{String(index + 1).padStart(2, "0")}</span>
         <LineVisual line={part} />
-        <div><span className="bb-hud-part-kind">{index === 0 ? "Selected item" : "Related cost"}</span><strong>{part.title}</strong><span>{part.quantity ?? "Confirm quantity"} {part.unit ?? "units"} · {part.paymentMonth ?? plan.profile.periodStart}</span>
+        <div><span className="bb-hud-part-kind">{index === 0 ? "Selected item" : "Related cost"}</span><strong>{part.title}</strong><span>{part.quantity ?? "Confirm quantity"} {part.unit ?? "units"} · {formatMonth(part.paymentMonth ?? plan.profile.periodStart)}</span>
           {part.forgottenCost && <span className="bb-hud-marker"><Sparkles size={12} aria-hidden />Spotted · Forgotten cost</span>}
           {!part.price && <span>Unpriced</span>}
         </div>
@@ -50,12 +51,12 @@ export function DetailSheet({ line, plan, actions, onClose }: {
     <dl className="bb-hud-specs">
       <dt>Quantity / unit</dt><dd>{line.quantity ?? "To confirm"} {line.unit ?? "units"}{line.priceBasis === "bundle" && " · Bundle price"}</dd>
       <dt>Frequency</dt><dd>{line.frequency.replaceAll("_", " ")}</dd>
-      <dt>First payment</dt><dd>{line.paymentMonth ?? plan.profile.periodStart}</dd>
-      <dt>Planning months</dt><dd>{plan.profile.periodStart} – {plan.profile.periodEnd}</dd>
+      <dt>First payment</dt><dd>{formatMonth(line.paymentMonth ?? plan.profile.periodStart)}</dd>
+      <dt>Planning months</dt><dd>{formatMonthRange(plan.profile.periodStart, plan.profile.periodEnd)}</dd>
       <dt>Evidence type</dt><dd>{evidence?.type.replaceAll("_", " ").toLowerCase() ?? "Unpriced"}</dd>
       <dt>Reference</dt><dd>{evidence?.reference ?? "Request a dated quote"}</dd>
-      <dt>Captured</dt><dd>{evidence?.capturedAt.slice(0, 10) ?? "Not yet sourced"}</dd>
-      <dt>Valid until</dt><dd>{evidence?.validUntil?.slice(0, 10) ?? "Not specified"}</dd>
+      <dt>Captured</dt><dd>{evidence ? formatDate(evidence.capturedAt) : "Not yet sourced"}</dd>
+      <dt>Valid until</dt><dd>{evidence?.validUntil ? formatDate(evidence.validUntil) : "Not specified"}</dd>
     </dl>
     {evidence?.type === "OPERATOR_PRICE_LIST" && <p className="bb-hud-fit">Kenac price-list item attached for this line. {line.note ?? "Confirm specification, quantity and delivery scope before purchase."}</p>}
     <Button variant="outline" onClick={async () => {

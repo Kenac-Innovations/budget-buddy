@@ -1,5 +1,5 @@
 "use client";
-import { useCallback,useEffect,useMemo,useRef,useState,type ReactNode } from "react";
+import { startTransition,useCallback,useEffect,useMemo,useRef,useState,type ReactNode } from "react";
 import { z } from "zod";
 import { ArrowUp,ChevronUp,LockKeyhole,Moon,ShieldCheck,Square,Sun,Wallet,X } from "lucide-react";
 import Link from "next/link";
@@ -14,12 +14,19 @@ import { loadSession,PlanConflict,requestTurn,sendUserOp } from "./transport";
 import { SaveForm } from "./save-form";
 import { SavedSharePanel } from "./share-panel";
 import { WrapUpCard } from "./wrap-up-card";
+import { resetDemoSession } from "./demo-session";
 import styles from "./styles";
 import "./advisor.css";
 const Message=z.object({ id: z.string(),role: z.enum(["user","advisor"]),text: z.string().max(20000),summary: z.string().max(600).optional(),offerSave: z.boolean().optional() });
 type Message=z.infer<typeof Message>;
 const Draft=z.object({ expires: z.number(),plan: Plan,messages: z.array(Message).max(200),turn: z.number().int().nonnegative() });
 const OPENING: Message={ id: "opening",role: "advisor",text: OPENING_MESSAGE };
+// Next dispatches server mutations within a transition, including calls made while bootstrapping.
+function resetDemo() {
+  return new Promise<boolean>(resolve => startTransition(async () => {
+    try { resolve(await resetDemoSession()); } catch { resolve(false); }
+  }));
+}
 /** Integration seam: T3's return page can supply a validated plan, history and save form. */
 export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=false,saveForm }: {
   demo?: boolean;
@@ -46,6 +53,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
   const [sharing,setSharing]=useState(false);
   const sessionRequest=useRef<ReturnType<typeof loadSession>|null>(null);
   const [ready,setReady]=useState(false);
+  const [booting,setBooting]=useState(true);
   const [turn,setTurn]=useState(0);
   const abortRef=useRef<AbortController|null>(null);
   const activeRef=useRef(false);
@@ -61,17 +69,19 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
   useEffect(() => {
     const controller=new AbortController();
     const frame=requestAnimationFrame(async () => {
-      const mode=demo||new URLSearchParams(location.search).has("demo");
+      const mode=demo;
       setDemoMode(mode);
       const notice=new URLSearchParams(location.search).get("notice");
       if(notice==="link-expired") setOpError("That link has expired. You can start a new conversation.");
       if(notice==="resume-unavailable") setOpError("We couldn't open your plan. Try the link again in a moment.");
       const storageKey=mode? "bb-draft-demo":"bb-draft";
+      let hasDraft=false;
       if(!initialPlan&&!saved) {
         try {
           const raw=localStorage.getItem(storageKey);
           const stored=raw? Draft.safeParse(JSON.parse(raw)):null;
           if(stored?.success&&stored.data.expires>Date.now()) {
+            hasDraft=true;
             planRef.current=stored.data.plan;
             setPlan(stored.data.plan);
             setMessages(stored.data.messages);
@@ -84,7 +94,13 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
       }
       try {
         if(!initialPlan) {
-          sessionRequest.current ??= loadSession(new AbortController().signal);
+          sessionRequest.current ??= (async () => {
+            if(mode&&!hasDraft) {
+              if(!await resetDemo()) throw new Error("Demo reset unavailable");
+              return null;
+            }
+            return loadSession(new AbortController().signal);
+          })();
           const session=await sessionRequest.current;
           if(controller.signal.aborted) return;
           if(session) {
@@ -92,17 +108,29 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
             setPlan(session.plan);
             setSessionSaved(session.saved);
             const history: Message[]=session.messages.map((m,i) => ({ id: `resumed-${i}`,role: m.role==="assistant"? "advisor":"user",text: m.content }));
-            setMessages(history.length? [{ id: "welcome",role: "advisor",text: "Welcome back. Your plan and the decisions we made are here." },...history]:[OPENING]);
+            setMessages(history.length? [mode? OPENING:{ id: "welcome",role: "advisor",text: "Welcome back. Your plan and the decisions we made are here." },...history]:[OPENING]);
             setTurn(session.messages.filter(m => m.role==="assistant").length);
+          }
+          else if(mode) {
+            planRef.current=emptyPlan();
+            setPlan(planRef.current);
+            setMessages([OPENING]);
+            setTurn(0);
+            try { localStorage.removeItem(storageKey); } catch { }
           }
         }
       }
       catch {
-        if(!controller.signal.aborted)
-          setOpError("Your saved session could not be loaded. Refresh to try again.");
+        if(!controller.signal.aborted) {
+          setOpError(mode? "The demo could not be reset. Select Start over to try again.":"Your saved session could not be loaded. Refresh to try again.");
+          setBooting(false);
+          if(mode) return;
+        }
       }
-      if(!controller.signal.aborted)
+      if(!controller.signal.aborted) {
         setReady(true);
+        setBooting(false);
+      }
     });
     return () => { controller.abort(); cancelAnimationFrame(frame); abortRef.current?.abort(); };
   },[demo,initialPlan,saved]);
@@ -279,6 +307,36 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
       abortRef.current=null;
     }
   },[pendingOp]);
+  async function startOver() {
+    if(!demoMode||booting||activeRef.current||pendingOp) return;
+    activeRef.current=true;
+    setPendingOp(true);
+    try {
+      if(!await resetDemo()) throw new Error("Reset unavailable");
+      try { localStorage.removeItem("bb-draft-demo"); } catch { }
+      replacePlan(emptyPlan());
+      setMessages([OPENING]);
+      setTurn(0);
+      setInput("");
+      setChanged({});
+      setReplyId("");
+      setFailure(false);
+      setStopped(false);
+      setSessionSaved(false);
+      setSharing(false);
+      setOpError("");
+      retry.current={ message: "",replyId: "" };
+      sessionRequest.current=null;
+      follow.current=true;
+      setReady(true);
+      requestAnimationFrame(() => textarea.current?.focus());
+    } catch {
+      setOpError("The demo could not be reset. Select Start over to try again.");
+    } finally {
+      activeRef.current=false;
+      setPendingOp(false);
+    }
+  }
   return <div className={styles.screen}>
     <header className={styles.topbar} inert={sheet||undefined}>
       <div className="flex min-w-0 items-center gap-2.5">
@@ -294,7 +352,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
         <span className="size-1.5 rounded-full bg-current" aria-hidden />
         {saved||sessionSaved? "Saved":"Not saved yet"}
       </span>
-      <Button variant="ghost" size="icon" className="ml-auto" aria-label="Switch light or dark theme" onClick={() => {
+      <Button variant="ghost" size="icon" className="ml-auto" title="Switch theme · Dark: HUD mode" aria-label="Switch light or dark theme · Dark: HUD mode" onClick={() => {
         const dark=document.documentElement.classList.toggle("hf-theme-dark"); try {
           localStorage.setItem("bb-theme",dark? "dark":"light");
         }
@@ -308,7 +366,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
       <section className={styles.conversation} aria-label="Conversation with Budget Buddy" inert={sheet||undefined}>
         <div className="flex shrink-0 items-center justify-between gap-3 px-5 py-4 nav:px-8">
           <div><p className="text-caption font-semibold text-ink-2">Your 2027 ICT plan</p>
-            {demoMode&&<p className="mt-1 text-[11px] text-ink-2">Demo · Scripted advice and planning assumptions</p>}</div>
+            {demoMode&&<div className="bb-advisor-demo-controls"><p>Demo · Scripted planning assumptions</p><button type="button" disabled={booting||streaming||pendingOp} onClick={startOver}>Start over</button></div>}</div>
           <span className="flex items-center gap-1.5 text-caption text-ink-2"><LockKeyhole size={12} />Private conversation</span>
         </div>
         <div ref={viewport} className={styles.messages} onScroll={() => {
@@ -316,18 +374,13 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
             follow.current=el.scrollHeight-el.scrollTop-el.clientHeight<100;
         }}>
           <div className="mx-auto w-full max-w-[600px] space-y-7">
-            {messages.map(m => <article key={m.id} className={m.role==="user"? styles.userMessage:styles.advisorMessage} aria-label={m.role==="user"? "You":"Budget Buddy"}>
+            {messages.map(m => <article key={m.id} className={m.role==="user"? styles.userMessage:styles.advisorMessage} data-streaming={m.role==="advisor"&&streaming&&m.id===replyId} aria-label={m.role==="user"? "You":"Budget Buddy"}>
               {m.role==="advisor"&&<p className="mb-3 flex items-center gap-2 text-caption font-semibold text-brand"><span className="size-1.5 rounded-full bg-brand" aria-hidden />Budget Buddy</p>}
               <div className={cn("text-[15px] leading-[1.75]",m.role==="user"? "text-ink-2":"text-ink")}>
                 <LightMarkdown text={m.text} />
               </div>
               {streaming&&m.id===replyId&&!m.text&&<div className="flex min-h-8 items-center gap-2 text-caption text-ink-2">
-                <span className={styles.thinking} aria-hidden>
-                  <i />
-                  <i />
-                  <i />
-                </span>
-                {status==="thinking"? "Thinking it through":status==="planning"? "Shaping your plan":"Putting it into words"}
+                <span className={styles.thinking}>{status==="thinking"? "Thinking it through":status==="planning"? "Shaping your plan":"Putting it into words"}</span>
               </div>}
               {m.summary&&<WrapUpCard summary={m.summary}>{saveForm??(m.offerSave&&m.id===[...messages].reverse().find(item => item.summary)?.id?
                 <SaveForm onSaved={() => { setSessionSaved(true); try { localStorage.removeItem(draftKey); } catch { } }} />:undefined)}</WrapUpCard>}
@@ -363,6 +416,7 @@ export function AdvisorScreen({ demo=false,initialPlan,initialMessages,saved=fal
               <ArrowUp />
             </Button>}
           </form>
+          <p className="bb-advisor-command-hint">Enter to send <span aria-hidden>·</span> Shift+Enter for a new line</p>
           <p className="mt-2.5 text-center text-[11px] text-ink-2">Take your time. A first draft starts with the big picture.</p>
         </div>
         <button ref={openButton} className={styles.planBar} aria-expanded={sheet} aria-controls="living-plan" onClick={() => setSheet(true)}>

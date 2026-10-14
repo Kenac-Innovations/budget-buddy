@@ -1,0 +1,157 @@
+{
+  "method": "sRGB compositing of shipped dark tokens and HUD color-mix definitions; palette audit, not browser sampling",
+  "minimumTextContrast": 4.73,
+  "glowLayersAudited": 3,
+  "pairs": [
+    {
+      "foreground": "ink",
+      "surface": "plan",
+      "ratio": 17.67
+    },
+    {
+      "foreground": "ink-2",
+      "surface": "plan",
+      "ratio": 11.61
+    },
+    {
+      "foreground": "hf-primary",
+      "surface": "plan",
+      "ratio": 10.73
+    },
+    {
+      "foreground": "ink",
+      "surface": "conversation/detail",
+      "ratio": 17.1
+    },
+    {
+      "foreground": "ink-2",
+      "surface": "conversation/detail",
+      "ratio": 11.23
+    },
+    {
+      "foreground": "hf-primary",
+      "surface": "conversation/detail",
+      "ratio": 10.38
+    },
+    {
+      "foreground": "ink",
+      "surface": "card/composer",
+      "ratio": 16.48
+    },
+    {
+      "foreground": "ink-2",
+      "surface": "card/composer",
+      "ratio": 10.83
+    },
+    {
+      "foreground": "hf-primary",
+      "surface": "card/composer",
+      "ratio": 10.01
+    },
+    {
+      "foreground": "ink",
+      "surface": "image caption",
+      "ratio": 17.1
+    },
+    {
+      "foreground": "ink-2",
+      "surface": "image caption",
+      "ratio": 11.23
+    },
+    {
+      "foreground": "hf-primary",
+      "surface": "image caption",
+      "ratio": 10.38
+    },
+    {
+      "foreground": "ink",
+      "surface": "status green",
+      "ratio": 12.43
+    },
+    {
+      "foreground": "ink-2",
+      "surface": "status green",
+      "ratio": 8.17
+    },
+    {
+      "foreground": "hf-primary",
+      "surface": "status green",
+      "ratio": 7.55
+    },
+    {
+      "foreground": "ink",
+      "surface": "status amber",
+      "ratio": 12.81
+    },
+    {
+      "foreground": "ink-2",
+      "surface": "status amber",
+      "ratio": 8.42
+    },
+    {
+      "foreground": "hf-primary",
+      "surface": "status amber",
+      "ratio": 7.78
+    },
+    {
+      "foreground": "ink",
+      "surface": "status red",
+      "ratio": 13.7
+    },
+    {
+      "foreground": "ink-2",
+      "surface": "status red",
+      "ratio": 9.0
+    },
+    {
+      "foreground": "hf-primary",
+      "surface": "status red",
+      "ratio": 8.32
+    },
+    {
+      "foreground": "ink",
+      "surface": "status slate",
+      "ratio": 12.77
+    },
+    {
+      "foreground": "ink-2",
+      "surface": "status slate",
+      "ratio": 8.39
+    },
+    {
+      "foreground": "hf-primary",
+      "surface": "status slate",
+      "ratio": 7.76
+    },
+    {
+      "foreground": "ink",
+      "surface": "decision",
+      "ratio": 17.1
+    },
+    {
+      "foreground": "ink-2",
+      "surface": "decision",
+      "ratio": 11.23
+    },
+    {
+      "foreground": "hf-primary",
+      "surface": "decision",
+      "ratio": 10.38
+    },
+    {
+      "foreground": "ink",
+      "surface": "three overlapping peak glows",
+      "ratio": 7.79
+    },
+    {
+      "foreground": "ink-2",
+      "surface": "three overlapping peak glows",
+      "ratio": 5.12
+    },
+    {
+      "foreground": "hf-primary",
+      "surface": "three overlapping peak glows",
+      "ratio": 4.73
+    }
+  ]
+}

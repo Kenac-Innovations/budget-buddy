@@ -8,6 +8,7 @@ import { applyOp, type PlanOp } from "@/lib/plan/ops";
 import { Plan } from "@/lib/plan/types";
 import type { ContactDetails } from "@/lib/session/store";
 import { SharedRow, sharedRows } from "@/lib/export/sharing";
+import { formatDate, formatMonth } from "./dates";
 
 const OpResponse = z.object({ plan: Plan });
 const ShareResponse = z.object({ rows: z.array(SharedRow) });
@@ -103,13 +104,13 @@ export function SharePanel({ plan, contact, saved, onPlanChange }: SharePanelPro
     <div className="space-y-3" aria-live="polite"><h4 className="font-semibold">Preview what Kenac receives</h4><p className="text-sm text-muted-foreground">Only the fields below are shared. The sharing date is recorded when you confirm.</p>
       {rows.length ? rows.map((row) => <article key={row.lineId} className="min-w-0 rounded-lg border border-border bg-muted/30 p-4"><h5 className="break-words font-medium">{row.item}</h5><dl className="mt-3 grid min-w-0 gap-2 text-sm sm:grid-cols-2">
         <div><dt className="text-muted-foreground">Quantity and unit</dt><dd>{row.quantity ?? "Not specified"} {row.unit ?? ""}</dd></div>
-        <div><dt className="text-muted-foreground">Timing</dt><dd>{row.timing} · {row.frequency.replaceAll("_", " ")}</dd></div>
+        <div><dt className="text-muted-foreground">Timing</dt><dd>{formatMonth(row.timing)} · {row.frequency.replaceAll("_", " ")}</dd></div>
         <div><dt className="text-muted-foreground">Category</dt><dd>{row.category}</dd></div>
         <div><dt className="text-muted-foreground">Notes</dt><dd className="whitespace-pre-wrap break-words">{row.notes ?? "Not specified"}</dd></div>
         {row.organisation && <div><dt className="text-muted-foreground">Organisation</dt><dd className="break-words">{row.organisation}</dd></div>}
         {row.contact && <div><dt className="text-muted-foreground">Contact</dt><dd className="break-words">{row.contact.name} · {row.contact.email} · {row.contact.role}</dd></div>}
         {row.allocation && <div><dt className="text-muted-foreground">Budget for the planning period</dt><dd>{row.allocation.amount === null ? "Unpriced" : `${row.allocation.currency} ${row.allocation.amount}`}</dd></div>}
-        {row.sharedAt && <div><dt className="text-muted-foreground">Shared date</dt><dd>{row.sharedAt}</dd></div>}
+        {row.sharedAt && <div><dt className="text-muted-foreground">Shared date</dt><dd>{formatDate(row.sharedAt)}</dd></div>}
       </dl></article>) : <p className="text-sm text-muted-foreground">No items selected. Confirm to keep all items private.</p>}
     </div>
     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}

@@ -10,6 +10,7 @@ import { AdvisorScreen } from "./advisor-screen";
 import { LightMarkdown } from "./markdown";
 import { money,PlanView,planSummary } from "./plan-view";
 import { WrapUpCard } from "./wrap-up-card";
+import { SharePanel } from "./share-panel";
 function change(plan: Plan,op: PlanOp) {
   const result=applyOp(plan,op,"user");
   if(!result.ok)
@@ -24,6 +25,31 @@ describe("living plan presentation",() => {
     expect(html).toContain(OPENING_MESSAGE.split("\n\n")[1]);
     expect(html).toContain('href="/privacy"');
     expect(html).not.toContain('type="email"');
+  });
+  it("offers a reset only for server-authorised demo mode and starts with the greeting", () => {
+    const demo=renderToStaticMarkup(createElement(AdvisorScreen,{ demo: true }));
+    expect(demo).toContain("Start over");
+    expect(demo).toContain(OPENING_MESSAGE.split("\n\n")[1]);
+    expect(demo).not.toContain("Welcome back");
+    expect(renderToStaticMarkup(createElement(AdvisorScreen))).not.toContain("Start over");
+    expect(demo).toContain("Dark: HUD mode");
+    expect(demo).toContain("Shift+Enter for a new line");
+  });
+  it("renders human dates in cards, chart tooltips and accessible month tables", () => {
+    const plan=scriptedTurn(1,scriptedTurn(0,undefined,true).plan,true).plan;
+    const html=renderToStaticMarkup(createElement(PlanView,{ plan,changed: {},disabled: false,onOp: async () => true }));
+    expect(html).toContain("Mar 2027");
+    expect(html).toContain("Jan–Dec 2027");
+    expect(html).toContain("View payments for Aug 2027");
+    expect(html).not.toMatch(/\b\d{4}-\d{2}\b/);
+  });
+  it("uses the same human month in the per-line sharing preview", () => {
+    let plan=demoPlan();
+    plan=change(plan,{ op: "set_state",id: plan.lines[0].id,state: "accepted" });
+    plan=change(plan,{ op: "set_sharing",id: plan.lines[0].id,shared: true,shareAllocation: false });
+    const html=renderToStaticMarkup(createElement(SharePanel,{ plan,saved: true,contact: { name: "Demo presenter",email: "demo@example.com",organisation: "Demo organisation",role: "CTO",consentEmail: true,consentContact: false } }));
+    expect(html).toContain("Mar 2027");
+    expect(html).not.toMatch(/\b\d{4}-\d{2}\b/);
   });
   it("never represents unpriced lines as a zero-valued budget",() => {
     const plan=demoPlan();
