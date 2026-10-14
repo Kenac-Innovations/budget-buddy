@@ -38,12 +38,15 @@ export async function findKenacOffers(requirement: KenacRequirement, options: Fi
     const attachable = fit === "full" && ranked.usablePrice !== null;
     const price = attachable && offer.price ? LinePrice.parse({
       unitPrice: ranked.usablePrice!.toFixed(), currency: offer.price.currency,
+      ...(offer.sku.length <= 60 ? { product: { sku: offer.sku, name: offer.name,
+        ...(entries.find((entry) => entry.sku === offer.sku)?.imageUrl ?
+          { imageUrl: entries.find((entry) => entry.sku === offer.sku)!.imageUrl } : {}) } } : {}),
       evidence: { type: "OPERATOR_PRICE_LIST", reference: offer.price.reference,
         capturedAt: offer.price.capturedAt.toISOString(),
         ...(offer.price.validUntil ? { validUntil: offer.price.validUntil.toISOString() } : {}),
         supplier: { name: offer.supplierName, isOperator: true } },
     }) : null;
-    return { sku: offer.sku, name: offer.name, category: offer.category, attributes: offer.attributes,
+    return { product: price?.product, sku: offer.sku, name: offer.name, category: offer.category, attributes: offer.attributes,
       supplier: { name: offer.supplierName, isOperator: true }, fit,
       status: fit === "partial" ? "Unconfirmed fit" : attachable ? "Confirmed fit" : "Unusable price",
       attachable, price, priceIssue, constraintResults: ranked.constraintResults,

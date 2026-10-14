@@ -8,7 +8,7 @@ pnpm price-list:import ./kenac.csv --ref "Kenac price list 2026-10" --date 2026-
 
 `--ref` is required. `--date` is the date of the source price list, not the upload date. If omitted it defaults to today's UTC date; use that default only for a newly issued list. Reuse the original date and reference on a re-import so stale prices are not made to look fresh. The importer needs `DATABASE_URL` and loads `.env`.
 
-The exact headers are `sku,name,category,unit,price,currency,valid_until,attributes` (order may vary). UTF-8 with or without a BOM is supported. Export Excel lists as CSV first; XLSX input is not supported.
+The exact headers are `sku,name,category,unit,price,currency,valid_until,attributes` with optional `image_url` (order may vary). UTF-8 with or without a BOM is supported. Export Excel lists as CSV first; XLSX input is not supported.
 
 | Column | Format |
 | --- | --- |
@@ -19,6 +19,7 @@ The exact headers are `sku,name,category,unit,price,currency,valid_until,attribu
 | price | Nonnegative decimal string, up to six decimal places and 14 integer digits. No currency symbols or thousands separators. Blank is rejected; it never becomes zero. |
 | currency | Three uppercase letters, e.g. `USD`. Prices in different currencies are not converted by the lookup. |
 | valid_until | A real `YYYY-MM-DD` date or blank. Valid through the end of that day in UTC. Expired items remain available for inspection but cannot be attached. |
+| image_url | Optional local asset path starting with a single `/`, or an `https://` URL, up to 500 characters. Blank clears the image. Assets must be supplied by Kenac. |
 | attributes | JSON object or `key=value;key=value`. Blank means unknown specifications. Keys are lowercase letters, digits and underscores, starting with a letter. Values are strings, finite numbers or booleans; no nested objects or arrays. |
 
 The advisor uses these categories: **Hardware**, **Software and subscriptions**, **Connectivity**, **Cloud and hosting**, **Cybersecurity**, **Professional services**, **Support and maintenance**, **Training**, **Power**.
@@ -27,7 +28,9 @@ For example, `ram_gb=16;cpu_class=i5;warranty_years=3` or `{"ram_gb":16,"cpu_cla
 
 The sample at `src/lib/pricing/__fixtures__/kenac-sample.csv` contains **synthetic test prices**, not Kenac commercial evidence. Never import it into a pilot or production database. It is not loaded automatically by runtime or demo mode. No genuine Kenac list has been supplied yet; without one, lines stay Unpriced or use the user's quote or estimate.
 
-An import atomically upserts the Kenac supplier (`isOperator: true`) and items by supplier/SKU, restoring previously deactivated items. Missing SKUs are deactivated, never deleted. Rejected SKUs retain their last accepted record. Empty/all-invalid files leave the entire catalogue unchanged. A malformed CSV or incorrect header aborts before writes. Counts and row numbers with validation reasons are printed; any rejection returns exit code 1 even if the valid rows were saved. Correct and re-import the complete file. Imports are serialised with a database transaction lock. No schema migration is needed.
+An import atomically upserts the Kenac supplier (`isOperator: true`) and items by supplier/SKU, restoring previously deactivated items. Missing SKUs are deactivated, never deleted. Rejected SKUs retain their last accepted record. Empty/all-invalid files leave the entire catalogue unchanged. A malformed CSV or incorrect header aborts before writes. Counts and row numbers with validation reasons are printed; any rejection returns exit code 1 even if the valid rows were saved. Correct and re-import the complete file. Imports are serialised with a database transaction lock. Apply the additive catalogue-image migration before importing images.
+
+Full usable offers also return `product {sku, name, imageUrl}` inside their attachable `price`. Pass that exact price into `price_line` to retain the image.
 
 Every usable offer has `OPERATOR_PRICE_LIST` evidence: reference `<ref> · <sku>`, captured date from `--date`, validity from the row, and `supplier.isOperator: true`. Full fits rank above unconfirmed fits. Failed constraints exclude an item. Partial fits, expired prices, missing source metadata and currency mismatches cannot authorize `price_line`. Lists older than 90 days without a validity date carry the shared evidence policy's refresh warning. Prices alone do not include installation, training, support or taxes unless the source and specification say so; those scope questions remain with the advisor.
 

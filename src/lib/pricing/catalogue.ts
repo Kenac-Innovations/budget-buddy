@@ -1,12 +1,13 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, type Prisma } from "@/generated/prisma/client";
 import { z } from "zod";
-import { Attributes, Category, Currency, Money, PriceListMetadata, parsePriceList } from "./format";
+import { Attributes, Category, Currency, ImageUrl, Money, PriceListMetadata, parsePriceList } from "./format";
 
 export const KENAC_SUPPLIER_ID = "kenac";
 export const KENAC_NAME = "Kenac Computer Systems";
 export const CatalogueEntry = z.object({
   id: z.string().min(1), sku: z.string().min(1).max(80), name: z.string().min(1).max(160),
+  imageUrl: ImageUrl.nullable().optional(),
   category: Category, attributes: Attributes, unit: z.string().min(1).max(30).nullable(),
   price: Money.nullable(), currency: Currency.nullable(), priceListRef: z.string().min(1).max(200).nullable(),
   priceListDate: z.date().nullable(), validUntil: z.date().nullable(), active: z.boolean(),
@@ -58,7 +59,7 @@ export async function importPriceList(prisma: Pick<PrismaClient, "$transaction">
     let updated = 0;
     for (const row of parsed.rows) {
       const data = { name: row.name, category: row.category, unit: row.unit, price: row.price,
-        currency: row.currency, attributes: row.attributes, active: true,
+        imageUrl: row.image_url || null, currency: row.currency, attributes: row.attributes, active: true,
         priceListRef: meta.reference, priceListDate: new Date(`${meta.date}T00:00:00.000Z`),
         validUntil: row.valid_until ? new Date(`${row.valid_until}T23:59:59.999Z`) : null };
       await tx.catalogueItem.upsert({ where: { supplierId_sku: { supplierId: supplier.id, sku: row.sku } },

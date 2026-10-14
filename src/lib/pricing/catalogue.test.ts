@@ -43,6 +43,15 @@ function database() {
 }
 
 describe("catalogue import", () => {
+  it("persists and clears optional image URLs in the same atomic snapshot", async () => {
+    const db = database();
+    const rows = csv.trim().split("\n");
+    const withImage = rows.map((row, index) => row + (index === 0 ? ",image_url" : ",/catalogue/demo/solar-ups.svg")).join("\n");
+    await importPriceList(db.prisma, withImage, meta);
+    expect(db.items.get("TEST-LAPTOP-16")?.imageUrl).toBe("/catalogue/demo/solar-ups.svg");
+    await importPriceList(db.prisma, csv, meta);
+    expect(db.items.get("TEST-LAPTOP-16")?.imageUrl).toBeNull();
+  });
   it("creates the sample items and re-imports without duplicates", async () => {
     const db = database();
     expect(await importPriceList(db.prisma, csv, meta)).toMatchObject({ created: 5, updated: 0, deactivated: 0, rejected: [], applied: true });

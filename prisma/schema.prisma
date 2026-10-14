@@ -257,6 +257,7 @@ model Supplier {
 }
 
 model CatalogueItem {
+  imageUrl      String?
   id            String    @id @default(cuid())
   supplierId    String
   sku           String
