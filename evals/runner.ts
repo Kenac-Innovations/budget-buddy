@@ -74,6 +74,10 @@ export async function runScenario(scenario: Scenario, options: {
 }
 
 export async function main(args = process.argv.slice(2)) {
+  if (args.includes("--help") || args.includes("-h")) {
+    process.stdout.write("Usage: pnpm eval [--scenario n] [--mode demo|live] [--base-url http://localhost:3208]\nDemo uses scripted users; live requires OPENAI_API_KEY and an account-confirmed OPENAI_MODEL.\n");
+    return 0;
+  }
   const options = parseOptions(args);
   const all = await loadScenarios();
   const scenarios = options.scenario ? all.filter((s) => s.id === options.scenario) : all;
