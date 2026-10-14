@@ -13,6 +13,7 @@ import { deriveHud,pathIds,sharePercent } from "./plan/derive";
 import { BudgetHud } from "./plan/budget-hud";
 import { LineVisual } from "./plan/visual";
 import { money } from "./plan/money";
+import { useResponseCheck } from "./plan/use-response-check";
 import { DetailSheet } from "./plan/detail-sheet";
 const DISPOSITION={
   fund: { label: "Fund",tone: "green" },pilot: { label: "Pilot",tone: "slate" },
@@ -105,12 +106,13 @@ function SourceDate({ date }: {
 }) {
   return new Date(`${date.slice(0,7)}-01T00:00:00Z`).toLocaleDateString("en-GB",{ month: "short",year: "numeric",timeZone: "UTC" });
 }
-export const PlanView=memo(function PlanView({ plan,changed,disabled,onOp }: {
+export const PlanView=memo(function PlanView({ plan,changed,disabled,onOp: persistOp }: {
   plan: Plan;
   changed: Record<string,number>;
   disabled: boolean;
   onOp: (op: PlanOp) => Promise<boolean>;
 }) {
+  const onOp=useResponseCheck(plan.version,persistOp);
   const hud=useMemo(() => deriveHud(plan),[plan]);
   const [focused,setFocused]=useState<string|null>(null);
   const [category,setCategory]=useState<string|null>(null);

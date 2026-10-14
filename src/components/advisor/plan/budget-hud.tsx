@@ -1,27 +1,28 @@
 import Decimal from "decimal.js";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Plan } from "@/lib/plan/types";
 import { money } from "./money";
 import type { Hud } from "./derive";
 
-function AnimatedTotal({ value, currency }: { value: Decimal; currency: string }) {
+export function AnimatedTotal({ value, currency }: { value: Decimal; currency: string }) {
   const element = useRef<HTMLSpanElement>(null);
   const previous = useRef(new Decimal(0));
   const target = value.toString();
   useLayoutEffect(() => {
     const to = new Decimal(target), from = previous.current;
-    const start = performance.now();
+    // Commit the first eased step before paint, so feedback does not wait for a server reply or a second frame.
+    const start = performance.now() - 16;
     let frame = 0;
     const media = matchMedia("(prefers-reduced-motion: reduce)");
     const finish = () => { cancelAnimationFrame(frame); previous.current = to; if (element.current) element.current.textContent = money(to, currency); };
     const tick = (now: number) => {
-      const progress = Math.min(1, (now - start) / 600);
+      const progress = Math.max(0, Math.min(1, (now - start) / 600));
       const eased = 1 - Math.pow(1 - progress, 3);
       previous.current = from.plus(to.minus(from).times(eased.toString()));
       if (element.current) element.current.textContent = money(previous.current.toDecimalPlaces(2), currency);
       if (progress < 1) frame = requestAnimationFrame(tick);
     };
-    if (media.matches) finish(); else frame = requestAnimationFrame(tick);
+    if (media.matches) finish(); else tick(performance.now());
     const change = () => { if (media.matches) finish(); };
     media.addEventListener("change", change);
     return () => { cancelAnimationFrame(frame); media.removeEventListener("change", change); };
@@ -32,6 +33,16 @@ function monthLabel(month: string) {
   return new Date(`${month}-01T00:00:00Z`).toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" });
 }
 export function BudgetHud({ hud, plan, onCategory }: { hud: Hud; plan: Plan; onCategory: (category: string | null) => void }) {
+  const headline = useRef<HTMLDivElement>(null);
+  const [pinned, setPinned] = useState(false);
+  useEffect(() => {
+    const node = headline.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(([entry]) => setPinned(entry.boundingClientRect.bottom <= (entry.rootBounds?.top ?? 0)),
+      { root: node.closest(".bb-advisor-plan-panel") });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
   const [month, setMonth] = useState<string | null>(null);
   const { totals, categories } = hud;
   const currency = totals.reportingCurrency;
@@ -44,8 +55,14 @@ export function BudgetHud({ hud, plan, onCategory }: { hud: Hud; plan: Plan; onC
   });
   const hasAmount = totals.lines.some(l => l.reportingTotal !== null) || (hud.deferred.size > 0 && hud.hasBaselineAmount);
   const payments = month ? totals.lines.filter(l => l.reportingMonthly?.get(month)?.gt(0)) : [];
-  return <section className="bb-hud-budget" aria-label="Budget overview">
-    <div className="bb-hud-total-row">
+  return <>
+    <div className="bb-hud-live-total" data-visible={pinned} aria-hidden={!pinned}>
+      <div><span>Accepted spend</span><strong aria-label={hasAmount ? `${money(totals.reportingTotal, currency)}${hud.complete ? " planned spend" : " so far"}` : "Awaiting prices"}>
+        {hasAmount ? <><AnimatedTotal value={totals.reportingTotal} currency={currency} />{!hud.complete && " so far"}</> : "Awaiting prices"}
+      </strong><span>{hud.unpriced} unpriced</span></div>
+    </div>
+    <section className="bb-hud-budget" aria-label="Budget overview" data-total={totals.reportingTotal.toFixed(2)}>
+    <div ref={headline} className="bb-hud-total-row">
       <div><p className="bb-hud-eyebrow">{hud.complete ? "Planned spend" : "Accepted spend"}</p>
         <p className="bb-hud-total" aria-label={hasAmount ? `${money(totals.reportingTotal, currency)}${hud.complete ? " planned spend" : " so far"}` : "Awaiting prices"}>
           {hasAmount ? <><AnimatedTotal value={totals.reportingTotal} currency={currency} />{!hud.complete && <span aria-hidden> so far</span>}</> : <span className="bb-hud-awaiting">Awaiting prices</span>}
@@ -93,5 +110,5 @@ export function BudgetHud({ hud, plan, onCategory }: { hud: Hud; plan: Plan; onC
       <div className="bb-hud-payments" aria-live="polite">{month ? <><strong>{month} · {hasAmount ? money(totals.reportingMonthly.get(month)!, currency) : "No priced payments"}</strong>{payments.length ? <ul>{payments.map(l => <li key={l.id}>{plan.lines.find(p => p.id === l.id)?.title} <span>{money(l.reportingMonthly!.get(month)!, currency)}</span></li>)}</ul> : <p>No priced payments scheduled.</p>}</> : <p>Explore a month to see its payments.</p>}</div>
       <div className="sr-only"><table><caption>Monthly cash plan ({currency})</caption><thead><tr><th>Month</th><th>Total</th><th>Payments</th></tr></thead><tbody>{totals.months.map(m => <tr key={m}><th>{m}</th><td>{hasAmount ? totals.reportingMonthly.get(m)!.toFixed(2) : "No priced payments"}</td><td>{totals.lines.filter(l => l.reportingMonthly?.get(m)?.gt(0)).map(l => `${plan.lines.find(p => p.id === l.id)?.title}: ${l.reportingMonthly!.get(m)!.toFixed(2)}`).join("; ") || "No priced payments"}</td></tr>)}</tbody></table></div>
     </div>
-  </section>;
+  </section></>;
 }

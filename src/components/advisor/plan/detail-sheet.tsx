@@ -37,10 +37,10 @@ export function DetailSheet({ line, plan, actions, onClose }: {
     <section className="bb-hud-parts" aria-labelledby="purchase-parts-title">
       <h3 id="purchase-parts-title">Purchase scope</h3>
       <p>{line.initiativeId ? "Item and related costs recorded under this initiative." : "Recorded purchase item."}</p>
-      <ol>{parts.map((part, index) => <li key={part.id}>
+      <ol>{parts.map((part, index) => <li key={part.id} className={part.forgottenCost ? "bb-hud-part-spotted" : undefined}>
         <span className="bb-hud-part-index" aria-hidden>{String(index + 1).padStart(2, "0")}</span>
         <LineVisual line={part} />
-        <div><strong>{part.title}</strong><span>{part.quantity ?? "Confirm quantity"} {part.unit ?? "units"} · {part.paymentMonth ?? plan.profile.periodStart}</span>
+        <div><span className="bb-hud-part-kind">{index === 0 ? "Selected item" : "Related cost"}</span><strong>{part.title}</strong><span>{part.quantity ?? "Confirm quantity"} {part.unit ?? "units"} · {part.paymentMonth ?? plan.profile.periodStart}</span>
           {part.forgottenCost && <span className="bb-hud-marker"><Sparkles size={12} aria-hidden />Spotted · Forgotten cost</span>}
           {!part.price && <span>Unpriced</span>}
         </div>

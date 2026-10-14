@@ -12,9 +12,13 @@ export function LineVisual({ line, large = false }: { line: PlanLine; large?: bo
   const photo = safe && !failed;
   const illustration = !photo || url?.startsWith("/catalogue/demo/");
   return <figure className={`bb-hud-visual${large ? " bb-hud-visual-large" : ""}`}>
-    <Image unoptimized src={photo ? url : categoryIllustration(line.category)} width={large ? 400 : 84} height={large ? 250 : 84}
-      alt={photo ? product!.name : `${line.category} illustration`} onError={() => setFailed(true)} />
-    {illustration && <figcaption>Illustration</figcaption>}
+    <div className="bb-hud-visual-stage">
+      {photo ? <Image unoptimized src={url} width={large ? 400 : 84} height={large ? 250 : 84}
+        alt={product!.name} onError={() => setFailed(true)} /> :
+        <span className="bb-hud-category-art" role="img" aria-label={`${line.category} illustration`}
+          style={{ maskImage: `url("${categoryIllustration(line.category)}")`, WebkitMaskImage: `url("${categoryIllustration(line.category)}")` }} />}
+    </div>
+    <figcaption>{illustration ? "Illustration" : "Product image"}</figcaption>
     {large && product && <div className="mt-3 flex flex-wrap items-center justify-center gap-2"><Badge variant="secondary">Kenac</Badge><span>{product.name}</span></div>}
   </figure>;
 }
