@@ -214,7 +214,7 @@
       "deployment": "appliance",
       "description": "Integrated compute, storage and virtualisation platform. Confirm appliance cluster sizing, resilience and support."
     },
-    "image_url": "/catalogue/kenac/scale/SCALE-HYPERCONVERGED.webp"
+    "image_url": "/catalogue/kenac/scale/SCALE-HYPERCONVERGED.png"
   },
   {
     "sku": "CISCO-CATALYST",

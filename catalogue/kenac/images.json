@@ -88,14 +88,27 @@
     "file": "public/catalogue/kenac/hp/HP-PROBOOK.png",
     "source_page_url": "https://www.hp.com/us-en/laptops/business/probooks.html",
     "image_url": "https://www.hp.com/content/dam/sites/worldwide/laptops/work-laptops/probooks/media@2x.png",
-    "downloaded_at": "2026-10-14T14:53:31.667404+00:00",
+    "downloaded_at": "2026-10-14T15:51:47.139972+00:00",
     "vendor": "hp",
     "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner",
-    "width": 1520,
+    "width": 468,
     "height": 358,
     "format": "png",
-    "bytes": 36882,
-    "sha256": "a5dc0548e9e334157c8d3f1319671080ffc0d122b78607398d7fd0f72c632fd3"
+    "bytes": 34355,
+    "sha256": "a1d500adf7db35d819e514484f5bc6097f583a31ce7914adb1c6cca935cc1611",
+    "source_width": 1520,
+    "source_height": 358,
+    "source_sha256": "a5dc0548e9e334157c8d3f1319671080ffc0d122b78607398d7fd0f72c632fd3",
+    "transform": {
+      "operation": "crop",
+      "box": [
+        526,
+        0,
+        994,
+        358
+      ],
+      "note": "Trim plain white or transparent margins only; no resizing, retouching or product changes"
+    }
   },
   {
     "sku": "DELL-MONITORS",
@@ -142,30 +155,30 @@
   {
     "sku": "IBM-FLASHSYSTEM",
     "file": "public/catalogue/kenac/ibm/IBM-FLASHSYSTEM.jpg",
-    "source_page_url": "https://www.ibm.com/products/flashsystem-5300",
-    "image_url": "https://www.ibm.com/content/dam/worldwide-content/creative-assets/s-migr/ul/g/50/9b/flashsystem-5600-leadspace.png/_jcr_content/renditions/cq5dam.web.1280.1280.jpeg",
-    "downloaded_at": "2026-10-14T14:53:31.689134+00:00",
+    "source_page_url": "https://www.ibm.com/products/flashsystem-5600",
+    "image_url": "https://www.ibm.com/content/dam/worldwide-content/creative-assets/ibs/ul/g/ee/7c/flashsystem_5600_iso_wbackground_g20.png/_jcr_content/renditions/cq5dam.web.1280.1280.jpeg",
+    "downloaded_at": "2026-10-14T15:51:47.938375+00:00",
     "vendor": "ibm",
     "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner",
     "width": 1280,
-    "height": 468,
+    "height": 1280,
     "format": "jpeg",
-    "bytes": 67931,
-    "sha256": "85849b4d54fb8e6e9d39aa27b5f0e754726df905bb5d3dcb56b6b0163e0f10f4"
+    "bytes": 65566,
+    "sha256": "0baef5d1c987a274b4c1e20cc4d739ef016832831b7f498aaa649e0b0d837b7e"
   },
   {
     "sku": "SCALE-HYPERCONVERGED",
-    "file": "public/catalogue/kenac/scale/SCALE-HYPERCONVERGED.webp",
-    "source_page_url": "https://www.scalecomputing.com/sc-platform",
-    "image_url": "https://www.scalecomputing.com/images/products/SC_HyperCore_UI_2026.webp",
-    "downloaded_at": "2026-10-14T14:53:31.732105+00:00",
+    "file": "public/catalogue/kenac/scale/SCALE-HYPERCONVERGED.png",
+    "source_page_url": "https://www.scalecomputing.com/blog/the-he150-small-footprint-big-possibilities",
+    "image_url": "https://www.scalecomputing.com/imager/images/blog/49766/HE150_bdf9dfdf21c0ccb706be7ce8ce043692.png",
+    "downloaded_at": "2026-10-14T15:53:29.393918+00:00",
     "vendor": "scale",
     "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner",
-    "width": 4535,
-    "height": 2869,
-    "format": "webp",
-    "bytes": 243226,
-    "sha256": "391d494c8d05be702022e57933121a5a6a2ff699b050eeb81afd33e97f87f9b1"
+    "width": 672,
+    "height": 260,
+    "format": "png",
+    "bytes": 190803,
+    "sha256": "ef6368eb167bfe85c54e2848fcf1b3cf14f52adc21e56e60c5132c956ff071e2"
   },
   {
     "sku": "CISCO-CATALYST",
@@ -240,30 +253,58 @@
   {
     "sku": "FORTINET-FORTISWITCH",
     "file": "public/catalogue/kenac/fortinet/FORTINET-FORTISWITCH.png",
-    "source_page_url": "https://www.fortinet.com/products/ethernet-switches",
-    "image_url": "https://www.fortinet.com/content/dam/fortinet/images/products/laptop-ui-screenshot-fortiswitch-management.png",
-    "downloaded_at": "2026-10-14T14:53:31.741740+00:00",
+    "source_page_url": "https://www.fortinet.com/corporate/about-us/newsroom/press-kit",
+    "image_url": "https://www.fortinet.com/content/dam/fortinet/images/press-kit/product-highres/FortiSwitch.zip",
+    "downloaded_at": "2026-10-14T15:53:48.977324+00:00",
     "vendor": "fortinet",
     "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner",
-    "width": 986,
-    "height": 637,
+    "width": 2280,
+    "height": 620,
     "format": "png",
-    "bytes": 175109,
-    "sha256": "08446c7d0b692ca7c968b1d38e57a473766af8fc175e6212a08196fb79a042c1"
+    "bytes": 703255,
+    "sha256": "c283c132d5b54a07e9dd62d9e015ea5cdfd05c6c0f6ae3abd16c75d30476572c",
+    "source_width": 2280,
+    "source_height": 1140,
+    "source_sha256": "3a4d6507d3fcf68e75a4cce125c08bf9b58d92eb76d67289abd45d4b1645e45a",
+    "transform": {
+      "operation": "crop",
+      "box": [
+        0,
+        110,
+        2280,
+        730
+      ],
+      "note": "Trim plain white or transparent margins only; no resizing, retouching or product changes"
+    },
+    "archive_member": "FS-648F-FPOE.png"
   },
   {
     "sku": "FORTINET-FORTIAP",
     "file": "public/catalogue/kenac/fortinet/FORTINET-FORTIAP.png",
-    "source_page_url": "https://www.fortinet.com/products/wireless-access-points",
-    "image_url": "https://www.fortinet.com/content/dam/fortinet/images/products/laptop-ui-screenshot-fortiap.png",
-    "downloaded_at": "2026-10-14T14:53:31.742986+00:00",
+    "source_page_url": "https://www.fortinet.com/corporate/about-us/newsroom/press-kit",
+    "image_url": "https://www.fortinet.com/content/dam/fortinet/images/press-kit/product-highres/FortiAP.zip",
+    "downloaded_at": "2026-10-14T15:56:59.565487+00:00",
     "vendor": "fortinet",
     "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner",
-    "width": 986,
-    "height": 637,
+    "width": 1220,
+    "height": 440,
     "format": "png",
-    "bytes": 77125,
-    "sha256": "303e4aed813b88b999e69f4ac8a0e48090b9ac273ca4acc621eeca599c403056"
+    "bytes": 296861,
+    "sha256": "094da5ea41ce5ace15fd9d7b52fd9831ca9f6e6f33048a3a87278be62874dc35",
+    "archive_member": "FortiAP-441K.png",
+    "source_width": 1440,
+    "source_height": 960,
+    "source_sha256": "7993e3921722344a7191c6f511f00783d74b4b7707fa4e3281fcd4f4fc0f619d",
+    "transform": {
+      "operation": "crop",
+      "box": [
+        100,
+        175,
+        1320,
+        615
+      ],
+      "note": "Trim transparent margins only; no resizing, retouching or product changes"
+    }
   },
   {
     "sku": "FORTINET-FORTIANALYZER",
