@@ -59,7 +59,10 @@ export async function sendPlanEmail(session: AdvisorSessionRecord, options: Emai
     const contact = ContactInput.parse(session.contact);
     const plan = Plan.parse(session.plan);
     const totals = planTotals(plan);
-    const summary = `${plan.objectives.filter((o) => o.state === "accepted").length} objectives, ${plan.initiatives.filter((i) => i.state === "accepted").length} initiatives, ${totals.reportingCurrency} ${totals.reportingTotal.toFixed(2)} planned so far, and ${totals.unpricedLineIds.length} lines still to price${totals.unconvertedLineIds.length ? `; ${totals.unconvertedLineIds.length} lines need an exchange rate` : ""}.`;
+    const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+    const money = `${totals.reportingCurrency === "USD" ? "US$" : `${totals.reportingCurrency} `}${totals.reportingTotal.toNumber().toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+    const unconverted = totals.unconvertedLineIds.length ? `; ${count(totals.unconvertedLineIds.length, "line needs", "lines need")} an exchange rate` : "";
+    const summary = `${count(plan.objectives.filter((o) => o.state === "accepted").length, "objective", "objectives")}, ${count(plan.initiatives.filter((i) => i.state === "accepted").length, "initiative", "initiatives")}, ${money} planned so far, and ${count(totals.unpricedLineIds.length, "line", "lines")} still to price${unconverted}.`;
     const builder = options.buildWorkbook === undefined ? await optionalWorkbook() : options.buildWorkbook;
     const attachments = builder ? [{
       filename: "ICT-plan-2027.xlsx",

@@ -28,17 +28,20 @@ describe("plan email", () => {
     const mail = send.mock.calls[0][0];
     expect(mail.text).toContain(`${env.APP_URL}/r/${session.token}`);
     expect(mail.html).toContain(`${env.APP_URL}/r/${session.token}`);
-    expect(mail.text).toContain("1 lines still to price");
+    expect(mail.text).toContain("1 line still to price");
     expect(mail.text).toContain("Open your private return link first");
     expect(mail.text).toContain("Kenac Computer Systems");
   });
 
-  it("feature-detects the absent workbook module and sends the export link", async () => {
+  it("attaches the workbook by default now that the export module exists", async () => {
     const session = await savedSession();
     const transport = nodemailer.createTransport({ streamTransport: true, buffer: true });
     const send = vi.spyOn(transport, "sendMail");
     expect((await sendPlanEmail(session, { env, transport })).emailed).toBe(true);
-    expect(send.mock.calls[0][0].text).toContain(`${env.APP_URL}/api/export/xlsx`);
+    const mail = send.mock.calls[0][0];
+    expect(mail.text).toContain("Your Excel file is attached.");
+    expect(mail.text).not.toContain("US$0.00");
+    expect(mail.attachments).toHaveLength(1);
   });
 
   it("attaches T5's workbook and supplies saved organisation and role", async () => {
