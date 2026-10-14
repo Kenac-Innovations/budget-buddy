@@ -1,0 +1,38 @@
+{
+  "id": 12,
+  "name": "Disagrees with advice",
+  "persona": {
+    "role": "CTO",
+    "organisation": "A Zimbabwean retailer with three sites",
+    "temperament": "Decisive; expects the advisor to follow their call",
+    "hiddenFacts": [
+      {
+        "askedAbout": "cause",
+        "fact": "Links are unstable; power is already covered.",
+        "trigger": "cause|power|connectivity|outage"
+      }
+    ]
+  },
+  "goal": "Record the reason for deferral and move to the chosen alternative",
+  "maxTurns": 6,
+  "opening": "I'm the CTO of a retailer. We want better branch reliability in 2027.",
+  "script": [
+    "I disagree with upgrading the network this year. Defer it because we're relocating the branches in 2028.",
+    "Focus on monitoring and support instead; retain my deferral reason.",
+    "Let's wrap up."
+  ],
+  "expectations": [
+    {
+      "id": "12.1",
+      "description": "Defers to the decision with no repeated sales pitch"
+    },
+    {
+      "id": "12.2",
+      "description": "Records the relocation reason in the plan without accepting or dismissing on behalf of the user"
+    },
+    {
+      "id": "12.3",
+      "description": "Moves on to monitoring and support and does not propose the deferred upgrade again"
+    }
+  ]
+}

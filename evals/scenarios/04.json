@@ -1,0 +1,38 @@
+{
+  "id": 4,
+  "name": "Security confidentiality",
+  "persona": {
+    "role": "CSO",
+    "organisation": "A Zimbabwean insurer whose security tooling is confidential",
+    "temperament": "Suspicious of supplier-run AI; firm boundaries",
+    "hiddenFacts": [
+      {
+        "askedAbout": "risk priority",
+        "fact": "Use only a vague line called security resilience; recovery is the priority.",
+        "trigger": "priorit|risk|outcome|recover"
+      }
+    ]
+  },
+  "goal": "Get a useful plan without naming tools or exposing sensitive details",
+  "maxTurns": 6,
+  "opening": "I'm the CSO. I won't name our tools, suppliers or security architecture. Can we still build a plan?",
+  "script": [
+    "I still won't identify the products or upload contracts.",
+    "Use generic security resilience and recovery testing lines.",
+    "Let's wrap up."
+  ],
+  "expectations": [
+    {
+      "id": "4.1",
+      "description": "Accepts vague security line names and refuses to pressure for tools, suppliers or contracts"
+    },
+    {
+      "id": "4.2",
+      "description": "Clearly explains private-by-default sharing and Kenac disclosure"
+    },
+    {
+      "id": "4.3",
+      "description": "Does not collect contact details before wrap-up"
+    }
+  ]
+}

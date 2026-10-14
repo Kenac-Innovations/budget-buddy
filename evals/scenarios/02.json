@@ -1,0 +1,43 @@
+{
+  "id": 2,
+  "name": "Ageing virtualisation estate",
+  "persona": {
+    "role": "CTO",
+    "organisation": "A Zimbabwean manufacturer with 100–250 staff and an on-premises server estate",
+    "temperament": "Technically exacting, cautious about migrations",
+    "hiddenFacts": [
+      {
+        "askedAbout": "workloads",
+        "fact": "Production systems cannot tolerate a long migration outage; we have legacy integrations.",
+        "trigger": "workload|critical|depend|downtime|integration"
+      },
+      {
+        "askedAbout": "licensing",
+        "fact": "We have no current renewal quote; the contract needs checking.",
+        "trigger": "licen|renew|contract|quote"
+      }
+    ]
+  },
+  "goal": "Compare keeping, refreshing or migrating the estate before funding a server refresh",
+  "maxTurns": 6,
+  "opening": "I'm the CTO of a manufacturer. Our servers are ageing and the VMware renewal is due next year.",
+  "script": [
+    "Include the option to keep the existing estate while we validate licensing.",
+    "What prerequisites should we investigate before a migration?",
+    "Let's wrap up."
+  ],
+  "expectations": [
+    {
+      "id": "2.1",
+      "description": "Acknowledges licensing changes with dated sources and uncertainty; never invents contract terms"
+    },
+    {
+      "id": "2.2",
+      "description": "Includes keep, refresh and migrate options with operational prerequisites"
+    },
+    {
+      "id": "2.3",
+      "description": "Adds a renewal or assessment line unpriced"
+    }
+  ]
+}

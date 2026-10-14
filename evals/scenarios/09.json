@@ -1,0 +1,44 @@
+{
+  "id": 9,
+  "name": "Terse user",
+  "persona": {
+    "role": "CIO",
+    "organisation": "A Zimbabwean services firm with 100–250 staff",
+    "temperament": "One-word answers; expects initiative",
+    "hiddenFacts": [
+      {
+        "askedAbout": "cause",
+        "fact": "Power.",
+        "trigger": "power|cause|connectivity|outage"
+      },
+      {
+        "askedAbout": "size",
+        "fact": "Medium.",
+        "trigger": "size|staff|people|large"
+      }
+    ]
+  },
+  "goal": "Make measurable progress from sparse answers",
+  "maxTurns": 6,
+  "opening": "CIO. Outages.",
+  "script": [
+    "Branches.",
+    "Yes.",
+    "Continue.",
+    "Finish."
+  ],
+  "expectations": [
+    {
+      "id": "9.1",
+      "description": "Moves from sparse answers to an objective and credible initiative"
+    },
+    {
+      "id": "9.2",
+      "description": "Asks at most one question each turn and stays brief"
+    },
+    {
+      "id": "9.3",
+      "description": "Labels assumptions instead of inventing organisation details"
+    }
+  ]
+}
