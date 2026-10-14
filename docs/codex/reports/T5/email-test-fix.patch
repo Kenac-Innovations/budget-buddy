@@ -1,0 +1,13 @@
+diff --git a/src/lib/email/plan-email.test.ts b/src/lib/email/plan-email.test.ts
+--- a/src/lib/email/plan-email.test.ts
++++ b/src/lib/email/plan-email.test.ts
+@@ -36,7 +36,7 @@
+-  it("feature-detects the absent workbook module and sends the export link", async () => {
++  it("sends the export link when the workbook builder is unavailable", async () => {
+     const session = await savedSession();
+     const transport = nodemailer.createTransport({ streamTransport: true, buffer: true });
+     const send = vi.spyOn(transport, "sendMail");
+-    expect((await sendPlanEmail(session, { env, transport })).emailed).toBe(true);
++    expect((await sendPlanEmail(session, { env, transport, buildWorkbook: null })).emailed).toBe(true);
+     expect(send.mock.calls[0][0].text).toContain(`${env.APP_URL}/api/export/xlsx`);
+   });
