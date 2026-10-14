@@ -1,5 +1,7 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { InMemorySessionStore } from "@/lib/session/store";
+import { applyOp } from "@/lib/plan/ops";
+import { emptyPlan } from "@/lib/plan/types";
 import { readEvents, type AdvisorEvent } from "./events";
 import { createTurnHandler } from "./turn-handler";
 import type { ResponsesClient } from "./agent";
@@ -28,6 +30,16 @@ it("creates a secure lazy session, streams parseable demo turns and continues vi
   for (const flag of ["HttpOnly", "Secure", "SameSite=Lax", "Max-Age=2592000", "Path=/"]) expect(cookie).toContain(flag);
   const events = await collect(first);
   expect(events.at(-1)?.type).toBe("done");
+  let replay = emptyPlan();
+  for (const event of events) if (event.type === "op") {
+    const applied = applyOp(replay, event.op, "advisor");
+    if (!applied.ok) throw new Error("Replay failed");
+    replay = applied.plan;
+  }
+  if (events.at(-1)?.type === "done") {
+    // JSON transport omits optional undefined fields in reducer objects.
+    expect(JSON.parse(JSON.stringify(events.at(-1)))).toEqual({ type: "done", plan: JSON.parse(JSON.stringify(replay)) });
+  }
   const second = await handler(request({ message: "Mostly power" }, cookie.split(";")[0]));
   const more = await collect(second);
   expect(second.headers.get("Set-Cookie")).toBeNull();

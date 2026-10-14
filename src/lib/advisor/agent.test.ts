@@ -36,6 +36,25 @@ async function setup() {
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllEnvs(); });
 
 describe("Responses advisor loop", () => {
+  it("applies and persists a completed function before consuming the next text chunk in the same response", async () => {
+    const state = await setup();
+    const call = { type: "function_call", id: "fc1", call_id: "c1", name: "add_objective", arguments: '{"title":"Cut outages"}' };
+    let round = 0;
+    const client: ResponsesClient = { responses: { create: async () => (async function* () {
+      if (round++ === 0) {
+        yield { type: "response.output_item.added", output_index: 0, item: { ...call, arguments: "" } };
+        yield { type: "response.function_call_arguments.done", item_id: "fc1", arguments: call.arguments };
+        expect(state.events.some((e) => e.type === "op")).toBe(true);
+        expect((await state.store.findByToken(state.session.token))?.plan.objectives).toHaveLength(1);
+        yield { type: "response.output_text.delta", delta: "I've sketched the objective." };
+        yield { type: "response.completed", response: { output: [call, { type: "message", id: "m1", role: "assistant", status: "completed", content: [{ type: "output_text", text: "I've sketched the objective.", annotations: [] }] }] } };
+      } else for (const event of textRound("Power comes first.")) yield event;
+    })() } };
+    await runAgent({ ...state, client });
+    expect(state.events.some((e) => e.type === "error")).toBe(false);
+    expect(state.events.filter((e) => e.type === "op")).toHaveLength(1);
+  });
+
   it("emits durable ops before text ends and done equals replay; calls execute only once", async () => {
     const state = await setup();
     const client = stub([toolRound("add_objective", { title: "Cut outages", measure: null }),

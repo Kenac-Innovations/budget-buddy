@@ -35,7 +35,7 @@ const streamEvent = z.discriminatedUnion("type", [
   z.object({ type: z.literal("response.incomplete") }),
   z.object({ type: z.literal("error"), code: z.string().nullish() }),
 ]);
-const handledTypes = new Set(streamEvent.options.map((s) => s.shape.type.value));
+const handledTypes = new Set<string>(streamEvent.options.map((s) => s.shape.type.value));
 
 class TurnFailure extends Error {
   constructor(public kind: "timeout" | "limit" | "provider" | "model" | "configuration" | "storage") { super(kind); }
@@ -148,7 +148,7 @@ export async function runAgent(options: AgentOptions): Promise<Plan> {
           const next = await untilAbort(iterator.next(), signal);
           if (next.done) break;
           const envelope = z.object({ type: z.string() }).parse(next.value);
-          if (!handledTypes.has(envelope.type as never)) continue;
+          if (!handledTypes.has(envelope.type)) continue;
           const event = streamEvent.parse(next.value);
           switch (event.type) {
             case "response.output_text.delta":
