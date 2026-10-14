@@ -2,7 +2,9 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import type { Plan, PlanLine } from "@/lib/plan/types";
+import { catalogueDisplay } from "@/lib/pricing/catalogue-display";
 import { quoteRequest } from "./derive";
 import { LineVisual } from "./visual";
 import { formatDate, formatMonth, formatMonthRange } from "../dates";
@@ -19,6 +21,7 @@ export function DetailSheet({ line, plan, actions, onClose }: {
     return () => { element.close(); trigger?.focus(); };
   }, []);
   const evidence = line.price?.evidence;
+  const supply = catalogueDisplay(line);
   const parts = [line, ...plan.lines.filter(part => part.id !== line.id && line.initiativeId !== null && part.initiativeId === line.initiativeId && part.state !== "dismissed")];
   return createPortal(<dialog ref={dialog} className="bb-hud-detail" aria-labelledby="line-detail-title"
     onCancel={e => { e.preventDefault(); e.stopPropagation(); onClose(); }}
@@ -34,18 +37,22 @@ export function DetailSheet({ line, plan, actions, onClose }: {
     <header><p className="text-caption text-ink-2">Budget line · Private</p><Button variant="ghost" size="icon" aria-label="Close line details" onClick={onClose}><X /></Button></header>
     <LineVisual key={line.price?.product?.imageUrl} line={line} large />
     <h2 id="line-detail-title" className="mt-6 text-page-title">{line.title}</h2>
+    {supply && <p className="mt-2 text-body-sm text-ink-2">{supply.label}</p>}
     <p className="mt-2 text-body-sm text-ink-2">{line.note ?? "Specifications to confirm before requesting a quote."}</p>
     <section className="bb-hud-parts" aria-labelledby="purchase-parts-title">
       <h3 id="purchase-parts-title">Purchase scope</h3>
       <p>{line.initiativeId ? "Item and related costs recorded under this initiative." : "Recorded purchase item."}</p>
-      <ol>{parts.map((part, index) => <li key={part.id} className={part.forgottenCost ? "bb-hud-part-spotted" : undefined}>
+      <ol>{parts.map((part, index) => {
+        const partSupply = catalogueDisplay(part);
+        return <li key={part.id} className={part.forgottenCost ? "bb-hud-part-spotted" : undefined}>
         <span className="bb-hud-part-index" aria-hidden>{String(index + 1).padStart(2, "0")}</span>
         <LineVisual line={part} />
         <div><span className="bb-hud-part-kind">{index === 0 ? "Selected item" : "Related cost"}</span><strong>{part.title}</strong><span>{part.quantity ?? "Confirm quantity"} {part.unit ?? "units"} · {formatMonth(part.paymentMonth ?? plan.profile.periodStart)}</span>
           {part.forgottenCost && <span className="bb-hud-marker"><Sparkles size={12} aria-hidden />Spotted · Forgotten cost</span>}
           {!part.price && <span>Unpriced</span>}
+          {partSupply && <span><Badge variant="secondary">Kenac</Badge> {partSupply.label}</span>}
         </div>
-      </li>)}</ol>
+      </li>; })}</ol>
       {parts.length === 1 && <p>Other costs are not recorded yet. Confirm accessories, implementation, training and disposal where needed.</p>}
     </section>
     <dl className="bb-hud-specs">
@@ -59,6 +66,7 @@ export function DetailSheet({ line, plan, actions, onClose }: {
       <dt>Valid until</dt><dd>{evidence?.validUntil ? formatDate(evidence.validUntil) : "Not specified"}</dd>
     </dl>
     {evidence?.type === "OPERATOR_PRICE_LIST" && <p className="bb-hud-fit">Kenac price-list item attached for this line. {line.note ?? "Confirm specification, quantity and delivery scope before purchase."}</p>}
+    {supply && <p className="bb-hud-fit">{supply.fitNote}</p>}
     <Button variant="outline" onClick={async () => {
       try { await navigator.clipboard.writeText(quoteRequest(line, plan.profile.periodStart)); setCopy("Copied"); }
       catch { setCopy("Copy unavailable. Select the request below."); }
