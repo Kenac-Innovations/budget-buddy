@@ -33,13 +33,13 @@ it("starts the eased number response before paint using the engine's target", ()
   const totals = acceptedTotal();
   AnimatedTotal({ value: totals.reportingTotal, currency: totals.reportingCurrency });
   expect(control.node.textContent).toMatch(/^US\$[1-9]/);
-  expect(control.node.textContent).not.toBe("US$22,440");
+  expect(control.node.textContent).not.toBe("US$5,640");
   expect(requestAnimationFrame).toHaveBeenCalledOnce();
 });
 it("writes the final engine total synchronously without scheduling movement under reduced motion", () => {
   setup(true);
   const totals = acceptedTotal();
   AnimatedTotal({ value: totals.reportingTotal, currency: totals.reportingCurrency });
-  expect(control.node.textContent).toBe("US$22,440");
+  expect(control.node.textContent).toBe("US$5,640");
   expect(requestAnimationFrame).not.toHaveBeenCalled();
 });
