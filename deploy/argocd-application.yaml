@@ -1,0 +1,28 @@
+# Register outside deploy/k8s to avoid recursively creating the Application.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: budget-buddy
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: budget-buddy
+    app.kubernetes.io/component: argocd
+    app.kubernetes.io/part-of: budget-buddy
+  finalizers: [resources-finalizer.argocd.argoproj.io]
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Kenac-Innovations/kenac-gitops
+    targetRevision: HEAD
+    path: projects/budget-buddy/k8s
+    directory: {recurse: false}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: budget-buddy
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
+    syncOptions: [ServerSideApply=true, CreateNamespace=true, PrunePropagationPolicy=foreground, PruneLast=true]
+    retry:
+      limit: 5
+      backoff: {duration: 5s, factor: 2, maxDuration: 3m}
+  revisionHistoryLimit: 10

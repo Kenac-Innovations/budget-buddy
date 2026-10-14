@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
 
@@ -17,11 +18,12 @@ export const metadata: Metadata = {
 // Each user's theme choice is stored per browser, as in Humaflow; first visit follows the system.
 const themeScript = `try{var t=localStorage.getItem("bb-theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("hf-theme-dark")}catch(e){}`;
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <html lang="en" className={hanken.variable} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>{children}</body>
     </html>
