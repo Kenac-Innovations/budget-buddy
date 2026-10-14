@@ -12,6 +12,7 @@
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
+    "price-list:import": "tsx scripts/import-price-list.ts",
     "tokens": "node scripts/build-tokens.mjs",
     "retention": "tsx scripts/retention.ts",
     "eval": "tsx evals/cli.ts"
@@ -21,6 +22,7 @@
     "@prisma/client": "^7.9.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "csv-parse": "^7.0.3",
     "decimal.js": "^10.6.0",
     "dotenv": "^18.0.7",
     "lucide-react": "^1.56.0",
