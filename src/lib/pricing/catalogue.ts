@@ -60,7 +60,8 @@ export async function importPriceList(prisma: Pick<PrismaClient, "$transaction">
     for (const row of parsed.rows) {
       const data = { name: row.name, category: row.category, unit: row.unit, price: row.price,
         imageUrl: row.image_url || null, currency: row.currency, attributes: row.attributes, active: true,
-        priceListRef: meta.reference, priceListDate: new Date(`${meta.date}T00:00:00.000Z`),
+        priceListRef: row.price === null ? null : meta.reference,
+        priceListDate: row.price === null ? null : new Date(`${meta.date}T00:00:00.000Z`),
         validUntil: row.valid_until ? new Date(`${row.valid_until}T23:59:59.999Z`) : null };
       await tx.catalogueItem.upsert({ where: { supplierId_sku: { supplierId: supplier.id, sku: row.sku } },
         create: { ...data, supplierId: supplier.id, sku: row.sku }, update: data });

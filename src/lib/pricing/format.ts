@@ -3,7 +3,8 @@ import { parse } from "csv-parse/sync";
 import { z } from "zod";
 
 export const CATEGORIES = ["Hardware", "Software and subscriptions", "Connectivity", "Cloud and hosting",
-  "Cybersecurity", "Professional services", "Support and maintenance", "Training", "Power"] as const;
+  "Cybersecurity", "Professional services", "Support and maintenance", "Training", "Power",
+  "Servers and storage", "Networking", "Backup and recovery", "Data and analytics"] as const;
 export const Category = z.string().trim().transform((value) =>
   CATEGORIES.find((category) => category.toLowerCase() === value.toLowerCase()) ?? value)
   .pipe(z.enum(CATEGORIES));
@@ -35,10 +36,19 @@ export const ImageUrl = z.string().trim().max(500).refine((value) => {
 
 export const PriceListRow = z.object({
   sku: z.string().trim().min(1).max(80), name: z.string().trim().min(1).max(160), category: Category,
-  unit: z.string().trim().min(1).max(30), price: Money, currency: Currency,
+  unit: z.string().trim().min(1).max(30),
+  price: z.union([z.literal(""), Money]).transform(value => value === "" ? null : value),
+  currency: z.union([z.literal(""), Currency]).transform(value => value === "" ? null : value),
   image_url: ImageUrl.optional(),
   valid_until: z.union([z.literal(""), IsoDay]), attributes: Attributes,
-}).strict();
+}).strict().superRefine((row, context) => {
+  if (row.price === null && (row.currency !== null || row.valid_until !== "")) {
+    context.addIssue({ code: "custom", path: ["price"], message: "Unpriced items require blank currency and valid_until" });
+  }
+  if (row.price !== null && row.currency === null) {
+    context.addIssue({ code: "custom", path: ["currency"], message: "A priced item requires a currency" });
+  }
+});
 export type PriceListRow = z.infer<typeof PriceListRow>;
 const HEADERS = ["sku", "name", "category", "unit", "price", "currency", "valid_until", "attributes"];
 export interface ParsedPriceList {

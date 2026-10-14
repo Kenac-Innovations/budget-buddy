@@ -3,6 +3,7 @@ import { LinePrice } from "@/lib/plan/types";
 import { matchOffers, type Offer } from "@/lib/sourcing/match";
 import { CatalogueEntry, PrismaCatalogue, getPricingClient, type CatalogueReader } from "./catalogue";
 import { AttributeKey, AttributeValue, Category, Currency } from "./format";
+import { loadBundledCatalogue } from "./bundled-catalogue";
 
 export const ConstraintInput = z.union([
   z.object({ key: AttributeKey, op: z.literal("eq"), value: AttributeValue }).strict(),
@@ -18,8 +19,9 @@ export async function findKenacOffers(requirement: KenacRequirement, options: Fi
   const unit = z.string().trim().min(1).max(30).optional().parse(options.unit);
   const asOf = z.date().parse(options.asOf ?? new Date());
   const currency = Currency.parse(options.currency ?? "USD");
-  const prisma = options.catalogue ? undefined : getPricingClient();
-  const catalogue = options.catalogue ?? (prisma ? new PrismaCatalogue(prisma) : undefined);
+  const demo = process.env.ADVISOR_MODE === "demo";
+  const prisma = options.catalogue || demo ? undefined : getPricingClient();
+  const catalogue = options.catalogue ?? (demo ? loadBundledCatalogue() : prisma ? new PrismaCatalogue(prisma) : undefined);
   const entries = z.array(CatalogueEntry).parse(catalogue ? await catalogue.loadActive(req.category) : []);
   const offers: Offer[] = entries.filter((entry) => entry.active).map((entry) => ({
     supplierId: entry.supplier.id, supplierName: entry.supplier.name, isOperator: true,
@@ -46,9 +48,13 @@ export async function findKenacOffers(requirement: KenacRequirement, options: Fi
         ...(offer.price.validUntil ? { validUntil: offer.price.validUntil.toISOString() } : {}),
         supplier: { name: offer.supplierName, isOperator: true } },
     }) : null;
-    return { product: price?.product, sku: offer.sku, name: offer.name, category: offer.category, attributes: offer.attributes,
+    const entry = entries.find(entry => entry.sku === offer.sku)!;
+    const product = { sku: offer.sku, name: offer.name, ...(entry.imageUrl ? { imageUrl: entry.imageUrl } : {}) };
+    const unpriced = entry.price === null;
+    return { product, usablePrice: attachable ? ranked.usablePrice!.toFixed() : null,
+      sku: offer.sku, name: offer.name, category: offer.category, attributes: offer.attributes,
       supplier: { name: offer.supplierName, isOperator: true }, fit,
-      status: fit === "partial" ? "Unconfirmed fit" : attachable ? "Confirmed fit" : "Unusable price",
+      status: fit === "partial" ? "Unconfirmed fit" : unpriced ? "Available through Kenac · price on request" : attachable ? "Confirmed fit" : "Unusable price",
       attachable, price, priceIssue, constraintResults: ranked.constraintResults,
       reasons: priceIssue === "expired" ? [...ranked.reasons.filter((reason) => !reason.startsWith("Price has expired")),
         "Expired · request an updated quote"] : ranked.reasons };

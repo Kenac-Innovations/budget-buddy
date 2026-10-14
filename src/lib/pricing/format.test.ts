@@ -28,6 +28,14 @@ describe("price-list format", () => {
       expect(parsed.rows).toEqual([]);
       expect(parsed.rejected[0].reasons.join()).toContain("price:");
     });
+  it("accepts blank monetary fields as unknown, while keeping explicit zero priced", () => {
+    expect(parsePriceList(header + "A,Family,Networking,device,,,,").rows[0])
+      .toMatchObject({ price: null, currency: null, valid_until: "" });
+    expect(parsePriceList(header + "A,Family,Networking,device,0,USD,,").rows[0].price).toBe("0");
+    for (const values of [",USD,", ",,2027-01-01", "1,,"]) {
+      expect(parsePriceList(header + `A,Family,Networking,device,${values},`).rejected).toHaveLength(1);
+    }
+  });
   it("preserves exact large money amounts", () => {
     expect(parsePriceList(header + "A,Item,Hardware,unit,99999999999999.999999,USD,,").rows[0].price)
       .toBe("99999999999999.999999");

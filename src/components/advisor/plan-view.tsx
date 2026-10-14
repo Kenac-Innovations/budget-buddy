@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { EVIDENCE_STATUS,StatusPill } from "@/components/ui/status-pill";
 import { PlanOp } from "@/lib/plan/ops";
 import type { ItemState,Plan,PlanLine } from "@/lib/plan/types";
+import { catalogueDisplay } from "@/lib/pricing/catalogue-display";
 import { cn } from "@/lib/utils";
 import styles from "./styles";
 import { formatDate, formatMonth } from "./dates";
@@ -130,6 +131,7 @@ export const PlanView=memo(function PlanView({ plan,changed,disabled,onOp: persi
   const highlight=(id: string) => changed[id]? <span key={changed[id]} className="bb-hud-glow" aria-hidden />:null;
   const pending=(state: ItemState) => state==="proposed"? <span className="bb-hud-decision">Awaiting your decision</span>:null;
   const lineCard=(line: PlanLine) => {
+    const supply=catalogueDisplay(line);
     const total=hud.lineTotals.get(line.id);
     const deferred=Boolean(line.initiativeId&&hud.deferred.has(line.initiativeId));
     return <article key={line.id} {...nodeProps(line.id,line.state,line.forgottenCost)} className={cn(nodeProps(line.id,line.state,line.forgottenCost).className,"bb-hud-line",category&&category!==line.category&&"bb-hud-dim",category===line.category&&"bb-hud-category-active")}
@@ -138,11 +140,12 @@ export const PlanView=memo(function PlanView({ plan,changed,disabled,onOp: persi
       {highlight(line.id)}
       <div className="bb-hud-line-top"><LineVisual key={line.price?.product?.imageUrl} line={line} /><div className="min-w-0 flex-1">
         <div className="bb-hud-pills"><StatusPill map={EVIDENCE_STATUS} status={line.price?.evidence.type??"UNPRICED"} size="sm" />
-          {line.price?.evidence.type==="OPERATOR_PRICE_LIST"&&<Badge variant="secondary">Kenac</Badge>}
+          {(supply||line.price?.evidence.type==="OPERATOR_PRICE_LIST")&&<Badge variant="secondary">Kenac</Badge>}
           {line.forgottenCost&&<span className="bb-hud-marker"><Sparkles size={12} aria-hidden />Forgotten cost</span>}
         </div>
         <button className="bb-hud-line-title" onClick={() => setDetail(line.id)} aria-label={`View details for ${line.title}`}>{line.title}</button>
         {line.price?.evidence.type==="OPERATOR_PRICE_LIST"&&line.price.product&&<p className="text-caption text-ink-2">{line.price.product.name}</p>}
+        {supply&&<p className="text-caption text-ink-2">{supply.name}<br />{supply.label}</p>}
         <p className="mt-1 text-caption text-ink-2">{line.quantity??"Confirm quantity"} {line.unit??"units"} × {line.price? money(new Decimal(line.price.unitPrice),line.price.currency):"Unpriced"}{line.priceBasis==="bundle"&&" · Bundle price"}</p>
         <span className="bb-hud-timing">{line.frequency.replaceAll("_"," ")} · {formatMonth(line.paymentMonth??plan.profile.periodStart)}</span>
       </div></div>

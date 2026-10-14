@@ -87,7 +87,7 @@ const HUD_SCRIPT: ScriptedTurn[] = [
     ],
   },
   {
-    text: "Demo planning data, with illustrative prices only. Then power comes before the network. Your outages are mostly load-shedding, so solar and UPS at each branch will do more than any link upgrade. SD-WAN is worth investigating once all four sites are live. And I've added your firewall renewal; it falls in August and tends to surprise people.",
+    text: "Demo planning data. Solar and UPS need quotes from power suppliers; they are not Kenac catalogue items. Then power comes before the network. Your outages are mostly load-shedding, so solar and UPS at each branch will do more than any link upgrade. SD-WAN is worth investigating once all four sites are live. And I've added your firewall renewal; it falls in August and tends to surprise people. For equipment sourcing, Kenac can supply FortiGate branch firewalls, ThinkPad laptops and Meraki switches; ask for scoped quotes and alternatives. These families stay unpriced.",
     ops: [
       {
         op: "add_initiative",
@@ -127,20 +127,12 @@ const HUD_SCRIPT: ScriptedTurn[] = [
         paymentMonth: "2027-03",
         forgottenCost: true,
       },
-      {
-        op: "price_line", id: "l5", price: {
-          unitPrice: "4200.00", currency: "USD",
-          evidence: { type: "OPERATOR_PRICE_LIST", reference: "Demo price list · not real prices", capturedAt: "2026-10-14", validUntil: "2027-12-31",
-            supplier: { name: "Kenac Computer Systems", isOperator: true } },
-          product: { sku: "DEMO-POWER", name: "Generic branch solar and UPS kit", imageUrl: "/catalogue/demo/solar-ups.svg" },
-        },
-      },
       { op: "add_line", initiativeId: "i4", title: "Branch connectivity service", category: "Connectivity", quantity: 4,
         unit: "sites", frequency: "monthly", paymentMonth: "2027-06", note: "Demo scope: service for four branches; confirm bandwidth and failover." },
       { op: "price_line", id: "l7", price: { unitPrice: "180.00", currency: "USD", evidence: {
         type: "OPERATOR_PRICE_LIST", reference: "Demo price list · not real prices", capturedAt: "2026-10-14", validUntil: "2027-12-31",
         supplier: { name: "Kenac Computer Systems", isOperator: true } } } },
-      { op: "add_line", initiativeId: "i3", title: "Branch power handover training", category: "Training", quantity: 4,
+      { op: "add_line", initiativeId: "i3", title: "Branch systems handover training", category: "Training", quantity: 4,
         unit: "sessions", frequency: "one_off", paymentMonth: "2027-04", forgottenCost: true },
       { op: "price_line", id: "l8", price: { unitPrice: "150.00", currency: "USD", evidence: {
         type: "OPERATOR_PRICE_LIST", reference: "Demo price list · not real prices", capturedAt: "2026-10-14", validUntil: "2027-12-31",
@@ -156,6 +148,15 @@ const HUD_SCRIPT: ScriptedTurn[] = [
         paymentMonth: "2027-08",
         note: "Carried forward. Renews every August.",
       },
+      { op: "add_line", initiativeId: "i4", title: "Branch firewalls", category: "Cybersecurity", quantity: 4,
+        unit: "device", frequency: "one_off", paymentMonth: "2027-06",
+        note: "Confirm inspected throughput, VPN requirements and security subscriptions." },
+      { op: "add_line", initiativeId: "i4", title: "Laptops for new branch staff", category: "Hardware", quantity: 20,
+        unit: "device", frequency: "one_off", paymentMonth: "2027-06",
+        note: "Confirm staff roles, configuration, warranty and delivery scope." },
+      { op: "add_line", initiativeId: "i4", title: "Branch switching and Wi-Fi", category: "Networking", quantity: 4,
+        unit: "device", frequency: "one_off", paymentMonth: "2027-06",
+        note: "Switch family shown. Quote switches and access points separately after a coverage and PoE design." },
     ],
   },
 ];

@@ -43,6 +43,18 @@ function database() {
 }
 
 describe("catalogue import", () => {
+  it("replaces a previously priced SKU with an unpriced family and clears its evidence", async () => {
+    const db = database();
+    await importPriceList(db.prisma, csv, meta);
+    const unpriced = csv.replace("1149.00,USD,2027-12-31", ",,");
+    const result = await importPriceList(db.prisma, unpriced, meta);
+    expect(result).toMatchObject({ updated: 5, rejected: [], applied: true });
+    expect(db.items.get("TEST-LAPTOP-16")).toMatchObject({ price: null, currency: null,
+      validUntil: null, priceListRef: null, priceListDate: null, active: true });
+    const before = structuredClone([...db.items]);
+    await importPriceList(db.prisma, unpriced, meta);
+    expect([...db.items]).toEqual(before);
+  });
   it("persists and clears optional image URLs in the same atomic snapshot", async () => {
     const db = database();
     const rows = csv.trim().split("\n");
