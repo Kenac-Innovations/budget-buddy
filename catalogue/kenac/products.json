@@ -1,0 +1,614 @@
+[
+  {
+    "sku": "LENOVO-THINKPAD-T",
+    "name": "Lenovo ThinkPad T-series",
+    "category": "Hardware",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "laptop",
+      "use_case": "business computing",
+      "description": "Mainstream business notebooks. Image shows a T14; configuration, warranty and local availability require confirmation."
+    },
+    "image_url": "/catalogue/kenac/lenovo/LENOVO-THINKPAD-T.jpg"
+  },
+  {
+    "sku": "LENOVO-THINKPAD-X1",
+    "name": "Lenovo ThinkPad X1 Carbon",
+    "category": "Hardware",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "laptop",
+      "use_case": "mobile business computing",
+      "description": "Premium lightweight business notebooks. Image shows X1 Carbon; select the generation and configuration before quoting."
+    },
+    "image_url": "/catalogue/kenac/lenovo/LENOVO-THINKPAD-X1.jpg"
+  },
+  {
+    "sku": "LENOVO-THINKCENTRE",
+    "name": "Lenovo ThinkCentre desktops",
+    "category": "Hardware",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "desktop",
+      "use_case": "business computing",
+      "description": "Business desktops in multiple form factors. Image shows a Tiny model; chassis, configuration and availability need confirmation."
+    },
+    "image_url": "/catalogue/kenac/lenovo/LENOVO-THINKCENTRE.jpg"
+  },
+  {
+    "sku": "DELL-LATITUDE",
+    "name": "Dell Latitude business laptops",
+    "category": "Hardware",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "laptop",
+      "use_case": "business computing",
+      "description": "Business notebook family. Image shows Latitude 5450; confirm stock and current equivalent before procurement."
+    },
+    "image_url": "/catalogue/kenac/dell/DELL-LATITUDE.png"
+  },
+  {
+    "sku": "DELL-OPTIPLEX",
+    "name": "Dell OptiPlex desktops",
+    "category": "Hardware",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "desktop",
+      "use_case": "business computing",
+      "description": "Business desktop family. Image shows a small form factor model; confirm stock and current equivalent before procurement."
+    },
+    "image_url": "/catalogue/kenac/dell/DELL-OPTIPLEX.png"
+  },
+  {
+    "sku": "HP-ELITEBOOK",
+    "name": "HP EliteBook business laptops",
+    "category": "Hardware",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "laptop",
+      "use_case": "business computing",
+      "description": "Business notebook family. Select the model, processor, memory and support term to match the role."
+    },
+    "image_url": "/catalogue/kenac/hp/HP-ELITEBOOK.png"
+  },
+  {
+    "sku": "HP-PROBOOK",
+    "name": "HP ProBook business laptops",
+    "category": "Hardware",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "laptop",
+      "use_case": "business computing",
+      "description": "Business notebook family for everyday work. Confirm the model, configuration and warranty before quoting."
+    },
+    "image_url": "/catalogue/kenac/hp/HP-PROBOOK.png"
+  },
+  {
+    "sku": "DELL-MONITORS",
+    "name": "Dell business monitors",
+    "category": "Hardware",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "monitor",
+      "use_case": "desktop displays",
+      "description": "Business displays including USB-C hub models. Image shows a representative monitor; size, resolution and ports vary."
+    },
+    "image_url": "/catalogue/kenac/dell/DELL-MONITORS.png"
+  },
+  {
+    "sku": "LENOVO-DOCKS",
+    "name": "Lenovo ThinkPad docks",
+    "category": "Hardware",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "dock",
+      "use_case": "desktop connectivity",
+      "description": "USB-C and Thunderbolt docking options. Confirm notebook compatibility, display requirements and power delivery."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "LENOVO-THINKSYSTEM",
+    "name": "Lenovo ThinkSystem rack servers",
+    "category": "Servers and storage",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "rack",
+      "use_case": "server workloads",
+      "deployment": "appliance",
+      "description": "Rack server family. Image shows SR650 V3; CPU, memory, drives, resilience and support must be sized for the workload."
+    },
+    "image_url": "/catalogue/kenac/lenovo/LENOVO-THINKSYSTEM.jpg"
+  },
+  {
+    "sku": "DELL-POWEREDGE",
+    "name": "Dell PowerEdge rack servers",
+    "category": "Servers and storage",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "rack",
+      "use_case": "server workloads",
+      "deployment": "appliance",
+      "description": "Rack server family. Image shows R760; processor, memory, drive and support configuration need workload sizing."
+    },
+    "image_url": "/catalogue/kenac/dell/DELL-POWEREDGE.png"
+  },
+  {
+    "sku": "IBM-POWER",
+    "name": "IBM Power Systems",
+    "category": "Servers and storage",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "server",
+      "use_case": "enterprise workloads",
+      "segment": "enterprise",
+      "deployment": "appliance",
+      "description": "Enterprise server family for mission-critical workloads. Confirm supported operating system, capacity and software entitlements."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "IBM-FLASHSYSTEM",
+    "name": "IBM FlashSystem storage",
+    "category": "Servers and storage",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "rack",
+      "use_case": "block storage",
+      "segment": "enterprise",
+      "deployment": "appliance",
+      "description": "All-flash enterprise storage family. Capacity, performance, resilience and software scope require workload sizing."
+    },
+    "image_url": "/catalogue/kenac/ibm/IBM-FLASHSYSTEM.jpg"
+  },
+  {
+    "sku": "SCALE-HYPERCONVERGED",
+    "name": "Scale Computing hyperconverged appliances",
+    "category": "Servers and storage",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "hyperconverged",
+      "use_case": "virtual infrastructure",
+      "deployment": "appliance",
+      "description": "Integrated compute, storage and virtualisation platform. Confirm appliance cluster sizing, resilience and support."
+    },
+    "image_url": "/catalogue/kenac/scale/SCALE-HYPERCONVERGED.webp"
+  },
+  {
+    "sku": "CISCO-CATALYST",
+    "name": "Cisco Catalyst switches",
+    "category": "Networking",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "switch",
+      "use_case": "campus switching",
+      "deployment": "appliance",
+      "description": "Campus switching family. Port count, PoE budget, uplinks, redundancy and licences depend on the selected model."
+    },
+    "image_url": "/catalogue/kenac/cisco/CISCO-CATALYST.png"
+  },
+  {
+    "sku": "CISCO-MERAKI-MS",
+    "name": "Cisco Meraki switches",
+    "category": "Networking",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "switch",
+      "use_case": "cloud-managed switching",
+      "deployment": "appliance",
+      "description": "Cloud-managed switching family. Confirm port count, PoE, uplinks and management licence term."
+    },
+    "image_url": "/catalogue/kenac/cisco/CISCO-MERAKI-MS.jpg"
+  },
+  {
+    "sku": "CISCO-MERAKI-AP",
+    "name": "Cisco Meraki access points",
+    "category": "Networking",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "access_point",
+      "use_case": "cloud-managed wireless",
+      "deployment": "appliance",
+      "description": "Cloud-managed wireless access points. Radio generation, coverage, mounting and licence scope require a site design."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "CISCO-MERAKI-MX",
+    "name": "Cisco Meraki MX security and SD-WAN",
+    "category": "Networking",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "gateway",
+      "use_case": "security and sd-wan",
+      "deployment": "appliance",
+      "description": "Cloud-managed security and SD-WAN appliances. Size users, throughput and VPN requirements; confirm licensing separately."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "CISCO-WIRELESS-AP",
+    "name": "Cisco wireless access points",
+    "category": "Networking",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "access_point",
+      "use_case": "wireless access",
+      "segment": "enterprise",
+      "deployment": "appliance",
+      "description": "Enterprise wireless access point family. Confirm radio generation, management platform, coverage and licence scope."
+    },
+    "image_url": "/catalogue/kenac/cisco/CISCO-WIRELESS-AP.png"
+  },
+  {
+    "sku": "F5-BIGIP",
+    "name": "F5 BIG-IP application delivery",
+    "category": "Networking",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "platform",
+      "use_case": "application delivery",
+      "description": "Application delivery and traffic management platform. Confirm physical or virtual deployment, throughput and module entitlements."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "FORTINET-FORTIGATE-SMB",
+    "name": "Fortinet FortiGate branch and SMB",
+    "category": "Cybersecurity",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "desktop",
+      "use_case": "branch firewall",
+      "segment": "smb",
+      "deployment": "appliance",
+      "description": "Branch and small-business next-generation firewall family. Size inspected traffic, VPNs, ports and security subscriptions."
+    },
+    "image_url": "/catalogue/kenac/fortinet/FORTINET-FORTIGATE-SMB.png"
+  },
+  {
+    "sku": "FORTINET-FORTIGATE-ENTERPRISE",
+    "name": "Fortinet FortiGate enterprise",
+    "category": "Cybersecurity",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "rack",
+      "use_case": "data centre firewall",
+      "segment": "enterprise",
+      "deployment": "appliance",
+      "description": "Enterprise next-generation firewall family. Size inspected throughput, interfaces, high availability and subscription scope."
+    },
+    "image_url": "/catalogue/kenac/fortinet/FORTINET-FORTIGATE-ENTERPRISE.png"
+  },
+  {
+    "sku": "FORTINET-FORTISWITCH",
+    "name": "Fortinet FortiSwitch",
+    "category": "Networking",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "switch",
+      "use_case": "secure switching",
+      "deployment": "appliance",
+      "description": "Secure Ethernet switching family integrated with Fortinet management. Confirm access or data centre model, ports and PoE."
+    },
+    "image_url": "/catalogue/kenac/fortinet/FORTINET-FORTISWITCH.png"
+  },
+  {
+    "sku": "FORTINET-FORTIAP",
+    "name": "Fortinet FortiAP",
+    "category": "Networking",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "access_point",
+      "use_case": "secure wireless",
+      "deployment": "appliance",
+      "description": "Wireless access point family integrated with Fortinet management. Confirm coverage, radio generation and management scope."
+    },
+    "image_url": "/catalogue/kenac/fortinet/FORTINET-FORTIAP.png"
+  },
+  {
+    "sku": "FORTINET-FORTIANALYZER",
+    "name": "Fortinet FortiAnalyzer",
+    "category": "Cybersecurity",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "platform",
+      "use_case": "security analytics",
+      "description": "Centralised logging, analytics and reporting for Fortinet security deployments. Confirm log volume, retention and deployment."
+    },
+    "image_url": "/catalogue/kenac/fortinet/FORTINET-FORTIANALYZER.png"
+  },
+  {
+    "sku": "CHECKPOINT-QUANTUM",
+    "name": "Check Point Quantum security gateways",
+    "category": "Cybersecurity",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "gateway",
+      "use_case": "network security",
+      "deployment": "appliance",
+      "description": "Network security gateway family. Size inspected traffic, interfaces, resilience and subscription scope."
+    },
+    "image_url": "/catalogue/kenac/checkpoint/CHECKPOINT-QUANTUM.png"
+  },
+  {
+    "sku": "BEYONDTRUST-PAM",
+    "name": "BeyondTrust privileged access",
+    "category": "Cybersecurity",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "privileged access",
+      "description": "Privileged remote access controls and audits privileged sessions. Confirm access workflows, identities and deployment scope."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "IBM-QRADAR",
+    "name": "IBM QRadar SIEM",
+    "category": "Cybersecurity",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "security monitoring",
+      "description": "Security information and event management. Confirm supported edition, ingestion, retention and deployment before quoting."
+    },
+    "image_url": "/catalogue/kenac/ibm/IBM-QRADAR.png"
+  },
+  {
+    "sku": "IBM-GUARDIUM",
+    "name": "IBM Guardium Data Protection",
+    "category": "Cybersecurity",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "data security",
+      "description": "Database activity monitoring and data protection. Confirm supported data sources, coverage and deployment scope."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "IBM-VERIFY",
+    "name": "IBM Verify",
+    "category": "Cybersecurity",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "identity and access",
+      "description": "Identity and access management family. Confirm identity scope, authentication requirements and edition."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "IBM-MAAS360",
+    "name": "IBM MaaS360",
+    "category": "Cybersecurity",
+    "unit": "device",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "endpoint management",
+      "description": "Unified endpoint management for devices and applications. Confirm supported endpoints, edition and licence scope."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "MICROSOFT-M365-BUSINESS",
+    "name": "Microsoft 365 business plans",
+    "category": "Software and subscriptions",
+    "unit": "seat",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "business productivity",
+      "segment": "smb",
+      "max_users_band": "1-300",
+      "licence_model": "subscription",
+      "description": "Subscription productivity plans for businesses of up to 300 users. Features differ by plan; choose the required tier."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "REDHAT-RHEL",
+    "name": "Red Hat Enterprise Linux",
+    "category": "Software and subscriptions",
+    "unit": "subscription",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "enterprise operating system",
+      "segment": "enterprise",
+      "licence_model": "subscription",
+      "description": "Enterprise Linux operating system with subscription support. Confirm physical or virtual workload and support tier."
+    },
+    "image_url": "/catalogue/kenac/redhat/REDHAT-RHEL.png"
+  },
+  {
+    "sku": "VMWARE-VSPHERE",
+    "name": "VMware vSphere",
+    "category": "Software and subscriptions",
+    "unit": "subscription",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "server virtualisation",
+      "licence_model": "subscription",
+      "description": "Server virtualisation. VMware moved new commercial licensing from perpetual to subscription; confirm current packaging and core entitlements."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "IBM-MQ",
+    "name": "IBM MQ",
+    "category": "Software and subscriptions",
+    "unit": "subscription",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "application messaging",
+      "description": "Messaging middleware connecting applications and systems. Confirm deployment, capacity and licence metric."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "IBM-APPCONNECT",
+    "name": "IBM App Connect Enterprise",
+    "category": "Software and subscriptions",
+    "unit": "subscription",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "application integration",
+      "description": "Application and data integration, including App Connect Enterprise. Confirm deployment, connectors and entitlement scope."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "VEEAM-DATA-PLATFORM",
+    "name": "Veeam Data Platform",
+    "category": "Backup and recovery",
+    "unit": "subscription",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "backup and recovery",
+      "description": "Data backup, recovery and resilience platform. Confirm protected workloads, edition, retention and recovery objectives."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "VERITAS-NETBACKUP",
+    "name": "Veritas NetBackup",
+    "category": "Backup and recovery",
+    "unit": "subscription",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "enterprise backup",
+      "segment": "enterprise",
+      "description": "Enterprise backup and recovery. NetBackup is now presented by Cohesity; confirm Kenac supply channel and entitlement scope."
+    },
+    "image_url": ""
+  },
+  {
+    "sku": "CLOUDERA-DATA-PLATFORM",
+    "name": "Cloudera Data Platform",
+    "category": "Data and analytics",
+    "unit": "subscription",
+    "price": null,
+    "currency": null,
+    "valid_until": "",
+    "attributes": {
+      "form_factor": "software",
+      "use_case": "data and analytics",
+      "description": "Data management and analytics platform for hybrid environments. Confirm workloads, deployment and subscription scope."
+    },
+    "image_url": ""
+  }
+]

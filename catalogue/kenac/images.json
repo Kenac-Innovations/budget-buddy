@@ -1,0 +1,209 @@
+[
+  {
+    "sku": "LENOVO-THINKPAD-T",
+    "file": "public/catalogue/kenac/lenovo/LENOVO-THINKPAD-T.jpg",
+    "source_page_url": "https://psref.lenovo.com/Product/ThinkPad/ThinkPad_T14_Gen_6_Intel",
+    "image_url": "https://psrefstuff.lenovo.com/syspool/Sys/Image/ThinkPad/ThinkPad_T14_Gen_6_Intel/Compressedimage/ThinkPad_T14_Gen_6_Intel_CT1_01.png",
+    "downloaded_at": "2026-10-14T14:53:31.656603+00:00",
+    "vendor": "lenovo",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "LENOVO-THINKPAD-X1",
+    "file": "public/catalogue/kenac/lenovo/LENOVO-THINKPAD-X1.jpg",
+    "source_page_url": "https://psref.lenovo.com/Product/ThinkPad/ThinkPad_X1_Carbon_Gen_13",
+    "image_url": "https://psrefstuff.lenovo.com/syspool/Sys/Image/ThinkPad/ThinkPad_X1_Carbon_Gen_13/Compressedimage/ThinkPad_X1_Carbon_Gen_13_CT1_01.png",
+    "downloaded_at": "2026-10-14T14:53:31.658145+00:00",
+    "vendor": "lenovo",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "LENOVO-THINKCENTRE",
+    "file": "public/catalogue/kenac/lenovo/LENOVO-THINKCENTRE.jpg",
+    "source_page_url": "https://psref.lenovo.com/Product/ThinkCentre/ThinkCentre_M70q_Gen_5",
+    "image_url": "https://psrefstuff.lenovo.com/syspool/Sys/Image/ThinkCentre/ThinkCentre_M70q_Gen_5/Compressedimage/ThinkCentre_M70q_Gen_5_CT1_01.png",
+    "downloaded_at": "2026-10-14T14:53:31.659276+00:00",
+    "vendor": "lenovo",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "DELL-LATITUDE",
+    "file": "public/catalogue/kenac/dell/DELL-LATITUDE.png",
+    "source_page_url": "https://www.dell.com/en-us/shop/dell-laptops/latitude-5450-laptop/spd/latitude-14-5450-laptop",
+    "image_url": "https://i.dell.com/is/image/DellContent//content/dam/ss2/product-images/dell-client-products/notebooks/latitude-notebooks/latitude-14-5450-laptop/mg/notebook-latitude-14-5450t-emza-gallery-1.psd?fmt=png-alpha&pscan=auto&scl=1&hei=476&wid=797&qlt=100,0&resMode=sharp2&size=797,476",
+    "downloaded_at": "2026-10-14T14:53:31.663309+00:00",
+    "vendor": "dell",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "DELL-OPTIPLEX",
+    "file": "public/catalogue/kenac/dell/DELL-OPTIPLEX.png",
+    "source_page_url": "https://www.dell.com/en-us/shop/desktop-computers/optiplex-small-form-factor/spd/optiplex-7020-small-ff/gctoo7020sffus_vp?redirectTo=SOC",
+    "image_url": "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/desktops/optiplex-desktops/optiplex-d13-sff/13-5-media-gallery-standard/desktop-optiplex-7020-sff-black-gallery-1.psd?fmt=png-alpha&pscan=auto&scl=1&hei=804&wid=444&qlt=100,1&resMode=sharp2&size=444,804&chrss=full",
+    "downloaded_at": "2026-10-14T14:53:31.664744+00:00",
+    "vendor": "dell",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "HP-ELITEBOOK",
+    "file": "public/catalogue/kenac/hp/HP-ELITEBOOK.png",
+    "source_page_url": "https://www.hp.com/us-en/laptops/business/elitebooks.html",
+    "image_url": "https://www.hp.com/content/dam/hp-com/visid/media-content/Pokemon_EB_14_MistSilver_WLAN_FHDCam_RJ45_Backlit_Catalog_FrontLeft.png",
+    "downloaded_at": "2026-10-14T14:53:31.666210+00:00",
+    "vendor": "hp",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "HP-PROBOOK",
+    "file": "public/catalogue/kenac/hp/HP-PROBOOK.png",
+    "source_page_url": "https://www.hp.com/us-en/laptops/business/probooks.html",
+    "image_url": "https://www.hp.com/content/dam/sites/worldwide/laptops/work-laptops/probooks/media@2x.png",
+    "downloaded_at": "2026-10-14T14:53:31.667404+00:00",
+    "vendor": "hp",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "DELL-MONITORS",
+    "file": "public/catalogue/kenac/dell/DELL-MONITORS.png",
+    "source_page_url": "https://www.dell.com/en-us/shop/dell-pro-24-plus-usb-c-hub-monitor-p2425he/apd/210-bmgh/monitors-monitor-accessories",
+    "image_url": "https://i.dell.com/assetlink/img/global/monitor-p2425h-black-gallery-1-dl1expj-large.png?fmt=png-alpha&pscan=auto&scl=1&hei=804&wid=913&qlt=100,1&resMode=sharp2&size=913,804&chrss=full",
+    "downloaded_at": "2026-10-14T14:53:31.674373+00:00",
+    "vendor": "dell",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "LENOVO-THINKSYSTEM",
+    "file": "public/catalogue/kenac/lenovo/LENOVO-THINKSYSTEM.jpg",
+    "source_page_url": "https://lenovopress.lenovo.com/lp1601-thinksystem-sr650-v3-server",
+    "image_url": "https://lenovopress.lenovo.com/assets/images/LP1601/SR650%20V3%20Shanghai%20front%20angled%20left.jpg",
+    "downloaded_at": "2026-10-14T14:53:31.675739+00:00",
+    "vendor": "lenovo",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "DELL-POWEREDGE",
+    "file": "public/catalogue/kenac/dell/DELL-POWEREDGE.png",
+    "source_page_url": "https://www.dell.com/en-us/shop/ipovw/poweredge-r760",
+    "image_url": "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-enterprise-products/enterprise-systems/poweredge/r760/media-gallery/server-poweredge-r760-black-gallery-1.psd?fmt=png-alpha&pscan=auto&scl=1&hei=402&wid=1250&qlt=100,1&resMode=sharp2&size=1250,402&chrss=full",
+    "downloaded_at": "2026-10-14T14:53:31.678407+00:00",
+    "vendor": "dell",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "IBM-FLASHSYSTEM",
+    "file": "public/catalogue/kenac/ibm/IBM-FLASHSYSTEM.jpg",
+    "source_page_url": "https://www.ibm.com/products/flashsystem-5300",
+    "image_url": "https://www.ibm.com/content/dam/worldwide-content/creative-assets/s-migr/ul/g/50/9b/flashsystem-5600-leadspace.png/_jcr_content/renditions/cq5dam.web.1280.1280.jpeg",
+    "downloaded_at": "2026-10-14T14:53:31.689134+00:00",
+    "vendor": "ibm",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "SCALE-HYPERCONVERGED",
+    "file": "public/catalogue/kenac/scale/SCALE-HYPERCONVERGED.webp",
+    "source_page_url": "https://www.scalecomputing.com/sc-platform",
+    "image_url": "https://www.scalecomputing.com/images/products/SC_HyperCore_UI_2026.webp",
+    "downloaded_at": "2026-10-14T14:53:31.732105+00:00",
+    "vendor": "scale",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "CISCO-CATALYST",
+    "file": "public/catalogue/kenac/cisco/CISCO-CATALYST.png",
+    "source_page_url": "https://www.cisco.com/site/us/en/products/networking/switches/catalyst-9000-switches/index.html",
+    "image_url": "https://www.cisco.com/content/dam/cisco-cdc/site/us/en/images/networking/Cat9Switching-product-stack-607x195.png",
+    "downloaded_at": "2026-10-14T14:53:31.734014+00:00",
+    "vendor": "cisco",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "CISCO-MERAKI-MS",
+    "file": "public/catalogue/kenac/cisco/CISCO-MERAKI-MS.jpg",
+    "source_page_url": "https://www.cisco.com/site/us/en/products/networking/switches/meraki-switches/index.html",
+    "image_url": "https://www.cisco.com/content/dam/cisco-cdc/site/images/photography/product-photography/meraki/ms-family-650x250.jpg",
+    "downloaded_at": "2026-10-14T14:53:31.735232+00:00",
+    "vendor": "cisco",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "CISCO-WIRELESS-AP",
+    "file": "public/catalogue/kenac/cisco/CISCO-WIRELESS-AP.png",
+    "source_page_url": "https://www.cisco.com/site/us/en/products/networking/wireless/index.html",
+    "image_url": "https://www.cisco.com/content/dam/cisco-cdc/site/images/photography/product-photography/products/networking/wireless/wifi7-ap-400x400-2x.png",
+    "downloaded_at": "2026-10-14T14:53:31.737898+00:00",
+    "vendor": "cisco",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "FORTINET-FORTIGATE-SMB",
+    "file": "public/catalogue/kenac/fortinet/FORTINET-FORTIGATE-SMB.png",
+    "source_page_url": "https://www.fortinet.com/products/next-generation-firewall",
+    "image_url": "https://www.fortinet.com/content/dam/fortinet/images/icons/ngfw/img-model-branch.png",
+    "downloaded_at": "2026-10-14T14:53:31.739265+00:00",
+    "vendor": "fortinet",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "FORTINET-FORTIGATE-ENTERPRISE",
+    "file": "public/catalogue/kenac/fortinet/FORTINET-FORTIGATE-ENTERPRISE.png",
+    "source_page_url": "https://www.fortinet.com/products/next-generation-firewall",
+    "image_url": "https://www.fortinet.com/content/dam/fortinet/images/icons/ngfw/img-model-data-center.png",
+    "downloaded_at": "2026-10-14T14:53:31.740588+00:00",
+    "vendor": "fortinet",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "FORTINET-FORTISWITCH",
+    "file": "public/catalogue/kenac/fortinet/FORTINET-FORTISWITCH.png",
+    "source_page_url": "https://www.fortinet.com/products/ethernet-switches",
+    "image_url": "https://www.fortinet.com/content/dam/fortinet/images/products/laptop-ui-screenshot-fortiswitch-management.png",
+    "downloaded_at": "2026-10-14T14:53:31.741740+00:00",
+    "vendor": "fortinet",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "FORTINET-FORTIAP",
+    "file": "public/catalogue/kenac/fortinet/FORTINET-FORTIAP.png",
+    "source_page_url": "https://www.fortinet.com/products/wireless-access-points",
+    "image_url": "https://www.fortinet.com/content/dam/fortinet/images/products/laptop-ui-screenshot-fortiap.png",
+    "downloaded_at": "2026-10-14T14:53:31.742986+00:00",
+    "vendor": "fortinet",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "FORTINET-FORTIANALYZER",
+    "file": "public/catalogue/kenac/fortinet/FORTINET-FORTIANALYZER.png",
+    "source_page_url": "https://www.fortinet.com/products/management/fortianalyzer",
+    "image_url": "https://www.fortinet.com/content/dam/fortinet/images/products/laptop-ui-screenshot-fortianalyzer-data-lake.png",
+    "downloaded_at": "2026-10-14T14:53:31.746840+00:00",
+    "vendor": "fortinet",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "CHECKPOINT-QUANTUM",
+    "file": "public/catalogue/kenac/checkpoint/CHECKPOINT-QUANTUM.png",
+    "source_page_url": "https://www.checkpoint.com/quantum/next-generation-firewall/",
+    "image_url": "https://www.checkpoint.com/wp-content/uploads/quantum-force-page-float.png?v=1.0",
+    "downloaded_at": "2026-10-14T14:53:31.748189+00:00",
+    "vendor": "checkpoint",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "IBM-QRADAR",
+    "file": "public/catalogue/kenac/ibm/IBM-QRADAR.png",
+    "source_page_url": "https://www.ibm.com/products/qradar-siem",
+    "image_url": "https://www.ibm.com/content/adobe-cms/us/en/products/qradar-siem/jcr:content/root/table_of_contents/filter_menu_containe/filter-menu-tabs/item_1750128868880/item_horizontal_with/image.coreimg.png/1776320388454/ibm-security-qradar-network-visibility-product-screenshot.png",
+    "downloaded_at": "2026-10-14T14:53:31.749274+00:00",
+    "vendor": "ibm",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  },
+  {
+    "sku": "REDHAT-RHEL",
+    "file": "public/catalogue/kenac/redhat/REDHAT-RHEL.png",
+    "source_page_url": "https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux",
+    "image_url": "https://www.redhat.com/rhdc/managed-files/rhel-hero-ui-image-2x-optimized.png",
+    "downloaded_at": "2026-10-14T14:53:31.750392+00:00",
+    "vendor": "redhat",
+    "licence_note": "Manufacturer marketing image, used by Kenac as authorised partner"
+  }
+]

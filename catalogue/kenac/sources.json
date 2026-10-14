@@ -1,0 +1,238 @@
+{
+  "LENOVO-THINKPAD-T": {
+    "vendor_page": "https://psref.lenovo.com/Product/ThinkPad/ThinkPad_T14_Gen_6_Intel",
+    "checked_on": "2026-10-14",
+    "description": "Mainstream business notebooks. Image shows a T14; configuration, warranty and local availability require confirmation.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "LENOVO-THINKPAD-X1": {
+    "vendor_page": "https://psref.lenovo.com/Product/ThinkPad/ThinkPad_X1_Carbon_Gen_13",
+    "checked_on": "2026-10-14",
+    "description": "Premium lightweight business notebooks. Image shows X1 Carbon; select the generation and configuration before quoting.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "LENOVO-THINKCENTRE": {
+    "vendor_page": "https://psref.lenovo.com/Product/ThinkCentre/ThinkCentre_M70q_Gen_5",
+    "checked_on": "2026-10-14",
+    "description": "Business desktops in multiple form factors. Image shows a Tiny model; chassis, configuration and availability need confirmation.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "DELL-LATITUDE": {
+    "vendor_page": "https://www.dell.com/en-us/shop/dell-laptops/latitude-5450-laptop/spd/latitude-14-5450-laptop",
+    "checked_on": "2026-10-14",
+    "description": "Business notebook family. Image shows Latitude 5450; confirm stock and current equivalent before procurement.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "DELL-OPTIPLEX": {
+    "vendor_page": "https://www.dell.com/en-us/shop/desktop-computers/optiplex-small-form-factor/spd/optiplex-7020-small-ff",
+    "checked_on": "2026-10-14",
+    "description": "Business desktop family. Image shows a small form factor model; confirm stock and current equivalent before procurement.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "HP-ELITEBOOK": {
+    "vendor_page": "https://www.hp.com/us-en/laptops/business/elitebooks.html",
+    "checked_on": "2026-10-14",
+    "description": "Business notebook family. Select the model, processor, memory and support term to match the role.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "HP-PROBOOK": {
+    "vendor_page": "https://www.hp.com/us-en/laptops/business/probooks.html",
+    "checked_on": "2026-10-14",
+    "description": "Business notebook family for everyday work. Confirm the model, configuration and warranty before quoting.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "DELL-MONITORS": {
+    "vendor_page": "https://www.dell.com/en-us/shop/dell-pro-24-plus-usb-c-hub-monitor-p2425he/apd/210-bmgh/monitors-monitor-accessories",
+    "checked_on": "2026-10-14",
+    "description": "Business displays including USB-C hub models. Image shows a representative monitor; size, resolution and ports vary.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "LENOVO-DOCKS": {
+    "vendor_page": "https://psref.lenovo.com/accessory/40AY0090IT",
+    "checked_on": "2026-10-14",
+    "description": "USB-C and Thunderbolt docking options. Confirm notebook compatibility, display requirements and power delivery.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "LENOVO-THINKSYSTEM": {
+    "vendor_page": "https://lenovopress.lenovo.com/lp1601-thinksystem-sr650-v3-server",
+    "checked_on": "2026-10-14",
+    "description": "Rack server family. Image shows SR650 V3; CPU, memory, drives, resilience and support must be sized for the workload.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "DELL-POWEREDGE": {
+    "vendor_page": "https://www.dell.com/en-us/shop/ipovw/poweredge-r760",
+    "checked_on": "2026-10-14",
+    "description": "Rack server family. Image shows R760; processor, memory, drive and support configuration need workload sizing.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "IBM-POWER": {
+    "vendor_page": "https://www.ibm.com/products/power",
+    "checked_on": "2026-10-14",
+    "description": "Enterprise server family for mission-critical workloads. Confirm supported operating system, capacity and software entitlements.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "IBM-FLASHSYSTEM": {
+    "vendor_page": "https://www.ibm.com/products/flashsystem",
+    "checked_on": "2026-10-14",
+    "description": "All-flash enterprise storage family. Capacity, performance, resilience and software scope require workload sizing.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "SCALE-HYPERCONVERGED": {
+    "vendor_page": "https://www.scalecomputing.com/sc-platform",
+    "checked_on": "2026-10-14",
+    "description": "Integrated compute, storage and virtualisation platform. Confirm appliance cluster sizing, resilience and support.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "CISCO-CATALYST": {
+    "vendor_page": "https://www.cisco.com/site/us/en/products/networking/switches/catalyst-9000-switches/index.html",
+    "checked_on": "2026-10-14",
+    "description": "Campus switching family. Port count, PoE budget, uplinks, redundancy and licences depend on the selected model.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "CISCO-MERAKI-MS": {
+    "vendor_page": "https://www.cisco.com/site/us/en/products/networking/switches/meraki-switches/index.html",
+    "checked_on": "2026-10-14",
+    "description": "Cloud-managed switching family. Confirm port count, PoE, uplinks and management licence term.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "CISCO-MERAKI-AP": {
+    "vendor_page": "https://meraki.cisco.com/product-catalog/wi-fi/",
+    "checked_on": "2026-10-14",
+    "description": "Cloud-managed wireless access points. Radio generation, coverage, mounting and licence scope require a site design.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "CISCO-MERAKI-MX": {
+    "vendor_page": "https://www.cisco.com/c/en/us/products/collateral/security/meraki-cloud-managed-security-appliances/mx-family-ds.html",
+    "checked_on": "2026-10-14",
+    "description": "Cloud-managed security and SD-WAN appliances. Size users, throughput and VPN requirements; confirm licensing separately.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "CISCO-WIRELESS-AP": {
+    "vendor_page": "https://www.cisco.com/site/us/en/products/networking/wireless/index.html",
+    "checked_on": "2026-10-14",
+    "description": "Enterprise wireless access point family. Confirm radio generation, management platform, coverage and licence scope.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "F5-BIGIP": {
+    "vendor_page": "https://www.f5.com/products/big-ip-services",
+    "checked_on": "2026-10-14",
+    "description": "Application delivery and traffic management platform. Confirm physical or virtual deployment, throughput and module entitlements.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "FORTINET-FORTIGATE-SMB": {
+    "vendor_page": "https://www.fortinet.com/products/next-generation-firewall",
+    "checked_on": "2026-10-14",
+    "description": "Branch and small-business next-generation firewall family. Size inspected traffic, VPNs, ports and security subscriptions.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "FORTINET-FORTIGATE-ENTERPRISE": {
+    "vendor_page": "https://www.fortinet.com/products/next-generation-firewall",
+    "checked_on": "2026-10-14",
+    "description": "Enterprise next-generation firewall family. Size inspected throughput, interfaces, high availability and subscription scope.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "FORTINET-FORTISWITCH": {
+    "vendor_page": "https://www.fortinet.com/products/ethernet-switches",
+    "checked_on": "2026-10-14",
+    "description": "Secure Ethernet switching family integrated with Fortinet management. Confirm access or data centre model, ports and PoE.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "FORTINET-FORTIAP": {
+    "vendor_page": "https://www.fortinet.com/products/wireless-access-points",
+    "checked_on": "2026-10-14",
+    "description": "Wireless access point family integrated with Fortinet management. Confirm coverage, radio generation and management scope.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "FORTINET-FORTIANALYZER": {
+    "vendor_page": "https://www.fortinet.com/products/management/fortianalyzer",
+    "checked_on": "2026-10-14",
+    "description": "Centralised logging, analytics and reporting for Fortinet security deployments. Confirm log volume, retention and deployment.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "CHECKPOINT-QUANTUM": {
+    "vendor_page": "https://www.checkpoint.com/quantum/next-generation-firewall/",
+    "checked_on": "2026-10-14",
+    "description": "Network security gateway family. Size inspected traffic, interfaces, resilience and subscription scope.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "BEYONDTRUST-PAM": {
+    "vendor_page": "https://www.beyondtrust.com/products/privileged-remote-access",
+    "checked_on": "2026-10-14",
+    "description": "Privileged remote access controls and audits privileged sessions. Confirm access workflows, identities and deployment scope.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "IBM-QRADAR": {
+    "vendor_page": "https://www.ibm.com/products/qradar-siem",
+    "checked_on": "2026-10-14",
+    "description": "Security information and event management. Confirm supported edition, ingestion, retention and deployment before quoting.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "IBM-GUARDIUM": {
+    "vendor_page": "https://www.ibm.com/products/guardium-data-protection",
+    "checked_on": "2026-10-14",
+    "description": "Database activity monitoring and data protection. Confirm supported data sources, coverage and deployment scope.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "IBM-VERIFY": {
+    "vendor_page": "https://www.ibm.com/products/verify",
+    "checked_on": "2026-10-14",
+    "description": "Identity and access management family. Confirm identity scope, authentication requirements and edition.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "IBM-MAAS360": {
+    "vendor_page": "https://www.ibm.com/products/maas360",
+    "checked_on": "2026-10-14",
+    "description": "Unified endpoint management for devices and applications. Confirm supported endpoints, edition and licence scope.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "MICROSOFT-M365-BUSINESS": {
+    "vendor_page": "https://www.microsoft.com/en-us/microsoft-365/business",
+    "checked_on": "2026-10-14",
+    "description": "Subscription productivity plans for businesses of up to 300 users. Features differ by plan; choose the required tier.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "REDHAT-RHEL": {
+    "vendor_page": "https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux",
+    "checked_on": "2026-10-14",
+    "description": "Enterprise Linux operating system with subscription support. Confirm physical or virtual workload and support tier.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "VMWARE-VSPHERE": {
+    "vendor_page": "https://www.vmware.com/products/cloud-infrastructure/vsphere",
+    "checked_on": "2026-10-14",
+    "description": "Server virtualisation. VMware moved new commercial licensing from perpetual to subscription; confirm current packaging and core entitlements.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting.",
+    "licensing_source": "https://blogs.vmware.com/cloud-foundation/2024/01/22/vmware-end-of-availability-of-perpetual-licensing-and-saas-services/"
+  },
+  "IBM-MQ": {
+    "vendor_page": "https://www.ibm.com/products/mq",
+    "checked_on": "2026-10-14",
+    "description": "Messaging middleware connecting applications and systems. Confirm deployment, capacity and licence metric.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "IBM-APPCONNECT": {
+    "vendor_page": "https://www.ibm.com/products/app-connect",
+    "checked_on": "2026-10-14",
+    "description": "Application and data integration, including App Connect Enterprise. Confirm deployment, connectors and entitlement scope.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "VEEAM-DATA-PLATFORM": {
+    "vendor_page": "https://www.veeam.com/products/veeam-data-platform.html",
+    "checked_on": "2026-10-14",
+    "description": "Data backup, recovery and resilience platform. Confirm protected workloads, edition, retention and recovery objectives.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  },
+  "VERITAS-NETBACKUP": {
+    "vendor_page": "https://www.veritas.com/protection/netbackup",
+    "checked_on": "2026-10-14",
+    "description": "Enterprise backup and recovery. NetBackup is now presented by Cohesity; confirm Kenac supply channel and entitlement scope.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting.",
+    "current_vendor_page": "https://www.cohesity.com/platform/netbackup/"
+  },
+  "CLOUDERA-DATA-PLATFORM": {
+    "vendor_page": "https://www.cloudera.com/products/cloudera-data-platform.html",
+    "checked_on": "2026-10-14",
+    "description": "Data management and analytics platform for hybrid environments. Confirm workloads, deployment and subscription scope.",
+    "attribute_notes": "Form factor and use case describe the family. Unstated sizing, RAM, CPU, ports, throughput and licensing are unknown. Select an exact model and confirm fit before quoting."
+  }
+}
