@@ -10,6 +10,7 @@ import { AdvisorScreen } from "./advisor-screen";
 import { LightMarkdown } from "./markdown";
 import { money,PlanView,planSummary } from "./plan-view";
 import { WrapUpCard } from "./wrap-up-card";
+import { SharePanel } from "./share-panel";
 function change(plan: Plan,op: PlanOp) {
   const result=applyOp(plan,op,"user");
   if(!result.ok)
@@ -40,6 +41,14 @@ describe("living plan presentation",() => {
     expect(html).toContain("Mar 2027");
     expect(html).toContain("Jan–Dec 2027");
     expect(html).toContain("View payments for Aug 2027");
+    expect(html).not.toMatch(/\b\d{4}-\d{2}\b/);
+  });
+  it("uses the same human month in the per-line sharing preview", () => {
+    let plan=demoPlan();
+    plan=change(plan,{ op: "set_state",id: plan.lines[0].id,state: "accepted" });
+    plan=change(plan,{ op: "set_sharing",id: plan.lines[0].id,shared: true,shareAllocation: false });
+    const html=renderToStaticMarkup(createElement(SharePanel,{ plan,saved: true,contact: { name: "Demo presenter",email: "demo@example.com",organisation: "Demo organisation",role: "CTO",consentEmail: true,consentContact: false } }));
+    expect(html).toContain("Mar 2027");
     expect(html).not.toMatch(/\b\d{4}-\d{2}\b/);
   });
   it("never represents unpriced lines as a zero-valued budget",() => {
