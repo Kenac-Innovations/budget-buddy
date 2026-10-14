@@ -1,3 +1,4 @@
+import { log } from "@/lib/log";
 import { z } from "zod";
 import { applyOp, PlanOp } from "@/lib/plan/ops";
 import { getSession } from "@/lib/session/cookie";
@@ -7,6 +8,7 @@ import { PlanVersionConflict } from "@/lib/session/prisma-store";
 const OpRequest = z.object({ op: PlanOp }).strict();
 
 export async function POST(request: Request) {
+  const start=Date.now();
   let body: unknown;
   try { body = await request.json(); } catch {
     return Response.json({ error: "Send a valid plan change." }, { status: 400 });
@@ -19,6 +21,7 @@ export async function POST(request: Request) {
     const result = applyOp(session.plan, parsed.data.op, "user");
     if (!result.ok) return Response.json({ error: result.error }, { status: 400 });
     await sessionStore.updatePlan(session.id, result.plan);
+    log({ event: "request_completed", route: "/api/plan/op", status: 200, ms: Date.now()-start, sessionId: session.id });
     return Response.json({ plan: result.plan }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof PlanVersionConflict || (error instanceof Error && error.message === "Plan version went backwards")) {

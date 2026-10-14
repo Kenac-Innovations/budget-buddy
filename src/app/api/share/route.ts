@@ -1,3 +1,4 @@
+import { log } from "@/lib/log";
 import { z } from "zod";
 import { getSession } from "@/lib/session/cookie";
 import { sharedRows } from "@/lib/export/sharing";
@@ -16,6 +17,7 @@ export async function GET() {
 
 /** Call after set_sharing ops. This records dates and indexes memory sessions; never edits a plan. */
 export async function POST(request: Request) {
+  const start=Date.now();
   try {
     const parsed = z.object({}).strict().safeParse(await request.json());
     if (!parsed.success) return Response.json({ error: "Send an empty sharing confirmation." }, { status: 400, headers });
@@ -25,6 +27,7 @@ export async function POST(request: Request) {
     if (!session) return Response.json({ error: "Open your private plan to confirm sharing." }, { status: 401, headers });
     if (!session.savedAt || !session.contact) return Response.json({ error: "Save your plan before sharing." }, { status: 403, headers });
     const dates = await recordSharing(session);
+    log({ event: "request_completed", route: "/api/share", status: 200, ms: Date.now()-start, sessionId: session.id });
     return Response.json({ rows: sharedRows(session.plan, session.contact, dates) }, { headers });
   } catch { return Response.json({ error: "We couldn't confirm sharing. Reopen sharing to check your choices." }, { status: 503, headers }); }
 }

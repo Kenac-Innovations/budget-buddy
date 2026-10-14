@@ -2,12 +2,13 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
 import { emptyPlan, Plan } from "@/lib/plan/types";
 import {
-  ContactInput, PrismaSessionStore, SessionMessages, UNSAVED_MAX_AGE_MS, checkPlanVersion,
+  ContactInput, PrismaSessionStore, SessionToken, SessionMessages, UNSAVED_MAX_AGE_MS, checkPlanVersion,
 } from "./prisma-store";
 import { newToken, type AdvisorSessionRecord, type ContactDetails, type SessionStore } from "./store";
 
 /** Keep the frozen development store, adding the same guards as persistence. */
 export class ValidatedMemoryStore implements SessionStore {
+  readonly storage = "memory";
   private records = new Map<string, AdvisorSessionRecord>();
   private tokens = new Map<string, string>();
   private touched = new Map<string, number>();
@@ -110,11 +111,14 @@ export function getSessionStore(): SessionStore {
 const resolutions = new WeakMap<SessionStore, Promise<SessionStore>>();
 export async function resolveSessionStore(): Promise<SessionStore> {
   const store = getSessionStore();
-  if (!(store instanceof PrismaSessionStore)) return store;
+  // Next may bundle the same adapter class separately for different routes.
+  // Use its explicit capability, not cross-bundle constructor identity.
+  const database = store as SessionStore & { checkConnection?: () => Promise<void> };
+  if (!database.checkConnection) return store;
   let resolution = resolutions.get(store);
   if (!resolution) {
     resolution = (async () => {
-      try { await store.checkConnection(); return store; }
+      try { await database.checkConnection!(); return store; }
       catch {
         if (process.env.ADVISOR_MODE !== "demo") throw new Error("Session database unavailable");
         const memory = new ValidatedMemoryStore();
@@ -129,9 +133,11 @@ export async function resolveSessionStore(): Promise<SessionStore> {
 
 /** Concrete adapter extension; the frozen SessionStore contract stays unchanged. */
 export async function deleteSessionByToken(token: string) {
+  SessionToken.parse(token);
   const store = await resolveSessionStore();
-  if (!(store instanceof PrismaSessionStore || store instanceof ValidatedMemoryStore)) throw new Error("Deletion unavailable");
-  await store.deleteByToken(token);
+  const adapter = store as SessionStore & { deleteByToken?: (token: string) => Promise<void> };
+  if (!adapter.deleteByToken) throw new Error("Deletion unavailable");
+  await adapter.deleteByToken(token);
 }
 
 export const sessionStore: SessionStore = {

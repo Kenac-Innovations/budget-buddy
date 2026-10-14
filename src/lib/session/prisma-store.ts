@@ -49,6 +49,7 @@ function record(row: AdvisorSession): AdvisorSessionRecord {
 
 /** Row locks protect transcript appends; the version check protects a stale caller's plan. */
 export class PrismaSessionStore implements SessionStore {
+  readonly storage = "prisma";
   constructor(private readonly prisma: PrismaClient) {}
 
   async checkConnection() {

@@ -3,7 +3,7 @@ import { PrismaClient } from "@/generated/prisma/client";
 import { z } from "zod";
 import { Plan } from "@/lib/plan/types";
 import { resolveSessionStore, sessionStore } from "@/lib/session";
-import { ContactInput, PrismaSessionStore } from "@/lib/session/prisma-store";
+import { ContactInput } from "@/lib/session/prisma-store";
 import type { AdvisorSessionRecord } from "@/lib/session/store";
 import { sharedRows, type SharedRow } from "./sharing";
 
@@ -13,7 +13,7 @@ type Entry = { token: string; changes: Map<string, { change: Change; at: string 
 const state = globalThis as typeof globalThis & { budgetBuddySharing?: Map<string, Entry>; budgetBuddySharingPrisma?: PrismaClient };
 const memory = state.budgetBuddySharing ??= new Map();
 async function db() {
-  if (!process.env.DATABASE_URL || !((await resolveSessionStore()) instanceof PrismaSessionStore)) return null;
+  if (!process.env.DATABASE_URL || (await resolveSessionStore() as { storage?: string }).storage !== "prisma") return null;
   return state.budgetBuddySharingPrisma ??= new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 }
 

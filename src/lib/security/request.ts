@@ -14,7 +14,6 @@ export function clientIp(headers: Headers, trustedHeader?: "x-real-ip" | "x-forw
 export async function checkJsonBody(request: Request): Promise<400 | 413 | 415 | 408 | null> {
   if (!request.body) return null;
   const type = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
-  if (type !== "application/json") return 415;
   const rawLength = request.headers.get("content-length");
   if (rawLength !== null) {
     const length = lengthSchema.safeParse(rawLength);
@@ -29,6 +28,9 @@ export async function checkJsonBody(request: Request): Promise<400 | 413 | 415 |
       while (true) {
         const { value, done } = await reader.read();
         if (done) return null;
+        // Next can expose an empty stream for a bodyless DELETE. Reject a
+        // non-JSON type only when bytes actually arrive.
+        if (value.byteLength && type !== "application/json") return 415 as const;
         size += value.byteLength;
         if (size > MAX_JSON_BYTES) return 413 as const;
       }

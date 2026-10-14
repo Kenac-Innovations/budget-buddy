@@ -1,9 +1,11 @@
+import { log } from "@/lib/log";
 import { getSession } from "@/lib/session/cookie";
 import { sessionStore } from "@/lib/session";
 import { ContactInput } from "@/lib/session/prisma-store";
 import { planLinks, sendPlanEmail } from "@/lib/email/plan-email";
 
 export async function POST(request: Request) {
+  const start=Date.now();
   let body: unknown;
   try { body = await request.json(); } catch {
     return Response.json({ error: "Check your details and try again." }, { status: 400 });
@@ -17,6 +19,7 @@ export async function POST(request: Request) {
     planLinks(session.token);
     await sessionStore.save(session.id, parsed.data);
     const delivery = await sendPlanEmail({ ...session, contact: parsed.data, savedAt: new Date() });
+    log({ event: "session_saved", route: "/api/session/save", status: 200, ms: Date.now()-start, sessionId: session.id });
     return Response.json({ saved: true, emailed: delivery.emailed, returnUrl: delivery.returnUrl }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return Response.json({ error: "We couldn't save your plan. Try again in a moment." }, { status: 503 });
