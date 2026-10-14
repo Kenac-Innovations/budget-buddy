@@ -135,3 +135,10 @@ describe("user operations and session integration",() => {
     await expect(sendUserOp(op,new AbortController().signal,false)).rejects.toThrow();
   });
 });
+
+it("treats a 204 resume as a normal fresh visit", async () => {
+  const fetch=vi.fn().mockResolvedValue(new Response(null,{status:204}));
+  vi.stubGlobal("fetch",fetch);
+  expect(await loadSession(new AbortController().signal)).toBeNull();
+  expect(fetch).toHaveBeenCalledTimes(1);
+});

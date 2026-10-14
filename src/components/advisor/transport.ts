@@ -87,7 +87,7 @@ const ResumeResponse=z.object({
 });
 export async function loadSession(signal: AbortSignal) {
   const response=await fetch("/api/plan",{ cache: "no-store",signal });
-  if(response.status===401||response.status===404)
+  if(response.status===204||response.status===401||response.status===404)
     return null;
   if(!response.ok)
     throw new Error("Could not load session");
