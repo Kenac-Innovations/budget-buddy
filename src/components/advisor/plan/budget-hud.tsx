@@ -61,13 +61,13 @@ export function BudgetHud({ hud, plan, onCategory }: { hud: Hud; plan: Plan; onC
   const payments = month ? totals.lines.filter(l => l.reportingMonthly?.get(month)?.gt(0)) : [];
   return <>
     <div className="bb-hud-live-total" data-visible={pinned} aria-hidden={!pinned}>
-      <div><span>Accepted spend</span><strong aria-label={hasAmount ? `${money(totals.reportingTotal, currency)}${hud.complete ? " planned spend" : " so far"}` : "Awaiting prices"}>
+      <div>{hasAmount && <TotalPulse value={`${currency}-${totals.reportingTotal}`} />}<span>Accepted spend</span><strong aria-label={hasAmount ? `${money(totals.reportingTotal, currency)}${hud.complete ? " planned spend" : " so far"}` : "Awaiting prices"}>
         {hasAmount ? <><AnimatedTotal value={totals.reportingTotal} currency={currency} />{!hud.complete && " so far"}</> : "Awaiting prices"}
       </strong><span>{hud.unpriced} unpriced</span></div>
     </div>
     <section className="bb-hud-budget" aria-label="Budget overview" data-total={totals.reportingTotal.toFixed(2)}>
     <div ref={headline} className="bb-hud-total-row">
-      {hasAmount && <TotalPulse value={totals.reportingTotal.toString()} />}
+      {hasAmount && <TotalPulse value={`${currency}-${totals.reportingTotal}`} />}
       <div><p className="bb-hud-eyebrow">{hud.complete ? "Planned spend" : "Accepted spend"}</p>
         <p className="bb-hud-total" aria-label={hasAmount ? `${money(totals.reportingTotal, currency)}${hud.complete ? " planned spend" : " so far"}` : "Awaiting prices"}>
           {hasAmount ? <><AnimatedTotal value={totals.reportingTotal} currency={currency} />{!hud.complete && <span aria-hidden> so far</span>}</> : <span className="bb-hud-awaiting">Awaiting prices</span>}

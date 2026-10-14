@@ -272,7 +272,7 @@
 .hf-theme-dark .bb-hud-parts li { background:var(--hud-elev-2); }
 .hf-theme-dark .bb-hud-parts li.bb-hud-part-spotted { border-color:var(--hud-trace); }
 .hf-theme-dark .bb-hud-part-index { background:var(--hud-elev-1); }
-.hf-theme-dark .bb-hud-live-total > div { background:var(--hud-elev-2); border-color:var(--hud-hairline); }
+.hf-theme-dark .bb-hud-live-total > div { position:relative; isolation:isolate; overflow:hidden; background:var(--hud-elev-2); border-color:var(--hud-hairline); }
 @media(max-width:599px) { .hf-theme-dark .bb-hud-total { font-size:32px; } }
 @media(prefers-reduced-motion:reduce) {
   .hf-theme-dark :is(.bb-hud-total-pulse,.bb-advisor-thinking)::after,
