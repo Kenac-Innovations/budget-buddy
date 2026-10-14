@@ -1,0 +1,52 @@
+.bb-advisor-screen { height: 100dvh; min-height: 420px; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+.bb-advisor-topbar { min-height: 76px; padding: 12px 32px; display: flex; align-items: center; gap: 24px; border-bottom: 1px solid var(--line-2); background: var(--surface); }
+.bb-advisor-session-state { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-2); }
+.bb-advisor-workspace { min-height: 0; display: grid; grid-template-columns: minmax(0,44fr) minmax(0,56fr); flex: 1; }
+.bb-advisor-conversation { display: flex; flex-direction: column; min-height: 0; min-width: 0; background: var(--surface); }
+.bb-advisor-messages { overflow-y: auto; overscroll-behavior: contain; min-height: 0; flex: 1; padding: 24px 32px 40px; scrollbar-gutter: stable; }
+.bb-advisor-advisor-message { min-height: 64px; overflow-wrap: anywhere; }
+.bb-advisor-user-message { margin-left: auto; max-width: 88%; width: fit-content; padding: 12px 18px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 16px 16px 4px 16px; overflow-wrap: anywhere; }
+.bb-advisor-composer-area { padding: 12px 28px 20px; flex-shrink: 0; background: var(--surface); }
+.bb-advisor-composer { display: flex; gap: 12px; align-items: flex-end; padding: 12px; border: 1px solid var(--line-2); border-radius: 14px; background: var(--bg); transition: border-color 140ms; }
+.bb-advisor-composer:focus-within { border-color: var(--ring); box-shadow: 0 0 0 3px var(--hf-primary-soft); }
+.bb-advisor-textarea { flex: 1; width: 100%; min-width: 0; min-height: 36px; max-height: 160px; padding: 7px 2px; resize: none; color: var(--ink); background: transparent; font-size: 14px; line-height: 22px; outline: none; }
+.bb-advisor-textarea:focus-visible { outline: none; }
+.bb-advisor-textarea::placeholder { color: var(--ink-2); }
+.bb-advisor-textarea:disabled { opacity: .6; }
+.bb-advisor-plan-panel { overflow-y: auto; overscroll-behavior: contain; min-width: 0; border-left: 1px solid var(--line-2); background: var(--bg); scrollbar-gutter: stable; }
+.bb-advisor-plan-content { max-width: 780px; margin: 0 auto; padding: 32px 40px 56px; }
+.bb-advisor-section-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 15px; font-weight: 700; }
+.bb-advisor-section-heading span { font-size: 11px; font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.bb-advisor-plan-item { position: relative; isolation: isolate; overflow-wrap: anywhere; animation: bb-advisor-arrive 240ms ease-out both; }
+.bb-advisor-highlight { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1; animation: bb-advisor-highlight 900ms ease-out both; }
+.bb-advisor-input { padding: 9px 10px; background: var(--surface); color: var(--ink); border: 1px solid var(--line-2); border-radius: 8px; font-size: 14px; font-weight: 400; }
+.bb-advisor-thinking { display: inline-flex; gap: 4px; }
+.bb-advisor-thinking i { width: 4px; height: 4px; border-radius: 50%; background: var(--hf-primary); animation: bb-advisor-breathe 1200ms ease-in-out infinite; }
+.bb-advisor-thinking i:nth-child(2) { animation-delay: 140ms; }
+.bb-advisor-thinking i:nth-child(3) { animation-delay: 280ms; }
+.bb-advisor-footer { display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; min-height: 40px; padding: 10px 16px; border-top: 1px solid var(--line-2); background: var(--surface-2); color: var(--ink-2); font-size: 11px; }
+.bb-advisor-plan-bar, .bb-advisor-sheet-handle { display: none; }
+@keyframes bb-advisor-arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bb-advisor-highlight { from { background: var(--hf-primary-soft-strong); } to { background: transparent; } }
+@keyframes bb-advisor-breathe { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+@media (min-width: 1500px) { .bb-advisor-messages { padding-left: 56px; padding-right: 56px; } .bb-advisor-composer-area { padding-left: 48px; padding-right: 48px; } }
+@media (max-width: 899px) {
+  .bb-advisor-topbar { min-height: 68px; padding: 12px 16px; gap: 12px; }
+  .bb-advisor-topbar > div p:first-child { font-size: 20px; }
+  .bb-advisor-session-state { font-size: 10px; gap: 4px; }
+  .bb-advisor-topbar > button { margin-left: 0; }
+  .bb-advisor-workspace { display: flex; flex-direction: column; }
+  .bb-advisor-conversation { flex: 1; }
+  .bb-advisor-messages { padding: 16px 20px 28px; }
+  .bb-advisor-composer-area { padding: 12px 16px; }
+  .bb-advisor-plan-panel { display: none; }
+  .bb-advisor-plan-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; min-height: 64px; border-top: 1px solid var(--hf-primary-border); color: var(--hf-primary); background: var(--hf-primary-soft); text-align: left; }
+  .bb-advisor-scrim { position: fixed; inset: 0; z-index: 40; background: var(--scrim); }
+  .bb-advisor-open-sheet { position: fixed; display: block; inset: 10dvh 0 0; z-index: 50; border: 1px solid var(--line-2); border-radius: 20px 20px 0 0; box-shadow: var(--sh-pop); animation: bb-advisor-arrive 180ms ease-out; }
+  .bb-advisor-sheet-handle { display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 2; background: var(--surface); padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .bb-advisor-plan-content { padding: 24px 20px 40px; }
+  .bb-advisor-footer { text-align: center; align-items: flex-start; line-height: 1.6; padding: 8px 16px; }
+  .bb-advisor-footer > svg { margin-top: 2px; flex-shrink: 0; }
+}
+@media (max-width: 380px) { .bb-advisor-session-state > span { display: none; } .bb-advisor-session-state { max-width: 44px; } .bb-advisor-topbar { gap: 8px; } .bb-advisor-messages { padding-left: 16px; padding-right: 16px; } }
+@media (prefers-reduced-motion: reduce) { .bb-advisor-plan-item, .bb-advisor-open-sheet, .bb-advisor-highlight, .bb-advisor-thinking i { animation: none; } .bb-advisor-composer { transition: none; } }
