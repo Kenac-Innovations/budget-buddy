@@ -1,0 +1,27 @@
+// Namespaced CSS keeps the HUD isolated under the existing Turbopack CSS loader.
+const styles={
+  advisorMessage: "bb-advisor-advisor-message",
+  composer: "bb-advisor-composer",
+  composerArea: "bb-advisor-composer-area",
+  conversation: "bb-advisor-conversation",
+  footer: "bb-advisor-footer",
+  highlight: "bb-advisor-highlight",
+  input: "bb-advisor-input",
+  messages: "bb-advisor-messages",
+  openSheet: "bb-advisor-open-sheet",
+  planBar: "bb-advisor-plan-bar",
+  planContent: "bb-advisor-plan-content",
+  planItem: "bb-advisor-plan-item",
+  planPanel: "bb-advisor-plan-panel",
+  screen: "bb-advisor-screen",
+  scrim: "bb-advisor-scrim",
+  sectionHeading: "bb-advisor-section-heading",
+  sessionState: "bb-advisor-session-state",
+  sheetHandle: "bb-advisor-sheet-handle",
+  textarea: "bb-advisor-textarea",
+  thinking: "bb-advisor-thinking",
+  topbar: "bb-advisor-topbar",
+  userMessage: "bb-advisor-user-message",
+  workspace: "bb-advisor-workspace",
+};
+export default styles;
