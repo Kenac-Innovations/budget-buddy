@@ -5,7 +5,7 @@ Review date: 2026-10-14 (draft preparation; no Kenac sign-off)
 Next review: 2027-01-14, or sooner if source guidance changes
 
 ## What it is
-Some established virtualisation portfolios have changed licensing models. A 2024 supplier announcement documents a transition from perpetual to subscription licensing; it does not establish the terms of an individual renewal today.
+Some established virtualisation portfolios have changed licensing models. A January 2024 supplier announcement ended the sale of perpetual licences and of support renewals for them, moving customers to subscription bundles typically priced per CPU core with a per-processor minimum. For budgeting this usually means: a recurring rather than one-off cost, a cost driven by licensed cores rather than hosts, and a renewal that may require moving to a bundle. It does not establish the terms of an individual renewal today; verify the organisation's own entitlement, core count and renewal date before planning.
 
 ## Who it fits in Zimbabwe
 Planning judgement: investigate renewal scope before a forced migration. Compare keeping the present platform, a supported alternative and suitable hosted workloads using evidenced ownership and operating costs. Cloud is not automatically cheaper.
