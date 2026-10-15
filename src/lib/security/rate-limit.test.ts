@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { RateLimiter, routeLimits } from "./rate-limit";
+import { advisorIpLimit, RateLimiter, routeLimits } from "./rate-limit";
 
 describe("abuse limits", () => {
   it("enforces 20 turns per session with independent sessions", () => {
@@ -28,5 +28,17 @@ describe("abuse limits", () => {
     expect(limiter.consume([{ key: "two", limit: 1 }], 0).allowed).toBe(false);
     expect(limiter.consume([{ key: "one", limit: 1 }], 0).allowed).toBe(false);
     expect(limiter.consume([{ key: "two", limit: 1 }], 600000).allowed).toBe(true);
+  });
+});
+
+describe("advisor IP limit override", () => {
+  it("defaults to 60", () => {
+    expect(advisorIpLimit({ NODE_ENV: "development" } as NodeJS.ProcessEnv)).toBe(60);
+  });
+  it("can be raised outside production for eval runs", () => {
+    expect(advisorIpLimit({ NODE_ENV: "development", ADVISOR_IP_TURN_LIMIT: "400" } as NodeJS.ProcessEnv)).toBe(400);
+  });
+  it("is ignored in production", () => {
+    expect(advisorIpLimit({ NODE_ENV: "production", ADVISOR_IP_TURN_LIMIT: "400" } as NodeJS.ProcessEnv)).toBe(60);
   });
 });

@@ -25,9 +25,19 @@ export class RateLimiter {
   }
 }
 
+/**
+ * Per-IP advisor turn limit. ADVISOR_IP_TURN_LIMIT raises it for local eval runs (many synthetic
+ * sessions from one machine); it is ignored in production so the live limit cannot be loosened.
+ */
+export function advisorIpLimit(env: NodeJS.ProcessEnv = process.env): number {
+  if (env.NODE_ENV === "production") return 60;
+  const override = Number(env.ADVISOR_IP_TURN_LIMIT);
+  return Number.isInteger(override) && override > 0 ? override : 60;
+}
+
 export function routeLimits(path: string, method: string, ip: string, session?: string) {
   if (path === "/api/advisor/turn" && method === "POST") return [
-    { key: `advisor:ip:${ip}`, limit: 60 },
+    { key: `advisor:ip:${ip}`, limit: advisorIpLimit() },
     { key: `advisor:session:${session ?? `anonymous:${ip}`}`, limit: 20 },
   ];
   if ((path === "/api/session/save" && method === "POST") || path.startsWith("/r/")) {
