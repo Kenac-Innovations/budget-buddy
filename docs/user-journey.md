@@ -44,7 +44,7 @@ A link from Kenac's website, LinkedIn or customer email:
 The link opens straight into the conversation. The advisor's first message is already there:
 
 > Good afternoon. I'm [name], an AI tech advisor run by Kenac Computer Systems. I'll help you shape your 2027 ICT plan and turn it into a budget you can defend. Your plan is private; Kenac only sees what you choose to share.
-> Shall we start with the big picture: roughly how big is the organisation, and what does the business most need from IT next year?
+> Shall we start with the big picture: what does the business most need from IT next year?
 
 - The private session starts with the CTO's first reply. Until it's saved, it's kept on this device.
 - When voice is added, a single tap ("Tap to talk") starts the audio. Browsers require that.
