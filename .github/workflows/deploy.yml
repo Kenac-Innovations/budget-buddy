@@ -28,6 +28,7 @@ jobs:
           node-version: "22"
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm exec next typegen
       - run: pnpm test && pnpm typecheck && pnpm lint
       - uses: azure/setup-helm@v4
       - run: helm lint deploy/helm
