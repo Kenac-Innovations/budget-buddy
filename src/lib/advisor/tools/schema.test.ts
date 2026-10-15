@@ -32,3 +32,17 @@ describe("strict tool schema adapter", () => {
     expect(toolParameters(schema)).toHaveProperty("additionalProperties", false);
   });
 });
+
+describe("OpenAI strict schema formats", () => {
+  it("drops unsupported string formats such as uri but keeps supported ones", () => {
+    const params = toolParameters(z.object({ url: z.string().url(), email: z.string().email() })) as {
+      properties: Record<string, { format?: string }>;
+    };
+    expect(params.properties.url.format).toBeUndefined();
+    expect(params.properties.email.format).toBe("email");
+  });
+
+  it("still rejects an invalid URL when parsing the tool input", () => {
+    expect(() => parseToolInput(z.object({ url: z.string().url() }), { url: "not a url" })).toThrow();
+  });
+});

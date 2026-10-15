@@ -7,10 +7,15 @@ export function toolParameters(schema: z.ZodType): JsonSchema {
   return strictSchema(z.toJSONSchema(schema, { io: "input", target: "draft-7" }));
 }
 
+/** String formats OpenAI strict mode accepts; any other (e.g. "uri") rejects the whole tool list. */
+const SUPPORTED_FORMATS = new Set(["date-time", "time", "date", "duration", "email", "hostname", "ipv4", "ipv6", "uuid"]);
+
 function strictSchema(source: JsonSchema): JsonSchema {
   const out = { ...source };
   delete out.$schema;
   delete out.default;
+  // Zod still validates the dropped format (e.g. URLs) when the tool input is parsed.
+  if (typeof out.format === "string" && !SUPPORTED_FORMATS.has(out.format)) delete out.format;
   if (source.properties) {
     const required = new Set(source.required as string[] | undefined);
     const properties = source.properties as Record<string, JsonSchema>;
