@@ -62,7 +62,7 @@ export async function runScenario(scenario: Scenario, options: {
     }
     if (options.mode === "live") {
       if (!options.models) throw new Error("Live judge missing.");
-      result.judge = await options.models.judge(result, AbortSignal.any([options.signal, AbortSignal.timeout(65_000)]));
+      result.judge = await options.models.judge(result, AbortSignal.any([options.signal, AbortSignal.timeout(process.env.EVAL_JUDGE === "codex" ? 300_000 : 65_000)]));
     }
   } catch {
     // Never log provider errors or server bodies: they may contain message text or identifiers.
@@ -91,7 +91,7 @@ export async function main(args = process.argv.slice(2)) {
   const results: ScenarioResult[] = [];
   // Three isolated scenarios in parallel, a 14-minute suite deadline, no SDK retries.
   // Deadline failures fail the report rather than silently dropping slow scenarios.
-  const signal = AbortSignal.timeout(14 * 60_000);
+  const signal = AbortSignal.timeout((process.env.EVAL_JUDGE === "codex" ? 30 : 14) * 60_000);
   let cursor = 0;
   await Promise.all(Array.from({ length: Math.min(3, scenarios.length) }, async () => {
     while (cursor < scenarios.length) {

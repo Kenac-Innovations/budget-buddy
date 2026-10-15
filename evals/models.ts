@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import Decimal from "decimal.js";
 import { z } from "zod";
+import { codexStructured } from "./codex-judge";
 import { JudgeResult, UserReply, type Scenario, type ScenarioResult } from "./schema";
 
 export interface ModelUsage { input: number; cached: number; output: number }
@@ -70,11 +71,15 @@ export class LiveModels {
   }
 
   async judge(result: ScenarioResult, signal: AbortSignal) {
-    const judged = await this.structured(JudgeResult, "judge", JUDGE_INSTRUCTIONS, {
+    const evidence = {
       scenario: result.scenario, opening: result.opening,
       transcript: result.turns.map((t) => ({ turn: t.number, user: t.user, advisor: t.text, events: t.events })),
       plan: result.turns.at(-1)?.plan, stop: result.stop,
-    }, signal);
+    };
+    // EVAL_JUDGE=codex judges through the Codex CLI (ChatGPT plan) instead of the API key.
+    const judged = process.env.EVAL_JUDGE === "codex"
+      ? await codexStructured(JudgeResult, JUDGE_INSTRUCTIONS, evidence, signal)
+      : await this.structured(JudgeResult, "judge", JUDGE_INSTRUCTIONS, evidence, signal);
     const expected = result.scenario.expectations.map((e) => e.id);
     if (judged.expectations.length !== expected.length || new Set(judged.expectations.map((e) => e.id)).size !== expected.length ||
         judged.expectations.some((e) => !expected.includes(e.id)) || judged.worstTurns.some((t) => t.turn > result.turns.length)) {
