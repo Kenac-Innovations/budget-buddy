@@ -14,7 +14,7 @@
     ]
   },
   "goal": "Pause planning safely without a forced save or early contact collection",
-  "maxTurns": 6,
+  "maxTurns": 9,
   "opening": "I'm the CTO of a logistics business. Next year we need fewer outages.",
   "script": [
     "I need to leave now. I'm not ready to save or give contact details.",

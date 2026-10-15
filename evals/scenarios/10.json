@@ -19,7 +19,7 @@
     ]
   },
   "goal": "Budget a measured pilot instead of an unsupported full rollout",
-  "maxTurns": 6,
+  "maxTurns": 9,
   "opening": "I'm the CIO. The board wants AI copilots for all 250 staff next year.",
   "script": [
     "Challenge the hype and propose a small pilot with success measures.",

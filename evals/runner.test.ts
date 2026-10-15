@@ -54,8 +54,25 @@ describe("HTTP runner", () => {
     expect(models.user).not.toHaveBeenCalled();
     expect(models.judge).toHaveBeenCalledOnce();
   });
+  it("applies the simulated user's decisions through the plan-op endpoint the UI uses", async () => {
+    const replies = [{ message: "Agreed on power.", goalMet: false, decisions: [{ id: "o1", action: "accept", reason: "" }, { id: "i2", action: "set_aside", reason: "No budget this year" }] },
+      { message: "Done", goalMet: true, decisions: [] }];
+    const models = { user: vi.fn().mockImplementation(async () => replies.shift()), judge: vi.fn().mockResolvedValue(null) };
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async (url, init) => {
+      if (String(url).endsWith("/api/plan/op")) return Response.json({ plan: emptyPlan() });
+      return response([{ type: "text", delta: "Power first." }, done]);
+    });
+    const result = await runScenario((await loadScenarios())[0], { mode: "live", baseUrl, vendors: [], signal: new AbortController().signal,
+      transport: new AdvisorTransport(baseUrl, fetcher), models });
+    const opCalls = fetcher.mock.calls.filter(([url]) => String(url).endsWith("/api/plan/op"));
+    expect(opCalls.map(([, init]) => JSON.parse(String(init!.body)).op)).toEqual([
+      { op: "set_state", id: "o1", state: "accepted" },
+      { op: "set_state", id: "i2", state: "dismissed", reason: "No budget this year" },
+    ]);
+    expect(result.turns[1].decisions).toHaveLength(2);
+  });
   it("stops when the live simulated user's goal is met", async () => {
-    const models = { user: vi.fn().mockResolvedValue({ message: "Done", goalMet: true }), judge: vi.fn().mockResolvedValue(null) };
+    const models = { user: vi.fn().mockResolvedValue({ message: "Done", goalMet: true, decisions: [] }), judge: vi.fn().mockResolvedValue(null) };
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(response([{ type: "text", delta: "Keep it unpriced." }, done]));
     const result = await runScenario((await loadScenarios())[0], { mode: "live", baseUrl, vendors: [], signal: new AbortController().signal,
       transport: new AdvisorTransport(baseUrl, fetcher), models });
@@ -68,7 +85,7 @@ describe("HTTP runner", () => {
       transport: new AdvisorTransport(baseUrl, fetcher) });
     expect(result.stop).toBe("error");
     expect(result.error).not.toContain("Sensitive");
-    const models = { user: vi.fn().mockResolvedValue({ message: "Done", goalMet: true }), judge: vi.fn().mockRejectedValue(new Error("Private model output")) };
+    const models = { user: vi.fn().mockResolvedValue({ message: "Done", goalMet: true, decisions: [] }), judge: vi.fn().mockRejectedValue(new Error("Private model output")) };
     const good = vi.fn<typeof fetch>().mockResolvedValue(response([done]));
     const judged = await runScenario((await loadScenarios())[0], { mode: "live", baseUrl, vendors: [], signal: new AbortController().signal,
       transport: new AdvisorTransport(baseUrl, good), models });

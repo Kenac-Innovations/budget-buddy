@@ -14,7 +14,7 @@
     ]
   },
   "goal": "Record the reason for deferral and move to the chosen alternative",
-  "maxTurns": 6,
+  "maxTurns": 9,
   "opening": "I'm the CTO of a retailer. We want better branch reliability in 2027.",
   "script": [
     "I disagree with upgrading the network this year. Defer it because we're relocating the branches in 2028.",

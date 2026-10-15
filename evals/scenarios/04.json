@@ -14,7 +14,7 @@
     ]
   },
   "goal": "Get a useful plan without naming tools or exposing sensitive details",
-  "maxTurns": 6,
+  "maxTurns": 9,
   "opening": "I'm the CSO. I won't name our tools, suppliers or security architecture. Can we still build a plan?",
   "script": [
     "I still won't identify the products or upload contracts.",

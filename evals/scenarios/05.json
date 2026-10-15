@@ -19,7 +19,7 @@
     ]
   },
   "goal": "Build a procurement-ready refresh plan with fair sourcing and lead times",
-  "maxTurns": 6,
+  "maxTurns": 9,
   "opening": "I manage ICT for a ministry. We need to replace ageing laptops and improve branch resilience in 2027.",
   "script": [
     "How should we factor procurement and import lead times into the plan?",

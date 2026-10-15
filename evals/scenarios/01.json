@@ -24,7 +24,7 @@
     ]
   },
   "goal": "Connect branch expansion and fewer outages to a defensible unpriced budget",
-  "maxTurns": 6,
+  "maxTurns": 9,
   "opening": "I'm the CIO of a bank, about 180 staff, head office and four new branches next year. The board wants fewer outages.",
   "script": [
     "Power resilience is the priority. Show the implementation costs too.",

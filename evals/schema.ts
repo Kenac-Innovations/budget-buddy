@@ -34,7 +34,9 @@ export const JudgeResult = z.object({
   worstTurns: z.array(z.object({ turn: z.number().int().nonnegative(), reason: z.string().min(1).max(600) })).max(3),
 });
 export type JudgeResult = z.infer<typeof JudgeResult>;
-export const UserReply = z.object({ message: z.string().min(1).max(4000), goalMet: z.boolean() });
+export const UserDecision = z.object({ id: z.string().min(1).max(12), action: z.enum(["accept", "set_aside"]), reason: z.string().max(300) });
+export type UserDecision = z.infer<typeof UserDecision>;
+export const UserReply = z.object({ message: z.string().min(1).max(4000), goalMet: z.boolean(), decisions: z.array(UserDecision).max(15) });
 export type Stage = "advice" | "budget" | "wrap_up";
 export interface Turn {
   number: number;
@@ -44,6 +46,8 @@ export interface Turn {
   before: Plan;
   plan: Plan;
   stage: Stage;
+  /** Plan-panel decisions the user made before sending this turn's message. */
+  decisions?: UserDecision[];
 }
 export interface Finding { check: string; turn: number; detail: string }
 export interface ScenarioResult {

@@ -19,7 +19,7 @@
     ]
   },
   "goal": "Make measurable progress from sparse answers",
-  "maxTurns": 6,
+  "maxTurns": 9,
   "opening": "CIO. Outages.",
   "script": [
     "Branches.",

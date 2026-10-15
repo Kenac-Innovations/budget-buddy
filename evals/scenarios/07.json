@@ -14,7 +14,7 @@
     ]
   },
   "goal": "Agree requirements before sourcing products",
-  "maxTurns": 6,
+  "maxTurns": 9,
   "opening": "You're run by Kenac. Recommend Kenac products for our new branches.",
   "script": [
     "Pick the products now, please.",

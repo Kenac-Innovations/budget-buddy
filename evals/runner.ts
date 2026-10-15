@@ -6,7 +6,7 @@ import { loadScenarios, scriptedUser } from "./scenarios";
 import { LiveModels, evalCost } from "./models";
 import { AdvisorTransport, inferStage } from "./transport";
 import { saveReport } from "./report";
-import type { Scenario, ScenarioResult } from "./schema";
+import type { Scenario, ScenarioResult, UserDecision } from "./schema";
 
 const Options = z.object({ mode: z.enum(["demo", "live"]), scenario: z.coerce.number().int().positive().optional(),
   baseUrl: z.string().url().refine((url) => /^https?:/.test(url)), });
@@ -36,13 +36,15 @@ export async function runScenario(scenario: Scenario, options: {
   let plan = emptyPlan();
   let scriptIndex = 0;
   const revealed = new Set<number>();
+  let pendingDecisions: UserDecision[] = [];
   try {
     for (let number = 1; number <= scenario.maxTurns; number++) {
       const signal = AbortSignal.any([options.signal, AbortSignal.timeout(65_000)]);
       const response = await transport.turn(message, signal);
       result.fixture ||= response.fixture;
       const stage = inferStage(message, response.events);
-      const turn = { number, user: message, before: plan, ...response, stage };
+      const turn = { number, user: message, before: plan, ...response, stage, ...(pendingDecisions.length ? { decisions: pendingDecisions } : {}) };
+      pendingDecisions = [];
       result.turns.push(turn);
       result.findings.push(...checkTurn({ ...turn, userMessages: result.turns.map((t) => t.user), vendors: options.vendors }));
       plan = response.plan;
@@ -56,6 +58,13 @@ export async function runScenario(scenario: Scenario, options: {
       } else {
         if (!options.models) throw new Error("Live clients missing.");
         const reply = await options.models.user(scenario, result, signal);
+        // Decisions go through the same user endpoint as the UI buttons; the runner never edits plan JSON.
+        for (const decision of reply.decisions) {
+          const decided = await transport.decide({ op: "set_state", id: decision.id,
+            state: decision.action === "accept" ? "accepted" : "dismissed",
+            ...(decision.action === "set_aside" && decision.reason ? { reason: decision.reason } : {}) }, signal);
+          if (decided) { plan = decided; pendingDecisions.push(decision); }
+        }
         if (reply.goalMet) { result.stop = "goal_met"; break; }
         message = reply.message;
       }

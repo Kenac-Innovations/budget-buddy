@@ -1,11 +1,23 @@
 import { readEvents, TurnRequest } from "../src/lib/advisor/events";
 import type { AdvisorEvent } from "../src/lib/advisor/events";
+import type { Plan } from "../src/lib/plan/types";
 import type { Stage } from "./schema";
 
 /** One jar per scenario. Host-only cookies stay scoped to the configured advisor origin. */
 export class AdvisorTransport {
   private cookies = new Map<string, string>();
   constructor(private baseUrl: string, private fetcher: typeof fetch = fetch) {}
+
+  /** A user decision, sent exactly as the plan panel's Accept / Not now buttons send it. */
+  async decide(op: { op: "set_state"; id: string; state: "accepted" | "dismissed"; reason?: string }, signal: AbortSignal): Promise<Plan | null> {
+    const response = await this.fetcher(new URL("/api/plan/op", this.baseUrl), {
+      method: "POST", redirect: "error", signal,
+      headers: { "Content-Type": "application/json", Cookie: [...this.cookies].map(([key, value]) => `${key}=${value}`).join("; ") },
+      body: JSON.stringify({ op }),
+    });
+    if (!response.ok) return null; // e.g. an id that no longer exists; the decision is simply skipped
+    return ((await response.json()) as { plan: Plan }).plan;
+  }
 
   async turn(message: string, signal: AbortSignal) {
     const response = await this.fetcher(new URL("/api/advisor/turn", this.baseUrl), {

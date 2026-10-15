@@ -19,7 +19,7 @@
     ]
   },
   "goal": "Sequence security baseline and tested recovery into a budget",
-  "maxTurns": 6,
+  "maxTurns": 9,
   "opening": "I'm the CSO of an insurer. A ransomware scare has made recovery our board priority.",
   "script": [
     "Show what comes first under CIS IG1 before IG2.",

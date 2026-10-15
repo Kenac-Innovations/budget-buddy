@@ -16,11 +16,11 @@ function client(output: unknown, status = "completed") {
 }
 describe("stubbed OpenAI clients", () => {
   it("sends structured, non-stored requests with the configurable model and accounts for usage", async () => {
-    const stub = client({ message: "Mostly power.", goalMet: false });
+    const stub = client({ message: "Mostly power.", goalMet: false, decisions: [] });
     const models = new LiveModels("account-confirmed-model", stub.stub);
     const sample = await result();
     const signal = new AbortController().signal;
-    expect(await models.user(sample.scenario, sample, signal)).toEqual({ message: "Mostly power.", goalMet: false });
+    expect(await models.user(sample.scenario, sample, signal)).toEqual({ message: "Mostly power.", goalMet: false, decisions: [] });
     expect(stub.create.mock.calls[0][0]).toMatchObject({ model: "account-confirmed-model", store: false,
       text: { format: { type: "json_schema", strict: true } } });
     expect(stub.create.mock.calls[0][1]).toEqual({ signal });
