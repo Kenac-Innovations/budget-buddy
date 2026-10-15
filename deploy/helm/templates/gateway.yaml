@@ -1,0 +1,26 @@
+# Cloudflare terminates public TLS; its tunnel reaches the existing Istio gateway.
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: budget-buddy-gateway
+spec:
+  selector:
+    {{- toYaml .Values.istio.gatewaySelector | nindent 4 }}
+  servers:
+    - port: {number: 80, name: http-budget-buddy, protocol: HTTP}
+      hosts: [{{ .Values.host | quote }}]
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: budget-buddy
+spec:
+  hosts: [{{ .Values.host | quote }}]
+  gateways: [budget-buddy-gateway]
+  http:
+    - name: advisor
+      timeout: 180s
+      route:
+        - destination:
+            host: budget-buddy
+            port: {number: 80}

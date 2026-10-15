@@ -1,0 +1,106 @@
+name: Build and deploy Budget Buddy
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: budget-buddy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      # Client generation reads this URL without connecting to a database.
+      DATABASE_URL: postgresql://build:build@localhost:5432/build
+      ADVISOR_MODE: demo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec next typegen
+      - run: pnpm test && pnpm typecheck && pnpm lint
+      - uses: azure/setup-helm@v4
+      - run: helm lint deploy/helm
+
+  publish:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      tag: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/login-action@v3
+        with:
+          registry: harbor.kenac.co.zw
+          username: ${{ secrets.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_PASSWORD }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/kenac-innovations/budget-buddy:${{ github.sha }}
+            harbor.kenac.co.zw/kenac/budget-buddy:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  update-gitops:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/create-github-app-token@v2
+        id: gitops-token
+        with:
+          app-id: ${{ secrets.GITOPS_APP_ID }}
+          private-key: ${{ secrets.GITOPS_APP_PRIVATE_KEY }}
+          owner: Kenac-Innovations
+          repositories: kenac-gitops
+      - uses: actions/checkout@v4
+        with:
+          repository: Kenac-Innovations/kenac-gitops
+          ref: master
+          token: ${{ steps.gitops-token.outputs.token }}
+          path: gitops-repo
+      - name: Update deployment chart and immutable image
+        env:
+          IMAGE_TAG: ${{ needs.publish.outputs.tag }}
+        run: |
+          set -euo pipefail
+          test -f gitops-repo/projects/budget-buddy/environments/dev/values.yaml
+          mkdir -p gitops-repo/projects/budget-buddy/helm-chart
+          cp -R deploy/helm/. gitops-repo/projects/budget-buddy/helm-chart/
+          sed -i -E "s/^  tag: .*/  tag: ${IMAGE_TAG}/" gitops-repo/projects/budget-buddy/environments/dev/values.yaml
+          cd gitops-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/budget-buddy
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Deploy Budget Buddy ${IMAGE_TAG}"
+          for attempt in 1 2 3; do
+            git pull --rebase origin master
+            if git push origin HEAD:master; then exit 0; fi
+          done
+          exit 1

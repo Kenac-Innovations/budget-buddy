@@ -1,0 +1,24 @@
+replicaCount: 1
+image:
+  repository: harbor.kenac.co.zw/kenac/budget-buddy
+  tag: a46132abb7750ba3ee2dad1a0a54c3cb181438ea
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+host: budgetbuddy.kenac.dev
+existingSecret: budget-buddy-env
+databaseCaSecret: budget-buddy-db-ca
+advisorMode: live
+resources:
+  requests:
+    cpu: 250m
+    memory: 384Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+istio:
+  gatewaySelector:
+    istio: gateway
+retention:
+  enabled: true
+  schedule: "15 2 * * *"
+  timeZone: Africa/Harare

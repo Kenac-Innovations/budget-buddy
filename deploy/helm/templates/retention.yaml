@@ -1,0 +1,56 @@
+{{- if .Values.retention.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: budget-buddy-retention
+spec:
+  schedule: {{ .Values.retention.schedule | quote }}
+  timeZone: {{ .Values.retention.timeZone | quote }}
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 300
+      template:
+        spec:
+          restartPolicy: Never
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            fsGroup: 1001
+            seccompProfile: {type: RuntimeDefault}
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: retention
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command: ["/app/node_modules/.bin/tsx", "/app/scripts/retention.ts"]
+              envFrom:
+                - secretRef: {name: {{ .Values.existingSecret | quote }}}
+              env:
+                - {name: NODE_ENV, value: production}
+                - {name: APP_URL, value: {{ printf "https://%s" .Values.host | quote }}}
+                - {name: ADVISOR_MODE, value: {{ .Values.advisorMode | quote }}}
+              resources:
+                requests: {cpu: 50m, memory: 128Mi}
+                limits: {cpu: 250m, memory: 256Mi}
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: {drop: [ALL]}
+              volumeMounts:
+                - {name: tmp, mountPath: /tmp}
+                - {name: database-ca, mountPath: /app/certs, readOnly: true}
+          volumes:
+            - {name: tmp, emptyDir: {}}
+            - name: database-ca
+              secret: {secretName: {{ .Values.databaseCaSecret | quote }}}
+{{- end }}
