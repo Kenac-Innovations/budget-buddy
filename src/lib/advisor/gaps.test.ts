@@ -26,6 +26,7 @@ describe("plan gaps", () => {
     expect(kinds).toContain("line_quantity:l4");
     expect(kinds).toContain("line_timing:l4");
     expect(kinds).toContain("unpriced:prices");
+    expect(kinds).toContain("no_owner:i2");
   });
 
   it("asks for timing when a measure has no date", () => {

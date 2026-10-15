@@ -14,11 +14,13 @@ export interface PlanGap {
     | "line_quantity"
     | "line_timing"
     | "no_recurring_cost"
+    | "no_owner"
     | "unpriced";
   text: string;
 }
 
 const RECURRING = new Set(["monthly", "quarterly", "annual"]);
+const OWNER = /\b(owner|owned by|accountable|responsible)\b/i;
 // A deadline: a year, a quarter or a month name. Frequency words ("a month") do not count.
 const HAS_DATE = /\b(20\d\d|q[1-4]|(first|second|third|fourth) quarter|jan(uary)?|feb(ruary)?|mar(ch)?|apr(il)?|may|june?|july?|aug(ust)?|sep(t(ember)?)?|oct(ober)?|nov(ember)?|dec(ember)?)\b/i;
 
@@ -38,6 +40,9 @@ export function planGaps(plan: Plan): PlanGap[] {
       gaps.push({ id: i.id, kind: "initiative_without_lines", text: `Initiative "${i.title}" has no budget lines yet.` });
     } else if (i.disposition === "fund" && !own.some((l) => RECURRING.has(l.frequency))) {
       gaps.push({ id: i.id, kind: "no_recurring_cost", text: `Initiative "${i.title}" has no recurring cost (support, subscription, maintenance or renewal).` });
+    }
+    if (i.disposition !== "defer" && !OWNER.test([i.rationale, ...own.map((l) => l.note ?? "")].join(" "))) {
+      gaps.push({ id: i.id, kind: "no_owner", text: `Initiative "${i.title}" has no accountable owner role recorded.` });
     }
   }
   for (const l of lines) {
