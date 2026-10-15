@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { FunctionTool } from "openai/resources/responses/responses";
 import { PlanOp, applyOp } from "@/lib/plan/ops";
+import { unpromptedBrand } from "../brand-guard";
 import { LinePrice, type Plan } from "@/lib/plan/types";
 import type { AdvisorEvent } from "../events";
 import { readyToWrapUp, requestedWrapUp, wrapUpSummary } from "../summary";
@@ -101,6 +102,11 @@ export function createToolRegistry(extraTools: AdvisorTool[] = []): ToolRegistry
         // The frozen reducer remains the authority, including rejection of USER_ESTIMATE.
         const result = applyOp(context.plan, op, "advisor");
         if (!result.ok) return { output: { ok: false, error: result.error } };
+        if (["add_initiative", "update_initiative", "add_line", "update_line"].includes(op.op)) {
+          const text = op as { title?: string; rationale?: string; caution?: string; note?: string };
+          const brand = unpromptedBrand([text.title, text.rationale, text.caution, text.note], context.userMessages);
+          if (brand) return { output: { ok: false, error: `Advice must be category-only: replace "${brand}" with a category (e.g. "supported operating system", "productivity suite", "endpoint protection") and retry.` } };
+        }
         if (op.op === "price_line") {
           const dates = [op.price.evidence.capturedAt, op.price.evidence.validUntil].filter(Boolean);
           if (dates.some((d) => !Number.isFinite(Date.parse(d!))) || !hasDocumentedPrice(op.price, context, op.id)) {
