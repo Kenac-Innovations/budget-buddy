@@ -4,7 +4,7 @@ Canonical public URL: https://budgetbuddy.kenac.dev. The target is the Kenac dev
 
 ## Delivery
 
-`.github/workflows/deploy.yml` verifies tests, types, lint and Helm on pull requests. On `main`, it publishes an immutable commit-SHA image to GHCR and `harbor.kenac.co.zw/kenac/budget-buddy`, then updates `Kenac-Innovations/kenac-gitops` on `master`. The workflow uses the existing organization secrets `HARBOR_USERNAME`, `HARBOR_PASSWORD`, `GITOPS_APP_ID` and `GITOPS_APP_PRIVATE_KEY`.
+`.github/workflows/deploy.yml` verifies tests, types, lint and Helm on pull requests. On `main`, it publishes an immutable commit-SHA image to `ghcr.io/kenac-innovations/budget-buddy`, then updates `Kenac-Innovations/kenac-gitops` on `master`. Publishing uses the workflow's `GITHUB_TOKEN`; GitOps updates use the existing organization secrets `GITOPS_APP_ID` and `GITOPS_APP_PRIVATE_KEY`. The namespace needs the existing cluster `ghcr-secret` pull configuration, provisioned outside Git.
 
 The chart source is `deploy/helm`. The pipeline copies it to `projects/budget-buddy/helm-chart`; environment overrides live at `projects/budget-buddy/environments/dev/values.yaml`. Argo CD Application `budget-buddy` watches that chart and deploys to namespace `budget-buddy`. Register its manifest from `argocd/applications/budget-buddy.yaml` in the GitOps repository on the dev cluster only. The first rollout requires the GitOps project files to exist before the pipeline updates them.
 

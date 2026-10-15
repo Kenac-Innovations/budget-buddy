@@ -1,9 +1,10 @@
 replicaCount: 1
 image:
-  repository: harbor.kenac.co.zw/kenac/budget-buddy
+  repository: ghcr.io/kenac-innovations/budget-buddy
   tag: a46132abb7750ba3ee2dad1a0a54c3cb181438ea
   pullPolicy: IfNotPresent
-imagePullSecrets: []
+imagePullSecrets:
+  - name: ghcr-secret
 host: budgetbuddy.kenac.dev
 existingSecret: budget-buddy-env
 databaseCaSecret: budget-buddy-db-ca
