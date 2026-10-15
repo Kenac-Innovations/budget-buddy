@@ -141,6 +141,9 @@ describe("Responses advisor loop", () => {
     expect(state.events.filter((e) => e.type === "op")).toHaveLength(8);
     expect(state.events).toContainEqual({ type: "error", message: expect.stringContaining("planning limit"), retryable: true });
     expect(client.responses.create).toHaveBeenCalledTimes(9);
+    // Independent calls may batch; the request after the cap allows text only.
+    expect(client.responses.create.mock.calls[0][0]).toMatchObject({ parallel_tool_calls: true, tool_choice: "auto" });
+    expect(client.responses.create.mock.calls[8][0]).toMatchObject({ tool_choice: "none" });
     const resumed = (await state.store.findByToken(state.session.token))!;
     const finalClient = stub([...Array.from({ length: 8 }, (_, n) => toolRound("set_profile", { profile: {} }, String(n))), textRound("Ready to continue.")]);
     const events: AdvisorEvent[] = [];
