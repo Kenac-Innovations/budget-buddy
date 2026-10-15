@@ -242,3 +242,14 @@ describe("Responses advisor loop", () => {
     expect(state.events.find((e) => e.type === "wrap_up")).toMatchObject({ summary: expect.stringContaining("No priced lines yet") });
   });
 });
+
+describe("turn deadlines and gaps", () => {
+  it("sends the open gaps with the plan and stops tool calls after the soft deadline", async () => {
+    const state = await setup();
+    const client = stub([toolRound("add_objective", { title: "Cut outages" }, "a"), textRound("Done.")]);
+    await runAgent({ ...state, client, softTimeoutMs: 0 });
+    const first = client.responses.create.mock.calls[0][0];
+    expect(first.input.at(-1).content).toContain("Open gaps");
+    expect(first.tool_choice).toBe("none");
+  });
+});
